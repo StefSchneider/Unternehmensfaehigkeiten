@@ -1,0 +1,28 @@
+Ein Name, der mit einem Unterstrich beginnt (z.B. _spam) sollte als nicht-öffentlicher Teil der API behandelt werden
+(egal ob es eine Funktion, eine Methode oder ein Datenattribut ist).
+Es sollte als Implementierungsdetails behandelt werden, das sich unangekündigt ändern kann.
+
+variable: Variable, die direkt von außen, zum Beispiel über Config-Dateien oder Requests manipuliert werden kann. Sie
+wird eingesetzt, wenn Daten von außen ohne Weiterverarbeitung durchgereicht werden.
+
+_variable: Variable, die nicht direkt von außen manipuliert werden kann. Sie wird auch eingesetzt, wenn Daten von außen
+weiterverarbeitet werden, das heißt wenn mit diesen Daten Berechnungen erfolgen
+
+
+Name Microservice: microservice (komplett klein geschrieben), z.B. "zeitstempel"
+
+Route: /microservice (mit Schrägstrich davor), z.B. "/zeitstempel"
+
+Flask-App-Route: ms_microservice, z.B. "ms_zeitstempel"
+
+Klasse: Microservice (mit großen Anfangsbuchstaben), z.B. "Zeitstempel" oder "Log-Level"
+
+Instanz der Klasse: _microservice (mit Unterstrich und Kleinbuchstaben), z.B. "_zeitstempel"
+
+Suffix "_ein": Daten, die eingelesen werden, z.B. aus einem Request oder einer Datei
+
+Suffix "_aus": Daten, sie ausgespielt werden, z.B. in eine Datei oder über ein Get-Request
+
+Suffix "_obj_ein": Objekt, das mit Eingangsdaten operiert
+
+Suffix "_obj_aus": Objekt, das mit Ausgangsdaten operiert
