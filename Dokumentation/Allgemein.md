@@ -18,9 +18,9 @@
 
 **fett**: Methodennamen, Objektnamen
 
-*kursiv*: Variablen, Attribute
+*kursiv*: Variablen, Attribute im Text
 
-***fett u. kursiv***: Parameter in Methodennamen
+***fett u. kursiv***: Parameter in Methodennamen im Text
 
 '...': Wertezuweisungen
 
