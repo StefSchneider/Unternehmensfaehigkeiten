@@ -102,10 +102,11 @@ class REST_Rueckmeldung:
 
 
 
-    def rueckmeldung_objekte_zusammenfassen(self):
+    def rueckmeldung_objekte_filtern(self):
         """
-        Die Methode fasst die einzelnen Dictionaries zu einem Dictionary zusammen und wandelt die Rückgabeinformationen
-        in ein JSON-Format um.
+        NEU PROGRAMMIEREN ALS FILTER
+        Die Methode fasst die einzelnen Dictionaries zu einem Dictionary zusammen, dabei filtert sie nicht gewünschte
+        Rückgabeobjekte heraus. Anschließend wandelt die Rückgabeinformationen in ein JSON-Format um.
         Die Informationen, die Entwickler betreffen, sollen zuschaltbar sein, wenn das entsprechende Attribut True ist.
         :return: Zusammenstellung der Rückgabeinformationen für Daten, Nutzer, Programm und möglicherweise Entwickler
         """

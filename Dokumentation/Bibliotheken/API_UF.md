@@ -3,6 +3,12 @@ Die Bibliothek API_UF enthällt alle Klassen und Methoden zur Steuerung der REST
 # Klassen
 
 ## Rest_Rueckmeldung
+Die Klasse ermittelt die Daten, die an den GET-Request zurückgeliefert werden. Dabei unterscheidet sie,für wen die 
+Rückgabedaten bestimmt sind: Daten (reine Daten des Speicherobjektes), Nutzer, Entwickler oder Programm. Die Daten für 
+den Entwickler sollen zu- und abschaltbar sein. Datenformat der Rückgabe ist JSON.
+
+Die Methoden werden für jedes REST-Verb programmiert, in ihrem Namen werden der jeweilige Empfänger und das jeweilige 
+REST-Verb festgehalten, um einen schnelle Zuordnung zu gewährleisten. 
 
 ### Methoden
 
@@ -45,13 +51,20 @@ Die Bibliothek API_UF enthällt alle Klassen und Methoden zur Steuerung der REST
 #### rueckmeldung_objekte_fuellen_get
 
 
-#### rueckmeldung_objekte_zusammenfassen
+#### rueckmeldung_objekte_filtern
 
 
 
 
 
 ## API
+Die Klasse umfasst alle Methoden, die für den Aufruf der Schnittstelle benötigt werden. Die Methoden teilen sich auf in:
+- grundsätzliche Methoden, Hilfsmethoden zur Verarbeitung der Daten,
+- Methoden zum Empfangen der Daten über die Schnittstelle,
+- Methoden zum Senden der Daten über die Schnittstelle.
+
+Die Namen der Methoden zum Empfang von Daten entsprechen denen der REST-Verben, die Namen der Methoden zum Senden von 
+Daten haben adäquate deutsche Namen.
 
 ### Methoden
 
