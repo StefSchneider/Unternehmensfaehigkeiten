@@ -1,4 +1,4 @@
-Die Bibliothek API_UF enthällt alle Klassen und Methoden zur Steuerung der REST-API.
+Die Bibliothek API_UF enthält alle Klassen und Methoden zur Steuerung der REST-API.
 
 # Klassen
 
@@ -21,7 +21,8 @@ REST-Verb festgehalten, um einen schnelle Zuordnung zu gewährleisten.
 #### ermittle_anzahl_speicherobjekte_nutzer_get
 
 
-#### ermittle_status_nutzer_get
+#### ermittle_status_objekt_nutzer_get
+Gibt zurück, ob das Datenobjekt vorhanden ist oder nicht.
 
 
 #### ermittle_laenge_liste_speicherobjekte_nutzer_get

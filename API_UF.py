@@ -39,7 +39,7 @@ class REST_Rueckmeldung:
     def ermittle_anzahl_speicherobjekte_nutzer_get(self):
         pass
 
-    def ermittle_status_nutzer_get(self):
+    def ermittle_status_objekt_nutzer_get(self):
         pass
 
     def ermittle_laenge_liste_speicherobjekte_nutzer_get(self):

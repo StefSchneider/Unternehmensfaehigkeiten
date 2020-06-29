@@ -9,6 +9,31 @@ import random
 
 ENTWICKLER_INFORMATIONEN: bool = True
 
+class REST_Rueckmeldung:
+
+    def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
+        self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
+        self.__rueckmeldung:dict = {}
+        self.__rueckmeldung_daten: dict = {"daten": None
+                                           }
+        self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
+                                            "status": None,
+                                            "suchschluessel": None,
+                                            "anzahl_rueckgabeobjekte": None,
+                                            "startobjekt": 0,
+                                            "berechtigung": None,
+                                            "daten_veraendert": None
+                                            }
+        self.__rueckmeldung_entwickler: dict = {"laenge_bytes": None,
+                                                "verarbeitungszeit": None,
+                                                "datenstruktur": None,
+                                                "strukturtiefe": None,
+                                                "speicherart": None
+                                                }
+        self.__rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
+                                              }
+
+
 
 class Persistenz:
 
