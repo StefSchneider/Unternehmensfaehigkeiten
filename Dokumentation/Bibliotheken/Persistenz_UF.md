@@ -44,6 +44,7 @@ Die Methode ermittelt die Verarbeitungszeit des Speicherzugriffs.
 ##### Beschreibung
 Die Methode wird sowohl kurz vor dem Start des Speicherzugriffs aus auch direkt nach seinem Ende aufgerufen. Wird der Parameter *startzeit* (= -1) nicht verändert, wird die ermittelte Zeit der *startzeit* zugewiesen. 
 Wird die *startzeit* als Parameter mitgeliefert, so wird die ermittelte Zeit der *endzeit* zugewiesen und es erfolgt eine Berechnung der Differenz, die als *verarbeitungszeit* zurückgeliefert wird.
+Zur Ermittlung von *startzeit* und *endzeit* wird der Microservice **ms_zeitstempel** aufgerufen.
 
 #### ermittle_datenstruktur_entwickler_lese
 
