@@ -35,7 +35,7 @@ z.B. Speicher, Datei, Datenbank
 Die Methode ermittelt die Verarbeitungszeit des Speicherzugriffs.
 ##### Parameter
 ***startzeit:*** Die Startzeit überträgt die ermittelte Startzeit in die Methode. Sie dient der Berechnung der Verarbeitungszeit. Stanardmäßig wird der Parameter auf -1 gesetzt.
-##### Rückegabewerte
+##### Rückgabewerte
 ***startzeit:*** Ermittelte Startzeit des Speicherzugriffs.
 
 ***endzeit:*** Ermittelte Endzeit des Speicherzugriffs.
