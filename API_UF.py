@@ -37,12 +37,14 @@ class REST_Rueckmeldung:
         pass
 
     def ermittle_anzahl_speicherobjekte_nutzer_get(self):
+        # len(dict)
         pass
 
     def ermittle_status_objekt_nutzer_get(self):
         pass
 
     def ermittle_laenge_liste_speicherobjekte_nutzer_get(self):
+        # derzeit = Anzahl der Speichelemente
         pass
 
     def ermittle_startobjekt_nutzer_get(self):
@@ -105,6 +107,9 @@ class REST_Rueckmeldung:
     def rueckmeldung_objekte_filtern(self):
         """
         NEU PROGRAMMIEREN ALS FILTER
+        "daten" fällt weg, wenn die Ressource nicht vorhanden ist
+        "entwickler fällt weg, Entwickler-Infos ausgeschaltet sind
+        ------
         Die Methode fasst die einzelnen Dictionaries zu einem Dictionary zusammen, dabei filtert sie nicht gewünschte
         Rückgabeobjekte heraus. Anschließend wandelt die Rückgabeinformationen in ein JSON-Format um.
         Die Informationen, die Entwickler betreffen, sollen zuschaltbar sein, wenn das entsprechende Attribut True ist.
