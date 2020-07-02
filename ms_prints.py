@@ -20,6 +20,8 @@ datensatz: dict = {"auftrag": None,
 eigener_pfad = "http://localhost:31002/prints"
 eigener_pfad_kurz = "/prints"
 
+server_port: int = 31002
+
 id = 0
 prints_PRS = PRS.Persistenz("prints", datenspeicher = True)
 
@@ -106,4 +108,4 @@ def drucke(pfad):
 
 
 if __name__ == "__main__":
-    app.run(port = 31002, debug = True)
+    app.run(port = server_port, debug = True)

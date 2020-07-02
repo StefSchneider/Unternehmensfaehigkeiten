@@ -5,8 +5,6 @@ Das ist die Bibliothek für die Klasse API.
 import json
 import urllib
 import urllib.request
-import datetime
-from http import HTTPStatus
 
 
 ENTWICKLER_INFORMATIONEN: bool = True
@@ -53,7 +51,7 @@ class REST_Rueckmeldung:
     def ermittle_laenge_daten_bytes_entwickler_get(self):
         pass
 
-    def ermittle_verarbeitungszeit_entwickler_get(self, startzeit, endzeit):
+    def ermittle_verarbeitungszeit_entwickler_get(self, startzeit: str):
         """
         Ermittlung startzeit und endzeit mit datetime.utcnow()
         :param startzeit:
@@ -61,10 +59,23 @@ class REST_Rueckmeldung:
         :return:
         """
         __startzeit = startzeit
-        __endzeit = endzeit
-        __verarbeitungszeit = __endzeit - __startzeit
+        __endzeit: str = ""
+        __verarbeitungszeit: str = ""
+        __zeitstempel_daten_aus: dict = {}
+        zeitstempel_API = API(get_request_zulassen = True)
+        zeitstempel_API.url_partner = "http://localhost:31002/zeitstempel/"
+        if __startzeit == -1:
+            __startzeit = zeitstempel_API.hole({})
+            __startzeit = __startzeit["zeitstempel_lokal"]
+        else:
+            __endzeit = zeitstempel_API.hole({})
+            __endzeit = __endzeit["zeitstempel_lokal"]
+            __verarbeitungszeit = int(__endzeit) - int(__startzeit)
+        __zeitstempel_daten_aus["startzeit"] = __startzeit
+        __zeitstempel_daten_aus["endzeit"] = __endzeit
+        __zeitstempel_daten_aus["verarbeitungszeit"] = __verarbeitungszeit
 
-        return __verarbeitungszeit
+        return json.dumps(__zeitstempel_daten_aus)
 
     def ermittle_datenstruktur_entwickler_get(self, daten_speicherobjekt: dict):
         """
