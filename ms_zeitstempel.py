@@ -9,24 +9,26 @@ import datetime
 
 server_port: int = 31005
 
-eigener_pfad = "http://localhost:31002/prints"
-eigener_pfad_kurz = "/prints"
+eigener_pfad = "http://localhost:31005/zeitstempel"
+eigener_pfad_kurz = "/zeitstempel"
 
 class Zeitstempel:
 
     def __init__(self):
         self.__zeitstempel_lokal: str = ""
         self.__zeitstempel_UTC: str = ""
+#        self.__zeitstempel_UTC_original: datetime.datetime
         self.__zeitstempel_daten: dict = {}
 
     def hole(self):
-        self.__zeitstempel_UTC = datetime.datetime.now(datetime.timezone.utc)
-        self.__zeitstempel_lokal = self.__zeitstempel_UTC.replace(tzinfo = datetime.timezone.utc)
+        self.__zeitstempel_UTC_original = datetime.datetime.now(datetime.timezone.utc)
+        self.__zeitstempel_lokal = self.__zeitstempel_UTC_original.replace(tzinfo = datetime.timezone.utc)
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.astimezone(tz = None)
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.strftime("%Y-%m-%d %H:%M:%S %z")
-        self.__zeitstempel_UTC = self.__zeitstempel_UTC.strftime("%Y-%m-%d %H:%M:%S %z")
+        self.__zeitstempel_UTC = self.__zeitstempel_UTC_original.strftime("%Y-%m-%d %H:%M:%S %z")
         self.__zeitstempel_daten["zeitstempel_lokal"] = self.__zeitstempel_lokal
         self.__zeitstempel_daten["zeitstempel_UTC"] = self.__zeitstempel_UTC
+        self.__zeitstempel_daten["zeitstempel_UTC_original"] = self.__zeitstempel_UTC_original
 
         return self.__zeitstempel_daten
 
@@ -99,6 +101,7 @@ def zeitstempel() -> str:
             return "DELETE-Request nicht erlaubt"
     __zeitstempel_obj_aus["zeitstempel_lokal"] = __zeitstempel["zeitstempel_lokal"]
     __zeitstempel_obj_aus["zeitstempel_UTC"] = __zeitstempel["zeitstempel_UTC"]
+    __zeitstempel_obj_aus["zeitstempel_UTC_original"] = __zeitstempel["zeitstempel_UTC_original"]
 
     return jsonify(__zeitstempel_obj_aus)
 

@@ -66,11 +66,11 @@ class REST_Rueckmeldung:
         zeitstempel_API.url_partner = "http://localhost:31002/zeitstempel/"
         if __startzeit == -1:
             __startzeit = zeitstempel_API.hole({})
-            __startzeit = __startzeit["zeitstempel_lokal"]
+            __startzeit = __startzeit["zeitstempel_UTC_original"]
         else:
             __endzeit = zeitstempel_API.hole({})
-            __endzeit = __endzeit["zeitstempel_lokal"]
-            __verarbeitungszeit = int(__endzeit) - int(__startzeit)
+            __endzeit = __endzeit["zeitstempel_UTC_original"]
+            __verarbeitungszeit = __endzeit - __startzeit
         __zeitstempel_daten_aus["startzeit"] = __startzeit
         __zeitstempel_daten_aus["endzeit"] = __endzeit
         __zeitstempel_daten_aus["verarbeitungszeit"] = __verarbeitungszeit
