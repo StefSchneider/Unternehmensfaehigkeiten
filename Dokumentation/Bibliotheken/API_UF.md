@@ -85,7 +85,7 @@ erfolgt durch das setzen der Parameter für jedes REST-Verb. Die Standardeinstel
 Verben aktiv zugeschaltet, d.h. auf 'True' gesetzt werden müssen.
 
 #### __encode_daten
-Die Methode wandelt ein Dictionary in Daten vom Typ-JSON-String um.
+Die Methode wandelt ein Dictionary in Daten vom Typ JSON um.
 ##### Parameter
 ***encode_daten_ein***: eingehendes Dictionary, das in das JSON-Format umgewandelt werden soll
 ##### Rückgabewerte
@@ -96,7 +96,7 @@ andere Datenformate encodiert werden. Auf eine Sortierung der Daten nach Schlüs
 verzichtet, da die API-Methoden ausschließlch dem Transport der Daten dienen.
 
 #### __decode_daten
-Die Methode wandelt die Daten vom Typ-JSON-String in ein Dictionary um.
+Die Methode wandelt die Daten vom Typ JSON in ein Dictionary um.
 ##### Parameter
 ***decode_daten_ein***: eingehende Daten, die zunächst von den Request-Methoden entgegengenommen wurden und decodiert
 werden sollen.
@@ -157,18 +157,49 @@ Die Methode dient der Verarbeitung eingehender Daten eines DELETE-Requests.
 Die eingehenden Daten werden mithilfe der Methode **decode** in ein Dictionary umgewandelt.
 
 ### Methoden zum Senden von Daten
+Die Methoden werden eingesetzt, um Daten an den anfragenden Microservice zu übermitteln. So schickt die Methode 
+**schreibe** Daten per POST-Request an die entsprechende Ressource. Die Namen der Methoden wurden adäquat zu den Namen
+für den Empfang von Daten gewählt. Beispielsweise ist **aendere** das Pendant zu **patch**.
+Alle Daten werden im JSON-Format gesendet.
 
 #### hole
-
+Die Methode greift per GET-Request auf eine Ressource zu und erhält das entsprechende Datenobjekt.
+##### Parameter
+***uebergabedaten_hole_ein***: Daten, die beim GET-Request mitgeschickt werden sollen; derzeit ohne Nutzung/Verarbeitung
+##### Rückgabewerte
+***__uebergabedaten_hole_aus***: Daten, die über den GET-Request auf die Ressource geliefert werden
+##### Beschreibung
+Die Methode startet einen GET-Request auf eine Ressource. Die erhaltenen Daten werden von der Methode im JSON-Format 
+zurückgegeben.
 
 #### schreibe
-
+Die Methode schreibt über einen POST-Request Daten in eine Ressource.
+##### Parameter
+***uebergabedaten_schreibe_ein***: 
+##### Rückgabewerte
+***__uebergabedaten_schreibe_aus***:
+##### Beschreibung
 
 #### ueberschreibe
 
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
 
 #### aendere
 
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
 
 #### loesche
 
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung

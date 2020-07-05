@@ -38,7 +38,7 @@ def drucke(pfad):
     text_zum_drucken: str = ""
     __hierarchien: list = prints_PRS.zerlege_pfad(pfad)
     if request.method == "GET":
-        __rueckmeldung_get_verarbeitung = json.loads(__rueckmeldung_request_verarbeitung.rueckmeldung_objekte_fuellen_get())
+#        __rueckmeldung_get_verarbeitung = json.loads(__rueckmeldung_request_verarbeitung.rueckmeldung_objekte_fuellen_get())
         if prints_API.get_request_erlaubt:
             __inhalt_speicher = json.loads(prints_PRS.get_request_in_crud(__hierarchien))
             __inhalt_speicher_aus = prints_API.get(__inhalt_speicher)

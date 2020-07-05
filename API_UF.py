@@ -151,25 +151,26 @@ class API:
                              "url_partner": "localhost:"
                              }
         self.server_port: int = self.__config["server_port"]
-        self.ressoruce_selbst: str = self.__config["ressource_selbst"]
+        self.ressource_selbst: str = self.__config["ressource_selbst"]
         self.pfad: str = self.__config["pfad"]
         self.ressource_partner: str = self.__config["ressource_partner"]
         self.url_partner: str = self.__config["url_partner"] + str(self.server_port)
         self.url_partner = ""
+        self.daten_typ_inhalt: str = "application/json; charset=utf-8"
 
     def __encode_daten(self, encode_daten_ein: dict) -> str:
         # Daten werden von Typ Dictionary in JSON-String umgewandelt
         # Encoding-/Decoding-Information aus Config einlesen und If-Bedingung einfügen
         self.__encode_daten_ein = encode_daten_ein
         __encode_obj = json.JSONEncoder(sort_keys = False) # KEINE Sortierung der Keys im Bereich der Schnittstelle
-        self.__encode_daten_aus = __encode_obj.encode(self.__encode_daten_ein)
+        self.__encode_daten_aus = __encode_obj.encode(self.__encode_daten_ein).encode("utf-8")
 
         return self.__encode_daten_aus
 
     def __decode_daten(self, decode_daten_ein: str) -> dict:
         # Daten werden vom Typ JSON-String in Dictionary umgewandelt
         # Encoding-/Decoding-Information aus Config einlesen und If-Bedingung einfügen
-        self.__decode_daten_ein = decode_daten_ein
+        self.__decode_daten_ein = json.dumps(decode_daten_ein)
         __decode_obj = json.JSONDecoder()
         self.__decode_daten_aus = __decode_obj.decode(self.__decode_daten_ein)
 
@@ -208,54 +209,68 @@ class API:
         return self.__uebergabedaten_delete_aus
 
 # Methoden zum Senden von Daten
-    def hole(self, uebergabedaten_hole_aus):
-        anfrage_partner = urllib.request.Request(url = self.url_partner, method = "GET")
-        self.__uebergabedaten_hole_aus = urllib.request.urlopen(anfrage_partner)
-        self.__uebergabedaten_hole_aus = json.load(self.__uebergabedaten_hole_aus)
+    def hole(self, uebergabedaten_hole_ein):
+        self.__uebergabedaten_hole_ein = uebergabedaten_hole_ein
+        __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "GET")
+        self.__uebergabedaten_hole_aus = urllib.request.urlopen(__anfrage_partner)
+        self.__uebergabedaten_hole_aus = self.__decode(self.__uebergabedaten_hole_aus)
+#        self.__uebergabedaten_hole_aus = json.load(self.__uebergabedaten_hole_aus)
         print("GET abgeschlossen")
 
         return self.__uebergabedaten_hole_aus
 
-    def schreibe(self, uebergabedaten_schreibe_aus: dict):
-        self.__uebergabedaten_schreibe_aus = self.__encode_daten(uebergabedaten_schreibe_aus)
-        self.__uebergabedaten_schreibe_aus = json.dumps(self.__uebergabedaten_schreibe_aus).encode("utf-8")
-        anfrage = urllib.request.Request(url = self.url_partner, method = "POST")
-        anfrage.add_header("Content-Type", "application/json; charset=utf-8")
-        anfrage.add_header("Content-Length", len(self.__uebergabedaten_schreibe_aus))
-        urllib.request.urlopen(anfrage, self.__uebergabedaten_schreibe_aus)
+    def schreibe(self, uebergabedaten_schreibe_ein: dict) -> json:
+        """
+        Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
+        über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen.
+        ACHTUNG: Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
+        :param uebergabedaten_schreibe_ein: Daten, die mit dem POST-Request mitgeschickt werden
+        :return: die über den POST-Request mitgeschickten Daten für die Ressource
+        """
+        self.__uebergabedaten_schreibe_aus = self.__encode_daten(uebergabedaten_schreibe_ein)
+        __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "POST")
+        __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_schreibe_aus))
+        urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_schreibe_aus)
         print("POST abgeschlossen")
 
         return self.__uebergabedaten_schreibe_aus
 
-    def ueberschreibe(self, uebergabedaten_ueberschreibe_aus):
-        self.__uebergabedaten_ueberschreibe_aus = self.__encode_daten(uebergabedaten_ueberschreibe_aus)
-        self.__uebergabedaten_ueberschreibe_aus = json.dumps(self.__uebergabedaten_ueberschreibe_aus).encode("utf-8")
-        anfrage = urllib.request.Request(url = self.url_partner, method = "PUT")
-        anfrage.add_header("Content-Type", "application/json; charset=utf-8")
-        anfrage.add_header("Content-Length", len(self.__uebergabedaten_ueberschreibe_aus))
-        urllib.request.urlopen(anfrage, self.__uebergabedaten_ueberschreibe_aus)
+    def ueberschreibe(self, uebergabedaten_ueberschreibe_ein):
+        self.__uebergabedaten_ueberschreibe_aus = self.__encode_daten(uebergabedaten_ueberschreibe_ein)
+        # Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
+        # über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen
+        __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "PUT")
+        __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        # Datenformat über daten_typ_inhalt muss zu Format in der Methode __encode passen
+        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_ueberschreibe_aus))
+        urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_ueberschreibe_aus)
         print("PUT abgeschlossen")
 
         return self.__uebergabedaten_ueberschreibe_aus
 
-    def aendere(self, uebergabedaten_aendere_aus):
-        self.__uebergabedaten_aendere_aus = self.__encode_daten(uebergabedaten_aendere_aus)
-        self.__uebergabedaten_aendere_aus = json.dumps(self.__uebergabedaten_aendere_aus).encode("utf-8")
-        anfrage = urllib.request.Request(url = self.url_partner, method = "PATCH")
-        anfrage.add_header("Content-Type", "application/json; charset=utf-8")
-        anfrage.add_header("Content-Length", len(self.__uebergabedaten_aendere_aus))
-        urllib.request.urlopen(anfrage, self.__uebergabedaten_aendere_aus)
+    def aendere(self, uebergabedaten_aendere_ein):
+        self.__uebergabedaten_aendere_aus = self.__encode_daten(uebergabedaten_aendere_ein)
+        # Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
+        # über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen
+        __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "PATCH")
+        __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        # Datenformat über daten_typ_inhalt muss zu Format in der Methode __encode passen
+        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_aendere_aus))
+        urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_aendere_aus)
         print("PATCH abgeschlossen")
 
         return self.__uebergabedaten_aendere_aus
 
-    def loesche(self, uebergabedaten_loesche_aus):
-        self.__uebergabedaten_loesche_aus = self.__encode_daten(uebergabedaten_loesche_aus)
-        self.__uebergabedaten_loesche_aus = json.dumps(self.__uebergabedaten_loesche_aus).encode("utf-8")
-        anfrage = urllib.request.Request(url = self.url_partner, method = "DELETE")
-        anfrage.add_header("Content-Type", "application/json; charset=utf-8")
-        anfrage.add_header("Content-Length", len(self.__uebergabedaten_loesche_aus))
-        urllib.request.urlopen(anfrage, self.__uebergabedaten_loesche_aus)
+    def loesche(self, uebergabedaten_loesche_ein):
+        self.__uebergabedaten_loesche_aus = self.__encode_daten(uebergabedaten_loesche_ein)
+        # Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
+        # über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen
+        __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
+        __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        # Datenformat über daten_typ_inhalt muss zu Format in der Methode __encode passen
+        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_loesche_aus))
+        urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_loesche_aus)
         print("DELETE abgeschlossen")
 
         return self.__uebergabedaten_loesche_aus
