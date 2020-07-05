@@ -34,11 +34,11 @@ z.B. Speicher, Datei, Datenbank
 #### ermittle_verarbeitungszeit_entwickler_lese
 Die Methode ermittelt die Verarbeitungszeit des Speicherzugriffs.
 ##### Parameter
-***startzeit:*** Die Startzeit überträgt die ermittelte Startzeit in die Methode. Sie dient der Berechnung der Verarbeitungszeit. Stanardmäßig wird der Parameter auf -1 gesetzt.
+***startzeit***: Die Startzeit überträgt die ermittelte Startzeit in die Methode. Sie dient der Berechnung der Verarbeitungszeit. Stanardmäßig wird der Parameter auf -1 gesetzt.
 ##### Rückgabewerte
-***startzeit:*** Ermittelte Startzeit des Speicherzugriffs.
+***startzeit***: Ermittelte Startzeit des Speicherzugriffs.
 
-***endzeit:*** Ermittelte Endzeit des Speicherzugriffs.
+***endzeit***: Ermittelte Endzeit des Speicherzugriffs.
 
 ***verarbeitungszeit:*** Differenz zwischen Endzeit und Startzeit.
 ##### Beschreibung

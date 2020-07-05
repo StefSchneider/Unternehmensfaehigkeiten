@@ -161,8 +161,8 @@ class API:
         # Daten werden von Typ Dictionary in JSON-String umgewandelt
         # Encoding-/Decoding-Information aus Config einlesen und If-Bedingung einfügen
         self.__encode_daten_ein = encode_daten_ein
-        encode_obj = json.JSONEncoder(sort_keys = False) # KEINE Sortierung der Keys im Bereich der Schnittstelle
-        self.__encode_daten_aus = encode_obj.encode(self.__encode_daten_ein)
+        __encode_obj = json.JSONEncoder(sort_keys = False) # KEINE Sortierung der Keys im Bereich der Schnittstelle
+        self.__encode_daten_aus = __encode_obj.encode(self.__encode_daten_ein)
 
         return self.__encode_daten_aus
 
@@ -170,37 +170,42 @@ class API:
         # Daten werden vom Typ JSON-String in Dictionary umgewandelt
         # Encoding-/Decoding-Information aus Config einlesen und If-Bedingung einfügen
         self.__decode_daten_ein = decode_daten_ein
-        decode_obj = json.JSONDecoder()
-        self.__decode_daten_aus = decode_obj.decode(self.__decode_daten_ein)
+        __decode_obj = json.JSONDecoder()
+        self.__decode_daten_aus = __decode_obj.decode(self.__decode_daten_ein)
 
         return self.__decode_daten_aus
 
 # Methoden zum Empfang von Daten
     def get(self, uebergabedaten_get_ein):
         self.__uebergabedaten_get_ein = uebergabedaten_get_ein
+        self.__uebergabedaten_get_aus = self.__uebergabedaten_get_ein
 
-        return self.__uebergabedaten_get_ein
+        return self.__uebergabedaten_get_aus
 
     def post(self, uebergabedaten_post_ein):
-        self.__uebergabedaten_post_ein = self.__decode_daten(uebergabedaten_post_ein)
+        self.__uebergabedaten_post_ein = uebergabedaten_post_ein
+        self.__uebergabedaten_post_aus = self.__decode_daten(self.__uebergabedaten_post_ein)
 
-        return self.__uebergabedaten_post_ein
+        return self.__uebergabedaten_post_aus
 
     def put(self, uebergabedaten_put_ein):
-        self.__uebergabedaten_put_ein = self.__decode_daten(uebergabedaten_put_ein)
+        self.__uebergabedaten_put_ein = uebergabedaten_put_ein
+        self.__uebergabedaten_put_aus = self.__decode_daten(self.__uebergabedaten_put_ein)
 
-        return self.__uebergabedaten_put_ein
+        return self.__uebergabedaten_put_aus
 
     def patch(self, uebergabedaten_patch_ein):
-        self.__uebergabedaten_patch_ein = self.__decode_daten(uebergabedaten_patch_ein)
+        self.__uebergabedaten_patch_ein = uebergabedaten_patch_ein
+        self.__uebergabedaten_patch_aus = self.__decode_daten(self.__uebergabedaten_patch_ein)
 
-        return self.__uebergabedaten_patch_ein
+        return self.__uebergabedaten_patch_aus
 
     def delete(self, uebergabedaten_delete_ein):
         self.__uebergabedaten_delete_ein = uebergabedaten_delete_ein
-        self.__uebergabedaten_delete_ein = json.loads(self.__uebergabedaten_delete_ein)
+        self.__uebergabedaten_delete_aus = self.__decode_daten(self.__uebergabedaten_delete_ein)
+        # json.loads(self.__uebergabedaten_delete_ein) PRÜFEN, WARUM ABWEICHUNG ZU ANDEREN REQUESTS
 
-        return self.__uebergabedaten_delete_ein
+        return self.__uebergabedaten_delete_aus
 
 # Methoden zum Senden von Daten
     def hole(self, uebergabedaten_hole_aus):
