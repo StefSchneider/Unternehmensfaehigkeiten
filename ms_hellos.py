@@ -21,7 +21,7 @@ if __name__ == "__main__":
         auswahl = input("Was möchten Sie tun? 1 = holen, 2 = schreiben, 3 = überschreiben, 4 = löschen: ")
         if auswahl == "1":
             hellos_API.url_partner += str(nummer_ressource)
-            uebergabedaten_ein = hellos_API.hole({})
+            uebergabedaten_ein = hellos_API.hole()
             hellos_PRS.zeige_datenspeicher_json(uebergabedaten_ein)
         elif auswahl == "2":
             uebergabetext: str = input("Welcher Text soll gedruckt werden?")
@@ -52,7 +52,7 @@ if __name__ == "__main__":
             hellos_API.ueberschreibe(uebergabedaten_aus)
         elif auswahl == "4":
             hellos_API.url_partner += str(nummer_ressource)
-            hellos_API.loesche(uebergabedaten_aus)
+            hellos_API.loesche()
             """
             loesche_alle_elemente: bool = False
             loesche_letztes_element: bool = False
