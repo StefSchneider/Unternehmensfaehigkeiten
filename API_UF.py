@@ -168,10 +168,10 @@ class API:
         :param encode_daten_ein: Daten, die für den Request kodiert werden sollen
         :return: codierte Daten
         """
-        __encode_daten_ein: dict = encode_daten_ein
-        __encode_daten_ein: json = json.dumps(__encode_daten_ein) # Umwandlung in JSON-String
-        __encode_daten_ein: bytes = __encode_daten_ein.encode("utf-8") # Umwandlung in Bytes
-        __encode_daten_aus: bytes = __encode_daten_ein
+        __encode_daten: dict = encode_daten_ein
+        __encode_daten: json = json.dumps(__encode_daten) # Umwandlung in JSON-String
+        __encode_daten: bytes = __encode_daten.encode("utf-8") # Umwandlung in Bytes
+        __encode_daten_aus: bytes = __encode_daten
 
         return __encode_daten_aus
 
@@ -183,54 +183,84 @@ class API:
         :param decode_daten_ein: umzuwandelnde Daten
         :return: in ein Dictionary dekodierte Daten
         """
-        __decode_daten_ein: bytes = decode_daten_ein
-        __decode_daten_ein: json = __decode_daten_ein.decode() # Umwandlung in JSON-String
-        __decode_daten_ein: dict = json.loads(decode_daten_ein) # Umwandlung in Dictionary
-        __decode_daten_aus: dict = __decode_daten_ein
+        __decode_daten: bytes = decode_daten_ein
+        __decode_daten: json = __decode_daten.decode() # Umwandlung in JSON-String
+        __decode_daten: dict = json.loads(decode_daten_ein) # Umwandlung in Dictionary
+        __decode_daten_aus: dict = __decode_daten
 
         return __decode_daten_aus
 
 # Methoden zum Empfang von Daten
-    def get(self, uebergabedaten_get_ein: bytes) -> bytes:
-        __uebergabedaten_get_ein: bytes = uebergabedaten_get_ein
-        __uebergabedaten_get_aus: bytes = __uebergabedaten_get_ein
+    def get(self, uebergabedaten_get_ein: bytes) -> dict:
+        """
+
+        :param uebergabedaten_get_ein:
+        :return:
+        """
+        __uebergabedaten_get: bytes = uebergabedaten_get_ein
+        __uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
+        __uebergabedaten_get_aus: bytes = __uebergabedaten_get
 
         return __uebergabedaten_get_aus
 
     def post(self, uebergabedaten_post_ein: bytes) -> dict:
-        __uebergabedaten_post_ein: bytes = uebergabedaten_post_ein
-        __uebergabedaten_post_ein: dict = self.__decode_daten(__uebergabedaten_post_ein)
-        __uebergabedaten_post_aus: dict = __uebergabedaten_post_ein
+        """
+
+        :param uebergabedaten_post_ein:
+        :return:
+        """
+        __uebergabedaten_post: bytes = uebergabedaten_post_ein
+        __uebergabedaten_post: dict = self.__decode_daten(__uebergabedaten_post)
+        __uebergabedaten_post_aus: dict = __uebergabedaten_post
 
         return __uebergabedaten_post_aus
 
     def put(self, uebergabedaten_put_ein: bytes) -> dict:
-        __uebergabedaten_put_ein: bytes = uebergabedaten_put_ein
-        __uebergabedaten_put_ein: dict = self.__decode_daten(__uebergabedaten_put_ein)
-        __uebergabedaten_put_aus: dict = __uebergabedaten_put_ein
+        """
+
+        :param uebergabedaten_put_ein:
+        :return:
+        """
+        __uebergabedaten_put: bytes = uebergabedaten_put_ein
+        __uebergabedaten_put: dict = self.__decode_daten(__uebergabedaten_put)
+        __uebergabedaten_put_aus: dict = __uebergabedaten_put
 
         return __uebergabedaten_put_aus
 
     def patch(self, uebergabedaten_patch_ein: bytes) -> dict:
-        __uebergabedaten_patch_ein: bytes = uebergabedaten_patch_ein
-        __uebergabedaten_patch_ein: dict = self.__decode_daten(__uebergabedaten_patch_ein)
-        __uebergabedaten_patch_aus: dict = __uebergabedaten_patch_ein
+        """
+
+        :param uebergabedaten_patch_ein:
+        :return:
+        """
+        __uebergabedaten_patch: bytes = uebergabedaten_patch_ein
+        __uebergabedaten_patch: dict = self.__decode_daten(__uebergabedaten_patch)
+        __uebergabedaten_patch_aus: dict = __uebergabedaten_patch
 
         return __uebergabedaten_patch_aus
 
-    def delete(self, uebergabedaten_delete_ein):
-        self.__uebergabedaten_delete_ein = uebergabedaten_delete_ein
-        self.__uebergabedaten_delete_aus = self.__uebergabedaten_delete_ein
+    def delete(self, uebergabedaten_delete_ein: bytes) -> dict :
+        """
 
-        return self.__uebergabedaten_delete_aus
+        :param uebergabedaten_delete_ein:
+        :return:
+        """
+        __uebergabedaten_delete: bytes = uebergabedaten_delete_ein
+        __uebergabedaten_delete: dict = self.__decode_daten(__uebergabedaten_delete)
+        __uebergabedaten_delete_aus: bytes = __uebergabedaten_delete
+
+        return __uebergabedaten_delete_aus
 
 # Methoden zum Senden von Daten
-    def hole(self) -> json:
-#        self.__uebergabedaten_hole_ein = uebergabedaten_hole_ein | keine Parameter uebergabedaten nötig
+    def hole(self) -> dict:
+        """
+
+        :return:
+        """
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "GET")
-        __uebergabedaten_hole_aus = urllib.request.urlopen(__anfrage_partner)
-        __uebergabedaten_hole_aus = __uebergabedaten_hole_aus.read()
-        __uebergabedaten_hole_aus = self.__decode_daten(__uebergabedaten_hole_aus)
+        __anfrage_partner = urllib.request.urlopen(__anfrage_partner)
+        __uebergabedaten_hole_aus: bytes = __anfrage_partner.read()
+        __uebergabedaten_hole_aus: dict = self.__decode_daten(__uebergabedaten_hole_aus)
         print("GET abgeschlossen")
 
         return __uebergabedaten_hole_aus
@@ -287,7 +317,10 @@ class API:
         return self.__uebergabedaten_aendere_aus
 
     def loesche(self):
-#        self.__uebergabedaten_loesche_aus = self.__encode_daten(uebergabedaten_loesche_ein) | keine Parameter uebergabedaten nötig
+        """
+
+        :return:
+        """
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
         urllib.request.urlopen(__anfrage_partner)
         print("DELETE abgeschlossen")

@@ -2,6 +2,23 @@
 
 
 
+# Umgang mit Daten/Namen in Methden
+
+## Bennenung von Parametern/Variablen
+- **eingehende Parameter**: Ergänzung des Namens mit "_ein". Beispiel: daten_patch_ein
+- **Rückgabedaten**: Ergänzung des Namens mit "_aus". Beispiel: daten_patch_aus
+
+## Annotation
+Neue Variablen bzw. Variablen, deren Typ sich durch Bearbeitung ändert, werden mit einer Typ-Annotation versehen.
+
+## Bennung bei Verarbeitung
+- im ersten Schritt werden die mitgegebenen Parameter in die Methode übernommen. Beispiel: __daten_post = daten_post_ein
+- im zweiten Schritt werden die Berechnungen mit den übernommenen Daten durchgeführt
+- in letzten Schritt werden die veränderten Daten den Ausgabedaten der Methode zugewiesen. Beispiel: __daten_post_aus = __daten_post
+- return __daten_post_aus
+
+
+
 
 
 
