@@ -158,71 +158,69 @@ class API:
         self.url_partner = ""
         self.daten_typ_inhalt: str = "application/json; charset=utf-8"
 
-    def __encode_daten(self, encode_daten_ein: dict) -> json:
+    def __encode_daten(self, encode_daten_ein: dict) -> bytes:
         """
-        Die Methode wandelt die im dict-Format eingehenden Daten in ein JSON-Format um, damit diese direkt über die
+        Die Methode wandelt die im dict-Format eingehenden Daten in das Format bytes um, damit diese direkt über die
         Schnittstelle als Request gesendet werden können. Zu einem späteren Zeitpunkt können die Daten auch in andere
         Formate umgewandelt werden. Das Format könnte entweder über die Config-Datei gesetzt werden oder über einen
         Parameter. Um mehrere Format zu behandeln, sollten diese über If-Bedingungen innerhalb der Methode gesteuert
         werden.
         :param encode_daten_ein: Daten, die für den Request kodiert werden sollen
-        :return: codierte Daten, derzeit nur Codierung in JSON-Format
+        :return: codierte Daten
         """
-        # eingangsdaten = dict
-        # json.dumps(eingangsdaten) -> Umwandlung in JSON-String
-        # .encode("utf-8") -> Umwandlung in Bytes zum Senden
-        __encode_daten_ein = encode_daten_ein
-        __encode_daten_ein = json.dumps(__encode_daten_ein)
-        __encode_daten_aus = __encode_daten_ein.encode("utf-8")
+        __encode_daten_ein: dict = encode_daten_ein
+        __encode_daten_ein: json = json.dumps(__encode_daten_ein) # Umwandlung in JSON-String
+        __encode_daten_ein: bytes = __encode_daten_ein.encode("utf-8") # Umwandlung in Bytes
+        __encode_daten_aus: bytes = __encode_daten_ein
 
         return __encode_daten_aus
 
-    def __decode_daten(self, decode_daten_ein: json) -> dict:
+    def __decode_daten(self, decode_daten_ein: bytes) -> dict:
         """
-        Die Methode wandet eingehende Daten im JSON-Format in ein Dictionary um. Sollte die Umwandlung in weitere
+        Die Methode wandet eingehende Daten Format Bytes in ein Dictionary um. Sollte die Umwandlung in weitere
         Datenformate gewünscht werden, könnte dies über eine If-Bedingung gesteuert werden. Das im Einzelfall benötigte
         Datenformat könnte über die Config-Datei gesetzt werden oder als Parameter in die Methode gegeben werden.
         :param decode_daten_ein: umzuwandelnde Daten
         :return: in ein Dictionary dekodierte Daten
         """
-        # eingangsdaten in Bytes
-        # eingangsdaten.decode() -> Umwandlung in JSON-String
-        # json.loads(eingangsdaten) -> Umwandlung in dict
-        __decode_daten_ein = decode_daten_ein
-        __decode_daten_aus = __decode_daten_ein.decode()
-        __decode_daten_aus = json.loads(decode_daten_ein)
+        __decode_daten_ein: bytes = decode_daten_ein
+        __decode_daten_ein: json = __decode_daten_ein.decode() # Umwandlung in JSON-String
+        __decode_daten_ein: dict = json.loads(decode_daten_ein) # Umwandlung in Dictionary
+        __decode_daten_aus: dict = __decode_daten_ein
 
         return __decode_daten_aus
 
 # Methoden zum Empfang von Daten
-    def get(self, uebergabedaten_get_ein):
-        self.__uebergabedaten_get_ein = uebergabedaten_get_ein
-        self.__uebergabedaten_get_aus = self.__uebergabedaten_get_ein
+    def get(self, uebergabedaten_get_ein: bytes) -> bytes:
+        __uebergabedaten_get_ein: bytes = uebergabedaten_get_ein
+        __uebergabedaten_get_aus: bytes = __uebergabedaten_get_ein
 
-        return self.__uebergabedaten_get_aus
+        return __uebergabedaten_get_aus
 
-    def post(self, uebergabedaten_post_ein):
-        self.__uebergabedaten_post_ein = uebergabedaten_post_ein
-        self.__uebergabedaten_post_aus = self.__decode_daten(self.__uebergabedaten_post_ein)
+    def post(self, uebergabedaten_post_ein: bytes) -> dict:
+        __uebergabedaten_post_ein: bytes = uebergabedaten_post_ein
+        __uebergabedaten_post_ein: dict = self.__decode_daten(__uebergabedaten_post_ein)
+        __uebergabedaten_post_aus: dict = __uebergabedaten_post_ein
 
-        return self.__uebergabedaten_post_aus
+        return __uebergabedaten_post_aus
 
-    def put(self, uebergabedaten_put_ein):
-        self.__uebergabedaten_put_ein = uebergabedaten_put_ein
-        self.__uebergabedaten_put_aus = self.__decode_daten(self.__uebergabedaten_put_ein)
+    def put(self, uebergabedaten_put_ein: bytes) -> dict:
+        __uebergabedaten_put_ein: bytes = uebergabedaten_put_ein
+        __uebergabedaten_put_ein: dict = self.__decode_daten(__uebergabedaten_put_ein)
+        __uebergabedaten_put_aus: dict = __uebergabedaten_put_ein
 
-        return self.__uebergabedaten_put_aus
+        return __uebergabedaten_put_aus
 
-    def patch(self, uebergabedaten_patch_ein):
-        self.__uebergabedaten_patch_ein = uebergabedaten_patch_ein
-        self.__uebergabedaten_patch_aus = self.__decode_daten(self.__uebergabedaten_patch_ein)
+    def patch(self, uebergabedaten_patch_ein: bytes) -> dict:
+        __uebergabedaten_patch_ein: bytes = uebergabedaten_patch_ein
+        __uebergabedaten_patch_ein: dict = self.__decode_daten(__uebergabedaten_patch_ein)
+        __uebergabedaten_patch_aus: dict = __uebergabedaten_patch_ein
 
-        return self.__uebergabedaten_patch_aus
+        return __uebergabedaten_patch_aus
 
     def delete(self, uebergabedaten_delete_ein):
         self.__uebergabedaten_delete_ein = uebergabedaten_delete_ein
         self.__uebergabedaten_delete_aus = self.__uebergabedaten_delete_ein
-        # json.loads(self.__uebergabedaten_delete_ein) PRÜFEN, WARUM ABWEICHUNG ZU ANDEREN REQUESTS
 
         return self.__uebergabedaten_delete_aus
 

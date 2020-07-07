@@ -47,7 +47,6 @@ def drucke(pfad):
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
-#            uebergabedaten_ein = request.get_json()
             uebergabedaten_ein = request.data
             rueckmeldung = prints_API.post(uebergabedaten_ein)
             print("in rueckmeldung", rueckmeldung, type(rueckmeldung))
