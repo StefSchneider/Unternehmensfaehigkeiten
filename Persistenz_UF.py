@@ -227,19 +227,20 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def get_request_in_crud(self, ebenen: list):
+    def get_request_in_crud(self, ebenen_ein: list):
         """
         1. Read
         :return:
         """
-        __ebenen = ebenen
+        __ebenen: list = ebenen_ein
+        __rest_rueckmeldung_get = REST_Rueckmeldung()
         __speicherinhalt: dict = {}
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
-        __speicherinhalt = json.loads(self.lese_speicherinhalt(__ebenen))
-        __rueckgaben_daten_aus["daten"] = __speicherinhalt
+        __rest_rueckmeldung_get.__rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
+        __rueckgaben_daten_aus["daten"] = __rest_rueckmeldung_get.__rueckmeldung_daten["daten"]
 
         print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
 
