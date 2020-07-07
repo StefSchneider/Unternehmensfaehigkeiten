@@ -30,6 +30,7 @@ class REST_Rueckmeldung:
                                                 }
         self.__rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
                                               }
+        self.__rueckmeldung_fuer_get_request: dict = {}
 
     def ermittle_speicherinhalt_daten_get(self):
         pass
@@ -108,11 +109,13 @@ class REST_Rueckmeldung:
 
         :return:
         """
-        rueckmeldung_fuer_get_request = self.rueckmeldung_objekte_zusammenfassen()
-        rueckmeldung_fuer_get_request = json.dumps(rueckmeldung_fuer_get_request)
+        self.__rueckmeldung_fuer_get_request: dict = {}
+        self.__rueckmeldung_fuer_get_request.update(self.__rueckmeldung_daten)
+        self.__rueckmeldung_fuer_get_request.update(self.__rueckmeldung_nutzer)
+        self.__rueckmeldung_fuer_get_request.update(self.__rueckmeldung_entwickler)
+        self.__rueckmeldung_fuer_get_request.update(self.__rueckmeldung_programm)
 
-        return rueckmeldung_fuer_get_request
-
+        return self.__rueckmeldung_fuer_get_request
 
 
     def rueckmeldung_objekte_filtern(self):
@@ -126,13 +129,12 @@ class REST_Rueckmeldung:
         Die Informationen, die Entwickler betreffen, sollen zuschaltbar sein, wenn das entsprechende Attribut True ist.
         :return: Zusammenstellung der Rückgabeinformationen für Daten, Nutzer, Programm und möglicherweise Entwickler
         """
-        self.__rueckmeldung.update(self.__rueckmeldung_daten)
-        self.__rueckmeldung.update(self.__rueckmeldung_nutzer)
-        self.__rueckmeldung.update(self.__rueckmeldung_programm)
-        if self.__entwickler_informationen_anzeigen:
-            self.__rueckmeldung.update(self.__rueckmeldung_entwickler)
 
-        return self.__rueckmeldung
+        if not self.__entwickler_informationen_anzeigen:
+            del self.__rueckmeldung_fuer_get_request[self.__rueckmeldung_entwickler]
+        self.__rueckmeldung_fuer_get_request = json.dumps(self.__rueckmeldung_fuer_get_request)
+
+        return self.__rueckmeldung_fuer_get_request
 
 
 class API:
