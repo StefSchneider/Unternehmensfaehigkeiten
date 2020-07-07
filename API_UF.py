@@ -231,8 +231,8 @@ class API:
 #        self.__uebergabedaten_hole_ein = uebergabedaten_hole_ein | keine Parameter uebergabedaten nötig
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "GET")
         __uebergabedaten_hole_aus = urllib.request.urlopen(__anfrage_partner)
+        __uebergabedaten_hole_aus = __uebergabedaten_hole_aus.read()
         __uebergabedaten_hole_aus = self.__decode_daten(__uebergabedaten_hole_aus)
-#        self.__uebergabedaten_hole_aus = json.load(self.__uebergabedaten_hole_aus)
         print("GET abgeschlossen")
 
         return __uebergabedaten_hole_aus
