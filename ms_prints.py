@@ -47,8 +47,10 @@ def drucke(pfad):
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
-            uebergabedaten_ein = request.get_json()
+#            uebergabedaten_ein = request.get_json()
+            uebergabedaten_ein = request.data
             rueckmeldung = prints_API.post(uebergabedaten_ein)
+            print("in rueckmeldung", rueckmeldung, type(rueckmeldung))
             __schluessel_neue_ressource = prints_PRS.erzeuge_schluessel_neueintrag(int(rueckmeldung["id"]))
             neuer_eintrag_in_datenspeicher: dict = {__schluessel_neue_ressource: rueckmeldung.copy()}
             text_zum_drucken = rueckmeldung["daten"]
@@ -60,7 +62,7 @@ def drucke(pfad):
             return "POST-Request nicht erlaubt"
     elif request.method == "PUT":
         if prints_API.put_request_erlaubt:
-            uebergabedaten_ein = request.get_json()
+            uebergabedaten_ein = request.data
             rueckmeldung = prints_API.put(uebergabedaten_ein)
             __schluessel_ressource = __hierarchien[-1]
             __eintrag_in_datenspeicher: dict = {__schluessel_ressource: rueckmeldung.copy()}
@@ -75,7 +77,7 @@ def drucke(pfad):
             return "PUT-Request nicht erlaubt."
     elif request.method == "PATCH":
         if prints_API.patch_request_erlaubt:
-            uebergabedaten_ein = request.get_json()
+            uebergabedaten_ein = request.data
             rueckmeldung = prints_API.patch(uebergabedaten_ein)
             __neuer_speicher  = prints_PRS.patch_request_in_crud(__hierarchien, rueckmeldung)
             try:
@@ -93,7 +95,7 @@ def drucke(pfad):
             return "PATCH-Request nicht erlaubt"
     elif request.method == "DELETE":
         if prints_API.delete_request_erlaubt:
-            uebergabedaten_ein = request.get_json()
+            uebergabedaten_ein = request.data
             prints_PRS.delete_request_in_crud(__hierarchien)
             rueckmeldung = prints_API.delete(uebergabedaten_ein)
         else:

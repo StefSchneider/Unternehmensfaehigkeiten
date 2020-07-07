@@ -330,6 +330,7 @@ class Persistenz:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
         __speicherelement_loeschen = self.loesche_speicherinhalt(ebenen)
+        __speicherelement_loeschen = json.loads(__speicherelement_loeschen)
         if __speicherelement_loeschen["rueckmeldung"] != "":
             print(__speicherelement_loeschen["rueckmeldung"])
         __rueckgaben_daten_aus["rueckmeldung"] = f"Element {ebenen[-1]} aus Speicher gelöscht"
