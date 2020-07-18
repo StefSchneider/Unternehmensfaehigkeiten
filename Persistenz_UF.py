@@ -227,7 +227,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def get_request_in_crud(self, ebenen_ein: list):
+    def get_request_in_crud(self, ebenen_ein: list) -> json:
         """
         1. Read
         :return:
@@ -246,7 +246,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def post_request_in_crud(self, ebenen: list, inhalt_ein: dict):
+    def post_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Create
         2. Update
@@ -269,7 +269,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def put_request_in_crud(self, ebenen: list, inhalt_ein: dict):
+    def put_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Delete
         2. Create
@@ -291,7 +291,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def patch_request_in_crud(self, ebenen: list, inhalt_ein: dict):
+    def patch_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Read
         2. Werte überschreiben
@@ -322,19 +322,20 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
     
-    def delete_request_in_crud(self, ebenen):
+    def delete_request_in_crud(self, ebenen) -> json:
         """
         1. Delete
         :return:
         """
+        __ebenen = ebenen
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
-        __speicherelement_loeschen = self.loesche_speicherinhalt(ebenen)
+        __speicherelement_loeschen = self.loesche_speicherinhalt(__ebenen)
         __speicherelement_loeschen = json.loads(__speicherelement_loeschen)
         if __speicherelement_loeschen["rueckmeldung"] != "":
             print(__speicherelement_loeschen["rueckmeldung"])
-        __rueckgaben_daten_aus["rueckmeldung"] = f"Element {ebenen[-1]} aus Speicher gelöscht"
+        __rueckgaben_daten_aus["rueckmeldung"] = f"Element {__ebenen[-1]} aus Speicher gelöscht"
 
         print("Rückgabe delete_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
 
