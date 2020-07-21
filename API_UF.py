@@ -52,20 +52,22 @@ class REST_Rueckmeldung:
     def ermittle_laenge_daten_bytes_entwickler_get(self):
         pass
 
-    def ermittle_verarbeitungszeit_entwickler_get(self, startzeit: str):
+    def ermittle_verarbeitungszeit_entwickler_get(self, startzeit: str, url_zeitstempel: str) -> json:
         """
         Ermittlung startzeit und endzeit mit datetime.utcnow()
         :param startzeit:
         :param endzeit:
+        :param: url_zeitstempel
         :return:
         """
-        __startzeit = startzeit
+        __startzeit: str = startzeit
+        __url_zeitstempel: str = url_zeitstempel
         __endzeit: str = ""
         __verarbeitungszeit: str = ""
         __zeitstempel_daten_aus: dict = {}
         zeitstempel_API = API(get_request_zulassen = True)
-        zeitstempel_API.url_partner = "http://localhost:31002/zeitstempel/"
-        if __startzeit == -1:
+        zeitstempel_API.url_partner = __url_zeitstempel
+        if __startzeit == "-1":
             __startzeit = zeitstempel_API.hole()
             __startzeit = __startzeit["zeitstempel_UTC_original"]
         else:
@@ -118,7 +120,7 @@ class REST_Rueckmeldung:
         return self.__rueckmeldung_fuer_get_request
 
 
-    def rueckmeldung_objekte_filtern(self):
+    def rueckmeldung_objekte_filtern_get(self):
         """
         NEU PROGRAMMIEREN ALS FILTER
         "daten" fällt weg, wenn die Ressource nicht vorhanden ist
@@ -267,7 +269,7 @@ class API:
 
         return __uebergabedaten_hole_aus
 
-    def schreibe(self, uebergabedaten_schreibe_ein: dict) -> json:
+    def schreibe(self, uebergabedaten_schreibe_ein: dict) -> bytes:
         """
         Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
         über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen.
@@ -284,7 +286,7 @@ class API:
 
         return __uebergabedaten_schreibe_aus
 
-    def ueberschreibe(self, uebergabedaten_ueberschreibe_ein):
+    def ueberschreibe(self, uebergabedaten_ueberschreibe_ein) -> bytes:
         """
         Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
         über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen.
@@ -301,7 +303,7 @@ class API:
 
         return self.__uebergabedaten_ueberschreibe_aus
 
-    def aendere(self, uebergabedaten_aendere_ein):
+    def aendere(self, uebergabedaten_aendere_ein) -> bytes:
         """
         Umwandlung der Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit
         über die Methode schnell angepasst werden, ohne in allen Funktionen erneuert werden zu müssen.
@@ -318,7 +320,7 @@ class API:
 
         return self.__uebergabedaten_aendere_aus
 
-    def loesche(self):
+    def loesche(self) ->str:
         """
 
         :return:

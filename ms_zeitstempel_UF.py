@@ -9,7 +9,7 @@ import pathlib
 import json
 import datetime
 
-server_port: int = 0
+server_port: int = 30001
 config_daten_individuell_gesamt: dict = {}
 
 

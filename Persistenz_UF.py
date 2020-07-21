@@ -5,11 +5,12 @@ Das ist die Bibliothek der Klasse Persistenz
 import json
 from flask import jsonify
 import random
+import API_UF
 
 
 ENTWICKLER_INFORMATIONEN: bool = True
 
-class REST_Rueckmeldung:
+class CRUD_Rueckmeldung:
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
@@ -33,6 +34,79 @@ class REST_Rueckmeldung:
         self.__rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
                                               }
 
+    def ermittle_speicherinhalt_daten_lese(self):
+        pass
+
+    def ermittle_anzahl_speicherobjekte_nutzer_lese(self):
+        pass
+
+    def ermittle_status_objekt_nutzer_lese(self):
+        pass
+
+    def ermittle_status_suchschluessel_nutzer_lese(self):
+        pass
+
+    def ermittle_laenge_liste_speicherobjekte_nutzer_lese(self):
+        pass
+
+    def ermittle_startobjekt_nutzer_lese(self):
+        pass
+
+    def ermittle_zugriffsberechtigung_nutzer_lese(self):
+        pass
+
+    def ermittle_status_daten_nutzer_lese(self):
+        pass
+
+    def ermittle_speicherart_entwickler_lese(self):
+        pass
+
+    def ermittle_laenge_daten_bytes_entwickler_lese(self):
+        pass
+
+    def ermittle_verarbeitungszeit_entwickler_lese(self, startzeit: str, url_zeitstempel: str) -> json:
+        """
+        Ermittlung startzeit und endzeit mit datetime.utcnow()
+        :param startzeit:
+        :param endzeit:
+        :param url_zeitstempel:
+        :return:
+        """
+        __startzeit: str = startzeit
+        __url_zeitstempel: str = url_zeitstempel
+        __endzeit: str = ""
+        __verarbeitungszeit: str = ""
+        __zeitstempel_daten_aus: dict = {}
+        zeitstempel_API = API_UF.API(get_request_zulassen = True)
+        zeitstempel_API.url_partner = __url_zeitstempel
+        if __startzeit == "-1":
+            __startzeit = zeitstempel_API.hole()
+            __startzeit = __startzeit["zeitstempel_UTC_original"]
+        else:
+            __endzeit = zeitstempel_API.hole()
+            __endzeit = __endzeit["zeitstempel_UTC_original"]
+            __verarbeitungszeit = __endzeit - __startzeit
+        __zeitstempel_daten_aus["startzeit"] = __startzeit
+        __zeitstempel_daten_aus["endzeit"] = __endzeit
+        __zeitstempel_daten_aus["verarbeitungszeit"] = __verarbeitungszeit
+
+        return json.dumps(__zeitstempel_daten_aus)
+
+    def ermittle_datenstruktur_entwickler_lese(self):
+        pass
+
+    def ermittle_strukturtiefe_baum_entwickler_lese(self):
+        pass
+
+    def ermittle_datentyp_rueckgabeobjekt_programm_lese(self):
+        pass
+
+    def rueckmeldung_objekte_fuellen_lese(self):
+        pass
+
+    def rueckmeldung_objekte_filtern_lese(self):
+        pass
+
 
 
 class Persistenz:
@@ -42,7 +116,7 @@ class Persistenz:
         self.datenspeicher: dict = {wurzel: {}}
 
     def zerlege_pfad(self, pfad: str) -> list:
-        __pfad = pfad
+        __pfad: str = pfad
         __hierarchien: list = [""]
         if __pfad[-1] == "/":
             __pfad = __pfad.rstrip("/")
@@ -233,14 +307,21 @@ class Persistenz:
         :return:
         """
         __ebenen: list = ebenen_ein
-        __rest_rueckmeldung_get = REST_Rueckmeldung()
+        __crud_rueckmeldung_get = CRUD_Rueckmeldung()
+        __rest_rueckmeldung_get = API_UF.REST_Rueckmeldung()
         __speicherinhalt: dict = {}
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
-        __rest_rueckmeldung_get.__rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
-        __rueckgaben_daten_aus["daten"] = __rest_rueckmeldung_get.__rueckmeldung_daten["daten"]
+        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
+            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
+        __crud_rueckmeldung_get.__rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
+        __verarbeitungszeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
+            (startzeit = __startzeit_crud_rueckmeldung_get,
+             url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
+        __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
+        __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.__rueckmeldung_daten["daten"]
 
         print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
 
