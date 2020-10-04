@@ -8,13 +8,29 @@ import urllib.request
 
 
 ENTWICKLER_INFORMATIONEN: bool = True
+# Die Konstate steuert zunächst, ob Daten für Entwickler angezeigt werden, ist für die Programmierung sinnvoll,
+# sollte später nur in besonderen Fällen aktiviert werden. Die Steuerung soll später über entsprechende Einträge in
+# Config-Datein erfolgen.
 
 
 class REST_Rueckmeldung:
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
+        """
+        In dieser Klasse werden die Daten sowohl aus der Ressource als auch Zusatzdaten, die auf Basis der Ressource
+        enstehen, abgespeichert und erfasst. Diese Daten entstehen und werden verarbeitet zum Zeitpunkt des Aufrufes
+        der REST Api. Grundsätzlich sind vier Datenbereiche interessant:
+        1. Die Kerndaten, die in der Ressource abgespeichert sind. (Kennzeichnung: "_daten")
+        2. Daten, die für Nutzer bei der späteren Anwendung interessant sind. (Kennzeichen: "_nutzer")
+        3. Daten, die für Entwickler interessant sind. (Kennzeichen: "_entwickler")
+        4. Daten zum Programm an sich. (Kennzeichen: "_programm")
+        Alle vier Bereiche verfügen über ein eigenes Dictionary, in dem die Daten abgelegt werden. Sie werden in einem
+        Gesamtdictionary self.__rueckmeldung aggregiert. Alle Dictionaries werden bei der Anlage einer enstprechenden
+        Instanz angelegt.
+        :param entwickler_informationen_anzeigen:
+        """
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
-        self.__rueckmeldung:dict = {}
+        self.__rueckmeldung: dict = {}
         self.__rueckmeldung_daten: dict = {"daten": None
                                            }
         self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
@@ -33,6 +49,10 @@ class REST_Rueckmeldung:
         self.__rueckmeldung_fuer_get_request: dict = {}
 
     def ermittle_speicherinhalt_daten_get(self):
+        """
+
+        :return:
+        """
         pass
 
     def ermittle_anzahl_speicherobjekte_nutzer_get(self):
