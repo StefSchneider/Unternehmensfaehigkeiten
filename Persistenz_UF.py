@@ -108,7 +108,6 @@ class CRUD_Rueckmeldung:
         pass
 
 
-
 class Persistenz:
 
     def __init__(self, wurzel: str, datenspeicher = False):
@@ -135,14 +134,16 @@ class Persistenz:
         :param nummer_ein:
         :return:
         """
-        schluessel: str = ""
-        schluessel = str(nummer_ein) + "_" + str((random.randint(1,1000) * random.randint(1,1000)))
+        __nummer_ein = nummer_ein
+        __schluessel: str = ""
+        __schluessel = str(__nummer_ein) + "_" + str((random.randint(1,1000) * random.randint(1,1000)))
 
-        return schluessel
+        return __schluessel
 
     def ermittele_letzten_eintrag_hierarchie(self, hierarchie_ein: list) -> int:
+        __hierarchie_ein = hierarchie_ein
         __ressourcen: list = [0]
-        for __eintrag in hierarchie_ein:
+        for __eintrag in __hierarchie_ein:
             if not __eintrag.startswith("h_"): # schließt Hierachien bei der Betrachtung aus
                 __ressourcen.append(int(__eintrag)) # erfasse vorhandene Ressourcen in Hierachie
 
@@ -192,7 +193,6 @@ class Persistenz:
                                         "fehlercode": 0}
         __ressource_vorhanden: bool = True
         __aktuelle_ebene = self.datenspeicher
-
         for __position, __schluessel in enumerate(ebenen):
             if __schluessel in __aktuelle_ebene.keys():
                 __aktuelle_ebene = __aktuelle_ebene[__schluessel]

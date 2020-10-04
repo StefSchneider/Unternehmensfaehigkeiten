@@ -119,7 +119,6 @@ class REST_Rueckmeldung:
 
         return self.__rueckmeldung_fuer_get_request
 
-
     def rueckmeldung_objekte_filtern_get(self):
         """
         NEU PROGRAMMIEREN ALS FILTER
@@ -143,6 +142,14 @@ class API:
 
     def __init__(self, get_request_zulassen = False, post_request_zulassen = False, put_request_zulassen = False,
                  patch_request_zulassen = False, delete_request_zulassen = False):
+        """
+
+        :param get_request_zulassen: steuert, ob per GET-Request auf den Microservice zugegriffen werden darf
+        :param post_request_zulassen: steuert, ob per POST-Request auf den Microservice zugegriffen werden darf
+        :param put_request_zulassen: steuert, ob per PUT-Request auf den Microservice zugegriffen werden darf
+        :param patch_request_zulassen: steuert, ob per PATCH-Request auf den Microservice zugegriffen werden darf
+        :param delete_request_zulassen: steuert, ob per DELETE-Request auf den Microservice zugegriffen werden darf
+        """
         self.get_request_erlaubt =  get_request_zulassen
         self.post_request_erlaubt = post_request_zulassen
         self.put_request_erlaubt = put_request_zulassen
