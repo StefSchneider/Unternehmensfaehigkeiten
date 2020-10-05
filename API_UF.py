@@ -33,7 +33,7 @@ class REST_Rueckmeldung:
         self.__rueckmeldung: dict = {}
         self.__rueckmeldung_daten: dict = {"daten": None
                                            }
-        self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
+        self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": 0,
                                             "status": None,
                                             "anzahl_rueckgabeobjekte": None,
                                             "startobjekt": 0
@@ -50,26 +50,56 @@ class REST_Rueckmeldung:
 
     def ermittle_speicherinhalt_daten_get(self):
         """
+        Die Methode liefert den Inhalt des Speicherobjekts (payload) bei einem GET-Request zurück. Die Daten werden aus
+        der Abfrage innerhalb der Persistenz übernommen.
+        :return: Inhalt der Ressource
+        """
+        pass
+
+    def ermittle_anzahl_speicherobjekte_nutzer_get(self):
+        """
+        Die Methode ermittelt die Anzahl der Speicherobjekte zum angefragten Schlüssel. Dabei wird nur die erste
+        Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
+        in der Ressource, die er abfragt, abgespeichert sind. Er kann dann entscheiden, ob er seine Abfrage einschränkt,
+        um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der Datenobjekte und wird hier erneut
+        durchgeführt, unabhängig vom Ergebnis der gleichen Berechnung in der Persistenz.
+        :return: Anzahl der Speicherobjekte als Integer
+        """
+        # len(dict)
+        pass
+
+    def ermittle_status_objekt_nutzer_get(self):
+        """
+        Die Methode ermittelt, ob die angefragte Speicherobjekt überhaupt vorhanden ist. Basis sind die Daten der
+        Rückmeldung aus der Persistenz.
+        :return: "Ressource vorhanden" / "Ressource nicht vorhanden" als str
+        """
+        pass
+
+    def ermittle_laenge_liste_speicherobjekte_nutzer_get(self):
+        """
+        Die Methode ermittelt die Anzahl der tatsächlich zurückgegebenen Speicherobjekte, die unter dem angefragten
+        Schlüssel hinterlegt sind. Derzeit ist diese gleich der Anzahl der Speicherobjekte, später kann eine Abweichung/
+        Konkretisierung sinnvoll sein, wenn die ursprüngliche Nutzerabfrage die Zahl der zurückgegebenen Speicherobjekte
+        einschränkt, aber die tatsächliche Zahl größer ist. In diesem Fall kann damit dem Nutzer signalisiert werden,
+        dass noch mehr Speicherobjekte vorhanden sind und seine Abfrage unvollständig sein könnte. c
+        :return: Anzahl der tatsächlichen Speicherobjekte als int
+        """
+        # derzeit = Anzahl der Speichelemente
+        pass
+
+    def ermittle_startobjekt_nutzer_get(self):
+        """
 
         :return:
         """
         pass
 
-    def ermittle_anzahl_speicherobjekte_nutzer_get(self):
-        # len(dict)
-        pass
-
-    def ermittle_status_objekt_nutzer_get(self):
-        pass
-
-    def ermittle_laenge_liste_speicherobjekte_nutzer_get(self):
-        # derzeit = Anzahl der Speichelemente
-        pass
-
-    def ermittle_startobjekt_nutzer_get(self):
-        pass
-
     def ermittle_laenge_daten_bytes_entwickler_get(self):
+        """
+
+        :return:
+        """
         pass
 
     def ermittle_verarbeitungszeit_entwickler_get(self, startzeit: str, url_zeitstempel: str) -> json:
