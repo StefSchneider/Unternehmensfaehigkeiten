@@ -61,7 +61,7 @@ class REST_Rueckmeldung:
         Die Methode ermittelt die Anzahl der Speicherobjekte zum angefragten Schlüssel. Dabei wird nur die erste
         Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
         in der Ressource, die er abfragt, abgespeichert sind. Er kann dann entscheiden, ob er seine Abfrage einschränkt,
-        um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der Datenobjekte und wird hier erneut
+        um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der payload und wird hier erneut
         durchgeführt, unabhängig vom Ergebnis der gleichen Berechnung in der Persistenz.
         :return: Anzahl der Speicherobjekte als Integer
         """
@@ -82,7 +82,8 @@ class REST_Rueckmeldung:
         Schlüssel hinterlegt sind. Derzeit ist diese gleich der Anzahl der Speicherobjekte, später kann eine Abweichung/
         Konkretisierung sinnvoll sein, wenn die ursprüngliche Nutzerabfrage die Zahl der zurückgegebenen Speicherobjekte
         einschränkt, aber die tatsächliche Zahl größer ist. In diesem Fall kann damit dem Nutzer signalisiert werden,
-        dass noch mehr Speicherobjekte vorhanden sind und seine Abfrage unvollständig sein könnte. c
+        dass noch mehr Speicherobjekte vorhanden sind und seine Abfrage unvollständig sein könnte. Die Berechnung
+        erfolgt auf Basis der payload.
         :return: Anzahl der tatsächlichen Speicherobjekte als int
         """
         # derzeit = Anzahl der Speichelemente
@@ -90,25 +91,33 @@ class REST_Rueckmeldung:
 
     def ermittle_startobjekt_nutzer_get(self):
         """
-
-        :return:
+        Diese Methode ermittelt das vom Nutzer vorgegebene Startobjekt innerhalb der Liste der zurückgegebenen
+        Speicherobjekte. Diese Methode ist später einsetzbar, wenn ein Nutzer die Daten der Ressource erst ab einem
+        bestimmten Punkt sehen möchte, z.B. erst ab Objekt "xyz" aufwärts. Zunächst ist das Startobjekt immer 0. Die
+        Berechnung erfolgt auf Basis der payload und wird unabhängig von der Berechnung innerhalb der Persistenz
+        durchgeführt.
+        :return: Position des Startobjekts in der Gesamtliste als int
         """
         pass
 
     def ermittle_laenge_daten_bytes_entwickler_get(self):
         """
-
-        :return:
+        Die Methode ermittelt die Größe der payload in Byte. Grundlage für die Berechnung ist die payload, die
+        Berechnung wird unabhängig von der Berechnung innerhalb der Persistenz durchgeführt.
+        :return: Länge der Daten in bytes
         """
         pass
 
     def ermittle_verarbeitungszeit_entwickler_get(self, startzeit: str, url_zeitstempel: str) -> json:
         """
+        Die Methode ermittelt die Zeitspanne zwischen dem Beginn und dem Ende der Ressourcenabfrage. Das Ende ist
+        mit der Rückgabe der payload erreicht. Wir die Methode mit der Startzeit "-1" aufgerufen, ermittelt sie den
+        Zeitstempel zu Beginn der Abfrage; wird die Methode mit einer richtigen Startzeit aufgerufen, ermittelt sie die
+        Endzeit und die daras resultierende Zeitspanne.
         Ermittlung startzeit und endzeit mit datetime.utcnow()
-        :param startzeit:
-        :param endzeit:
-        :param: url_zeitstempel
-        :return:
+        :param startzeit: vorher ermittelte Startzeit oder "-1" als str
+        :param: url_zeitstempel: URL, über die der Zeitstempel abgeholt werden kann (Microservice) als str
+        :return: Zeitdaten, d.h. Startzeit, Endzeit und Verarbeitungszeit als str
         """
         __startzeit: str = startzeit
         __url_zeitstempel: str = url_zeitstempel
