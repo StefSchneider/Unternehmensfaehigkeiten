@@ -155,15 +155,36 @@ class REST_Rueckmeldung:
 
         return __datenstruktur_speicherobjekt
 
-
     def ermittle_strukturtiefe_baum_entwickler_get(self):
-        pass
+        """
+        Diese Methode ermittelt die Anzahl der Baumebenen, ausgehend von der Wurzel. Dabei wird die Wurzel nicht
+        mitgezählt. So erhalten Entwickler Auskunft darüber, aus wie vielen Ebenen die komplette Ressource besteht.
+        :return: Anzahl der Ebenen als Integer
+        """
+        __strukturtiefe: int = 0
+
+        return __strukturtiefe
 
     def ermittle_server_datenquelle_entwickler_get(self):
-        pass
+        """
+        Die Methode ermittelt, welcher Server den GET-Request beantwortet, also welche Datenquelle aktiv ist. Derzeit
+        ist es nur eine Konstante, die zurückgegeben wird, d.h. der eigene Rechner, z.B. localhost: , also die IP-
+        Adresse ohne Port.
+        :return: Name des Servers, der die Daten bereitstellt als String
+        """
+        __servername_datenquelle: str = ""
+
+        return __servername_datenquelle
 
     def ermittle_datentyp_rueckgabeobjekt_programm_get(self):
-        pass
+        """
+        Die Methode ermittelt den Datentyp des Rückgabeobjekts, z.B. JSON. Dazu wird das Rückgabeobjekt als Parameter
+        in die Methode eingesspielt und mithilfe einer type-Abfrage der Datentyp ermittelt.
+        :return: Datentyp des Rückgabeobjekts als String
+        """
+        __datentyp_rueckgabeobjekt: str = ""
+
+        return __datentyp_rueckgabeobjekt
 
     def rueckmeldung_objekte_fuellen_get(self):
         """
