@@ -49,7 +49,7 @@ class CRUD_Rueckmeldung:
         Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
         in der Ressource, die er abfragt, abgespeichert sind. Er kann dann entscheiden, ob er seine Abfrage einschränkt,
         um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der payload.
-        :param: daten_speicherobjekt ist der Inhalt der Payload
+        :param: daten_speicherobjekt ist der Inhalt der payload
         :return: Anzahl der Speicherobjekte als Integer
         """
         __daten_speicherobjekt = daten_speicherobjekt
@@ -89,28 +89,76 @@ class CRUD_Rueckmeldung:
         return __status_suchschluessel
 
     def ermittle_laenge_liste_speicherobjekte_nutzer_lese(self):
+        """
+        Die Methode ermittelt die Anzahl der tatsächlich zurückgegebenen Speicherobjekte, die unter dem angefragten
+        Schlüssel hinterlegt sind. Derzeit ist diese gleich der Anzahl der Speicherobjekte, später kann eine Abweichung/
+        Konkretisierung sinnvoll sein, wenn die ursprüngliche Nutzerabfrage die Zahl der zurückgegebenen Speicherobjekte
+        einschränkt, aber die tatsächliche Zahl größer ist. In diesem Fall kann damit dem Nutzer signalisiert werden,
+        dass noch mehr Speicherobjekte vorhanden sind und seine Abfrage unvollständig sein könnte. Die Berechnung
+        erfolgt auf Basis der payload.
+        :return: Anzahl der tatsächlichen Speicherobjekte als int
+        """
+        # derzeit = Anzahl der Speichelemente
         pass
 
     def ermittle_startobjekt_nutzer_lese(self):
+        """
+        Diese Methode ermittelt das vom Nutzer vorgegebene Startobjekt innerhalb der Liste der zurückgegebenen
+        Speicherobjekte. Diese Methode ist später einsetzbar, wenn ein Nutzer die Daten der Ressource erst ab einem
+        bestimmten Punkt sehen möchte, z.B. erst ab Objekt "xyz" aufwärts. Zunächst ist das Startobjekt immer 0. Die
+        Berechnung erfolgt auf Basis der payload.
+        :return: Position des Startobjekts in der Gesamtliste als int
+        """
         pass
 
-    def ermittle_zugriffsberechtigung_nutzer_lese(self):
-        pass
+    def ermittle_zugriffsberechtigung_nutzer_lese(self, benutzer_id: str) -> bool:
+        """
+        Die Methode ermittelt, ob der Nutzer berechtigt ist, auf das Datenobjekt zuzugreifen. Dazu wird ist GET-Request
+        an den Microservice ms_berechtigungen geschickt. Die Grundeinstellung wird auf 'False' gesetzt. Liegt eine
+        Berechtigung vor, erfolgt wird die Variable __zugriff_erlaut auf 'True' gesetzt. Mithilfe von Berechtigungen
+        können Zugriffe eingeschränkt werden.
+        :param benutzer_id: Die ID, die individuell zu jedem Nutzer abespeichert ist
+        :return: Berechtigung vorhanden/nicht vorhanden als bool
+        """
+        __benutzer_id = benutzer_id
+        __zugriff_erlaubt: bool = False
+        # Hier Abfrage der Benutzer-ID beim Microservice ms_berechtigungen einfügen
+
+        return __zugriff_erlaubt
 
     def ermittle_status_daten_nutzer_lese(self):
-        pass
+        """
+        Die Methode ermittelt, ob die Daten des angefragte Speicherobjekts noch aktuell sind oder während des Zugriffs
+        verändert wurden. Dazu erfolgt eine Überprüfung, ob eine Änderung in der Queue vorliegt, die zeiltich vor oder
+        gleich dem GET-Request auf die Ressource liegt. Falls ja, erfolgt eine entsprechende Rückmeldung an den Nutzer.
+        Gibt "Daten sind nicht mehr aktuell" zurück, wenn diese während des Zugriffs verändert wurden.
+        :return: ob Speicherobjekt verändert wurde als bool
+        """
+        __daten_speicherobjekt_veraendert: bool = False
+
+        return __daten_speicherobjekt_veraendert
 
     def ermittle_speicherart_entwickler_lese(self):
-        pass
+        """
+        Die Methode ermittelt die Speicherart, wo die Ressource abgelegt wurde, zum Beispiel Hauptspeicher, File oder
+        Datenbank
+        :return: Speicherart als str
+        """
+        __speicherart: str = ""
+
+        return __speicherart
 
     def ermittle_laenge_daten_bytes_entwickler_lese(self):
+        """
+        Die Methode ermittelt die Größe der payload in Byte. Grundlage für die Berechnung ist die payload.
+        :return: Länge der Daten in bytes
+        """
         pass
 
     def ermittle_verarbeitungszeit_entwickler_lese(self, startzeit: str, url_zeitstempel: str) -> json:
         """
         Ermittlung startzeit und endzeit mit datetime.utcnow()
         :param startzeit:
-        :param endzeit:
         :param url_zeitstempel:
         :return:
         """
@@ -122,11 +170,11 @@ class CRUD_Rueckmeldung:
         zeitstempel_API = API_UF.API(get_request_zulassen = True)
         zeitstempel_API.url_partner = __url_zeitstempel
         if __startzeit == "-1":
-            __startzeit = zeitstempel_API.hole()
-            __startzeit = __startzeit["zeitstempel_UTC_original"]
+            __rueckmeldung_startzeit = zeitstempel_API.hole()
+            __startzeit = __rueckmeldung_startzeit["zeitstempel_UTC_original"]
         else:
-            __endzeit = zeitstempel_API.hole()
-            __endzeit = __endzeit["zeitstempel_UTC_original"]
+            __rueckmeldung_endzeit = zeitstempel_API.hole()
+            __endzeit = __rueckmeldung_endzeit["zeitstempel_UTC_original"]
             __verarbeitungszeit = __endzeit - __startzeit
         __zeitstempel_daten_aus["startzeit"] = __startzeit
         __zeitstempel_daten_aus["endzeit"] = __endzeit
@@ -134,14 +182,42 @@ class CRUD_Rueckmeldung:
 
         return json.dumps(__zeitstempel_daten_aus)
 
-    def ermittle_datenstruktur_entwickler_lese(self):
-        pass
+    def ermittle_datenstruktur_entwickler_lese(self, daten_speicherobjekt: dict):
+        """
+        Die Methode ermittelt zu allen Werten des eingehenden Speicherobjektes den entsprechendden Datentyp. Sie soll
+        damit Entwicklern schnell Auskunft über die verwendeten Datentypen innerhalb eines Speicherobjektes geben.
+        :param daten_speicherobjekt: Schlüssel-Wert-Paare des zu prüfenden Speicherobjekts
+        :return: Datentyp für jedes Schlüssel-Wert-Paar
+        """
+        __daten_speicherobjekt = daten_speicherobjekt
+        __daten_speicherobjekt_basisschlüssel = __daten_speicherobjekt.keys()
+        __daten_speicherobjekt_werte = __daten_speicherobjekt.values() # Abschneiden des Basisschlüssels
+        __datenstruktur_speicherobjekt: dict = {}
+        for __schluessel, __werte in __daten_speicherobjekt_werte.items():
+            __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
+        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschlüssel] = __datenstruktur_speicherobjekt
+
+        return __datenstruktur_speicherobjekt
 
     def ermittle_strukturtiefe_baum_entwickler_lese(self):
-        pass
+        """
+        Diese Methode ermittelt die Anzahl der Baumebenen, ausgehend von der Wurzel. Dabei wird die Wurzel nicht
+        mitgezählt. So erhalten Entwickler Auskunft darüber, aus wie vielen Ebenen die komplette Ressource besteht.
+        :return: Anzahl der Ebenen als Integer
+        """
+        __strukturtiefe: int = 0
+
+        return __strukturtiefe
 
     def ermittle_datentyp_rueckgabeobjekt_programm_lese(self):
-        pass
+        """
+        Die Methode ermittelt den Datentyp des Rückgabeobjekts, z.B. JSON. Dazu wird das Rückgabeobjekt als Parameter
+        in die Methode eingesspielt und mithilfe einer type-Abfrage der Datentyp ermittelt.
+        :return: Datentyp des Rückgabeobjekts als String
+        """
+        __datentyp_rueckgabeobjekt: str = ""
+
+        return __datentyp_rueckgabeobjekt
 
     def rueckmeldung_objekte_fuellen_lese(self):
         pass

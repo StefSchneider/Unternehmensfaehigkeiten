@@ -146,8 +146,9 @@ class REST_Rueckmeldung:
         :param daten_speicherobjekt: Schlüssel-Wert-Paare des zu prüfenden Speicherobjekts
         :return: Datentyp für jedes Schlüssel-Wert-Paar
         """
-        __daten_speicherobjekt_basisschlüssel =  daten_speicherobjekt.keys()
-        __daten_speicherobjekt_werte = daten_speicherobjekt.values() # Abschneiden des Basisschlüssels
+        __daten_speicherobjekt = daten_speicherobjekt
+        __daten_speicherobjekt_basisschlüssel = __daten_speicherobjekt.keys()
+        __daten_speicherobjekt_werte = __daten_speicherobjekt.values()  # Abschneiden des Basisschlüssels
         __datenstruktur_speicherobjekt: dict = {}
         for __schluessel, __werte in __daten_speicherobjekt_werte.items():
             __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
