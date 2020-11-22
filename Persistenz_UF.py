@@ -35,16 +35,58 @@ class CRUD_Rueckmeldung:
                                               }
 
     def ermittle_speicherinhalt_daten_lese(self):
-        pass
+        """
+        Die Methode liefert den Inhalt des Speicherobjekts (payload) bei einem GET-Request zurück.
+        :return: Inhalt der Ressource
+        """
+        __daten_ressource: json = {}
 
-    def ermittle_anzahl_speicherobjekte_nutzer_lese(self):
-        pass
+        return __daten_ressource
+
+    def ermittle_anzahl_speicherobjekte_nutzer_lese(self, daten_speicherobjekt: dict):
+        """
+        Die Methode ermittelt die Anzahl der Speicherobjekte zum angefragten Schlüssel. Dabei wird nur die erste
+        Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
+        in der Ressource, die er abfragt, abgespeichert sind. Er kann dann entscheiden, ob er seine Abfrage einschränkt,
+        um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der payload.
+        :param: daten_speicherobjekt ist der Inhalt der Payload
+        :return: Anzahl der Speicherobjekte als Integer
+        """
+        __daten_speicherobjekt = daten_speicherobjekt
+        __anzahl_daten_speicherobjekt: int = 0
+        __anzahl_daten_speicherobjekt = len(__daten_speicherobjekt)
+
+        return __anzahl_daten_speicherobjekt
 
     def ermittle_status_objekt_nutzer_lese(self):
-        pass
+        """
+        Die Methode ermittelt, ob die angefragte Speicherobjekt überhaupt vorhanden ist.
+        :return: Dictionary mit Einträgen True/False (bool) und "Ressource vorhanden"/"Ressource nicht vorhanden" (str)
+        """
+        __status_speicherobjekt: dict = {}
+        __objekt_vorhanden: bool = False
+        __rueckmeldung_objekt_vorhanden: str = "Ressource nicht vorhanden"
+        # Hier die Prüfungsabfrage einfügen
+        __status_speicherobjekt["objekt_vorhanden"] = __objekt_vorhanden
+        __status_speicherobjekt["rueckmeldung"] = __rueckmeldung_objekt_vorhanden
+
+        return __status_speicherobjekt
 
     def ermittle_status_suchschluessel_nutzer_lese(self):
-        pass
+        """
+        Die Methode überprüft, ob der vom Nutzer angeforderte Suchschlüssel innerhalb der Payload überhaupt vorhanden
+        ist. Basis ist der Inhalt der Payoad.
+        :return: Dictionary mit Einträgen True/False (bool) und "Suchschlüssel vorhanden"/
+        "Suchschlüssel nicht vorhanden" (str)
+        """
+        __status_suchschluessel: dict = {}
+        __suchschluessel_vorhanden: bool = False
+        __rueckmeldung_suchschluessel_vorhanden: str = "Suchschlüssel nicht vorhanden"
+        # Hier die Prüfungsabfrage einfügen
+        __status_suchschluessel["objekt_vorhanden"] = __suchschluessel_vorhanden
+        __status_suchschluessel["rueckmeldung"] = __rueckmeldung_suchschluessel_vorhanden
+
+        return __status_suchschluessel
 
     def ermittle_laenge_liste_speicherobjekte_nutzer_lese(self):
         pass
@@ -213,7 +255,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def lese_speicherinhalt(self, ebenen: list) -> dict:
+    def lese_speicherinhalt(self, ebenen: list) -> dict: # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
 
         Grundlage: CRUD - Read

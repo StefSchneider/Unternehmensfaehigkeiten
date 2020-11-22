@@ -72,7 +72,7 @@ class REST_Rueckmeldung:
         """
         Die Methode ermittelt, ob die angefragte Speicherobjekt überhaupt vorhanden ist. Basis sind die Daten der
         Rückmeldung aus der Persistenz.
-        :return: "Ressource vorhanden" / "Ressource nicht vorhanden" als str
+        :return: Dictionary mit Einträgen True/False (bool) und "Ressource vorhanden"/"Ressource nicht vorhanden" (str)
         """
         pass
 
