@@ -190,12 +190,12 @@ class CRUD_Rueckmeldung:
         :return: Datentyp für jedes Schlüssel-Wert-Paar
         """
         __daten_speicherobjekt = daten_speicherobjekt
-        __daten_speicherobjekt_basisschlüssel = __daten_speicherobjekt.keys()
+        __daten_speicherobjekt_basisschluessel = __daten_speicherobjekt.keys()
         __daten_speicherobjekt_werte = __daten_speicherobjekt.values() # Abschneiden des Basisschlüssels
         __datenstruktur_speicherobjekt: dict = {}
         for __schluessel, __werte in __daten_speicherobjekt_werte.items():
             __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
-        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschlüssel] = __datenstruktur_speicherobjekt
+        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschluessel] = __datenstruktur_speicherobjekt
 
         return __datenstruktur_speicherobjekt
 
