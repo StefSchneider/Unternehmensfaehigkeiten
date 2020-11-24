@@ -10,11 +10,12 @@ import API_UF
 
 ENTWICKLER_INFORMATIONEN: bool = True
 
+
 class CRUD_Rueckmeldung:
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
-        self.__rueckmeldung:dict = {}
+        self.__rueckmeldung: dict = {}
         self.__rueckmeldung_daten: dict = {"daten": None
                                            }
         self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
@@ -191,7 +192,7 @@ class CRUD_Rueckmeldung:
         """
         __daten_speicherobjekt = daten_speicherobjekt
         __daten_speicherobjekt_basisschluessel = __daten_speicherobjekt.keys()
-        __daten_speicherobjekt_werte = __daten_speicherobjekt.values() # Abschneiden des Basisschlüssels
+        __daten_speicherobjekt_werte = __daten_speicherobjekt.values()  # Abschneiden des Basisschlüssels
         __datenstruktur_speicherobjekt: dict = {}
         for __schluessel, __werte in __daten_speicherobjekt_werte.items():
             __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
@@ -229,7 +230,7 @@ class CRUD_Rueckmeldung:
 class Persistenz:
 
     def __init__(self, wurzel: str, datenspeicher = False):
-        self.__persistenz_datenspeicher = datenspeicher # steuert, ob die Daten im Datenspeicher abgelegt werden
+        self.__persistenz_datenspeicher = datenspeicher  # steuert, ob die Daten im Datenspeicher abgelegt werden
         self.datenspeicher: dict = {wurzel: {}}
 
     def zerlege_pfad(self, pfad: str) -> list:
@@ -254,7 +255,7 @@ class Persistenz:
         """
         __nummer_ein = nummer_ein
         __schluessel: str = ""
-        __schluessel = str(__nummer_ein) + "_" + str((random.randint(1,1000) * random.randint(1,1000)))
+        __schluessel = str(__nummer_ein) + "_" + str((random.randint(1, 1000) * random.randint(1, 1000)))
 
         return __schluessel
 
@@ -262,17 +263,17 @@ class Persistenz:
         __hierarchie_ein = hierarchie_ein
         __ressourcen: list = [0]
         for __eintrag in __hierarchie_ein:
-            if not __eintrag.startswith("h_"): # schließt Hierachien bei der Betrachtung aus
-                __ressourcen.append(int(__eintrag)) # erfasse vorhandene Ressourcen in Hierachie
+            if not __eintrag.startswith("h_"):  # schließt Hierachien bei der Betrachtung aus
+                __ressourcen.append(int(__eintrag))  # erfasse vorhandene Ressourcen in Hierachie
 
-        return(max(__ressourcen))
+        return max(__ressourcen)
 
     def zeige_datenspeicher_json(self, hierarchie_ein: dict):
         """
         Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
         erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
         werden die Schluessel-Wert-Paare alphabetisch sortiert.
-        :param hierachie_ein:
+        :param hierarchie_ein:
         :return: None
         """
         __datenspeicher_json = json.dumps(hierarchie_ein, sort_keys = True, indent = 4)
@@ -331,7 +332,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def lese_speicherinhalt(self, ebenen: list) -> dict: # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
+    def lese_speicherinhalt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
 
         Grundlage: CRUD - Read
@@ -435,10 +436,10 @@ class Persistenz:
         __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
             (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
         __crud_rueckmeldung_get.__rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
-        __verarbeitungszeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
-            (startzeit = __startzeit_crud_rueckmeldung_get,
-             url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
-        __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
+        __verarbeitungszeit_crud_rueckmeldung_get = \
+            __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
+        __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
+            __verarbeitungszeit_crud_rueckmeldung_get
         __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.__rueckmeldung_daten["daten"]
 
         print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
