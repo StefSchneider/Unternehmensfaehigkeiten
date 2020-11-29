@@ -147,12 +147,12 @@ class REST_Rueckmeldung:
         :return: Datentyp für jedes Schlüssel-Wert-Paar
         """
         __daten_speicherobjekt = daten_speicherobjekt
-        __daten_speicherobjekt_basisschlüssel = __daten_speicherobjekt.keys()
+        __daten_speicherobjekt_basisschluessel = __daten_speicherobjekt.keys()
         __daten_speicherobjekt_werte = __daten_speicherobjekt.values()  # Abschneiden des Basisschlüssels
         __datenstruktur_speicherobjekt: dict = {}
         for __schluessel, __werte in __daten_speicherobjekt_werte.items():
             __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
-        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschlüssel] = __datenstruktur_speicherobjekt
+        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschluessel] = __datenstruktur_speicherobjekt
 
         return __datenstruktur_speicherobjekt
 
@@ -290,7 +290,7 @@ class API:
         :return:
         """
         __uebergabedaten_get: bytes = uebergabedaten_get_ein
-        __uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
+#        __uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
         __uebergabedaten_get_aus: bytes = __uebergabedaten_get
 
         return __uebergabedaten_get_aus

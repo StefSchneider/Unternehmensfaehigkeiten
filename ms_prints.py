@@ -41,9 +41,9 @@ def drucke(pfad):
 #        __rueckmeldung_get_verarbeitung = json.loads(__rueckmeldung_request_verarbeitung.rueckmeldung_objekte_fuellen_get())
         if prints_API.get_request_erlaubt:
             __rueckmeldung_get_request_verarbeitung = json.loads(prints_PRS.get_request_in_crud(__hierarchien))
-            __inhalt_speicher = json.loads(prints_PRS.get_request_in_crud(__hierarchien))
-            __inhalt_speicher_aus = prints_API.get(__inhalt_speicher)
-            return (__inhalt_speicher_aus)
+            print("Rückmeldung GET in print", __rueckmeldung_get_request_verarbeitung, type(__rueckmeldung_get_request_verarbeitung))
+            __rueckmeldung_get_request_verarbeitung_aus = prints_API.get(__rueckmeldung_get_request_verarbeitung)
+            return (__rueckmeldung_get_request_verarbeitung)
         else:
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":

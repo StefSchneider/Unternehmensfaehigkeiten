@@ -16,7 +16,7 @@ class CRUD_Rueckmeldung:
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.__rueckmeldung: dict = {}
-        self.__rueckmeldung_daten: dict = {"daten": None
+        self.rueckmeldung_daten: dict = {"daten": None
                                            }
         self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
                                             "status": None,
@@ -420,7 +420,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def get_request_in_crud(self, ebenen_ein: list) -> json:
+    def get_request_in_crud(self, ebenen_ein: list) -> str:
         """
         1. Read
         :return:
@@ -433,16 +433,19 @@ class Persistenz:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
-        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
-            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
-        __crud_rueckmeldung_get.__rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
-        __verarbeitungszeit_crud_rueckmeldung_get = \
-            __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
-        __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
-            __verarbeitungszeit_crud_rueckmeldung_get
-        __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.__rueckmeldung_daten["daten"]
+#        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
+#            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
+        __crud_rueckmeldung_get.rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
+        print("gelesene Daten CRUD", __crud_rueckmeldung_get.rueckmeldung_daten["daten"])
+        print("Type CRUD", type(__crud_rueckmeldung_get.rueckmeldung_daten["daten"]))
+ #       __verarbeitungszeit_crud_rueckmeldung_get = \
+ #           __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
+ #       __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
+ #           __verarbeitungszeit_crud_rueckmeldung_get
+        __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.rueckmeldung_daten["daten"]
+        print("Type _rueckgabe_daten:", type(__rueckgaben_daten_aus["daten"]))
 
-        print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
+        print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus), type(json.dumps(__rueckgaben_daten_aus)))
 
         return json.dumps(__rueckgaben_daten_aus)
 
