@@ -15,10 +15,10 @@ class CRUD_Rueckmeldung:
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
-        self.__rueckmeldung: dict = {}
-        self.rueckmeldung_daten: dict = {"daten": None
+        self.rueckmeldung: dict = {}
+        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
                                            }
-        self.__rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
+        self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
                                             "status": None,
                                             "suchschluessel": None,
                                             "anzahl_rueckgabeobjekte": None,
@@ -26,13 +26,13 @@ class CRUD_Rueckmeldung:
                                             "berechtigung": None,
                                             "daten_veraendert": None
                                             }
-        self.__rueckmeldung_entwickler: dict = {"laenge_bytes": None,
+        self.rueckmeldung_entwickler: dict = {"laenge_bytes": None,
                                                 "verarbeitungszeit": None,
                                                 "datenstruktur": None,
                                                 "strukturtiefe": None,
                                                 "speicherart": None
                                                 }
-        self.__rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
+        self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
                                               }
 
     def ermittle_speicherinhalt_daten_lese(self):
@@ -223,8 +223,12 @@ class CRUD_Rueckmeldung:
     def rueckmeldung_objekte_fuellen_lese(self):
         pass
 
+
     def rueckmeldung_objekte_filtern_lese(self):
-        pass
+        __rueckmeldung_lese: dict = {}
+        __rueckmeldung_lese.update(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+
+        return json.dumps(__rueckmeldung_lese)
 
 
 class Persistenz:
@@ -339,7 +343,7 @@ class Persistenz:
         :return:
         """
         __ebenen = ebenen
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "lese_ressource_erfolgreich": False,
                                         "fehlercode": 0}
@@ -353,7 +357,7 @@ class Persistenz:
                 __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} nicht vorhanden"
                 break
         if __ressource_vorhanden:
-            __rueckgaben_daten_aus["daten"] = __aktuelle_ebene
+            __rueckgaben_daten_aus["speicherinhalt"] = __aktuelle_ebene
             __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} erfolgreich abgerufen"
             __rueckgaben_daten_aus["lese_ressource_erfolgreich"] = True
 
@@ -369,7 +373,7 @@ class Persistenz:
         """
         __ebenen = ebenen
         __inhalt_ein = inhalt_ein
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "aendere_ressource_erfolgreich": False,
                                         "fehlercode": 0}
@@ -391,13 +395,13 @@ class Persistenz:
         :return:
         """
         __ebenen = ebenen
-        __rueckgabe_daten_aus_nutzer: dict = {"daten": None,
+        __rueckgabe_daten_aus_nutzer: dict = {"speicherinhalt": None,
                                               "rueckmeldung": ""
                                               }
         __rueckgaben_daten_aus_entwickler: dict = {"loesche_ressource_erfolgreich": False,
                                                    "fehlercode": 0
                                                    }
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "loesche_ressource_erfolgreich": False,
                                         "fehlercode": 0}
@@ -429,23 +433,19 @@ class Persistenz:
         __crud_rueckmeldung_get = CRUD_Rueckmeldung()
         __rest_rueckmeldung_get = API_UF.REST_Rueckmeldung()
         __speicherinhalt: dict = {}
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
 #        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
 #            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
-        __crud_rueckmeldung_get.rueckmeldung_daten["daten"] = json.loads(self.lese_speicherinhalt(__ebenen))
-        print("gelesene Daten CRUD", __crud_rueckmeldung_get.rueckmeldung_daten["daten"])
-        print("Type CRUD", type(__crud_rueckmeldung_get.rueckmeldung_daten["daten"]))
+        __crud_rueckmeldung_get.rueckmeldung_speicherinhalt["speicherinhalt"] = json.loads(self.lese_speicherinhalt(__ebenen))
  #       __verarbeitungszeit_crud_rueckmeldung_get = \
  #           __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
  #       __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
  #           __verarbeitungszeit_crud_rueckmeldung_get
-        __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.rueckmeldung_daten["daten"]
-        print("Type _rueckgabe_daten:", type(__rueckgaben_daten_aus["daten"]))
-
-        print("Rückgabe get_request_in_crud:", json.dumps(__rueckgaben_daten_aus), type(json.dumps(__rueckgaben_daten_aus)))
+        __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.rueckmeldung_speicherinhalt["speicherinhalt"]
+        __rueckgaben_daten_aus = __crud_rueckmeldung_get.rueckmeldung_objekte_filtern_lese()
 
         return json.dumps(__rueckgaben_daten_aus)
 
@@ -457,7 +457,7 @@ class Persistenz:
         """
         __ebenen = ebenen
         __inhalt_ein = inhalt_ein
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
         __aktuelle_ebene = self.datenspeicher
@@ -482,7 +482,7 @@ class Persistenz:
         """
         __ebenen = ebenen
         __inhalt_ein = inhalt_ein
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
@@ -508,7 +508,7 @@ class Persistenz:
         __inhalt_ein = inhalt_ein
         __aktuelles_speicherelement: dict = {}
         __schluessel_ressource = __ebenen[-1]
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
@@ -531,7 +531,7 @@ class Persistenz:
         :return:
         """
         __ebenen = ebenen
-        __rueckgaben_daten_aus: dict = {"daten": None,
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
         __speicherelement_loeschen = self.loesche_speicherinhalt(__ebenen)
