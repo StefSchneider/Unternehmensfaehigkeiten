@@ -227,6 +227,10 @@ class CRUD_Rueckmeldung:
     def rueckmeldung_objekte_filtern_lese(self):
         __rueckmeldung_lese: dict = {}
         __rueckmeldung_lese.update(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+        __rueckmeldung_lese.update(self.rueckmeldung_nutzer)
+        __rueckmeldung_lese.update(self.rueckmeldung_entwickler)
+        __rueckmeldung_lese.update(self.rueckmeldung_programm)
+
 
         return json.dumps(__rueckmeldung_lese)
 
