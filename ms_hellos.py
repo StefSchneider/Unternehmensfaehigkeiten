@@ -30,7 +30,7 @@ if __name__ == "__main__":
             else:
                 uebergabedaten_aus["auftrag"] = "drucke_nicht"
             uebergabedaten_aus["id"] = __id_nummer
-            uebergabedaten_aus["daten"] = uebergabetext
+            uebergabedaten_aus["text"] = uebergabetext
             uebergabedaten_aus["auftraggeber"] = sys.argv[0]
             uebergabedaten_aus["server_port_auftraggeber"] = eigener_server_port
             print(uebergabedaten_aus)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
                 uebergabedaten_aus["auftrag"] = "drucke_daten"
             else:
                 uebergabedaten_aus["auftrag"] = "drucke_nicht"
-            uebergabedaten_aus["daten"] = uebergabetext
+            uebergabedaten_aus["text"] = uebergabetext
             uebergabedaten_aus["id"] = __id_nummer
             uebergabedaten_aus["auftraggeber"] = sys.argv[0]
             uebergabedaten_aus["server_port_auftraggeber"] = eigener_server_port

@@ -3,7 +3,6 @@ Das ist die Bibliothek der Klasse Persistenz
 """
 
 import json
-from flask import jsonify
 import random
 import API_UF
 
@@ -13,11 +12,12 @@ ENTWICKLER_INFORMATIONEN: bool = True
 
 class CRUD_Rueckmeldung:
 
-    def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
+    def __init__(self, persistenz: str, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
+        self.persistenz = persistenz
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.rueckmeldung: dict = {}
         self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
-                                           }
+                                                  }
         self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
                                             "status": None,
                                             "suchschluessel": None,
@@ -35,16 +35,20 @@ class CRUD_Rueckmeldung:
         self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
                                               }
 
-    def ermittle_speicherinhalt_daten_lese(self):
+    def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list):
         """
-        Die Methode liefert den Inhalt des Speicherobjekts (payload) bei einem GET-Request zurück.
+        Die Methode liefert den Inhalt des Speicherobjekts bei einem GET-Request zurück.
         :return: Inhalt der Ressource
         """
-        __daten_ressource: json = {}
+        __ebenen: list = ebenen_ein
+        print("Ebenen in ermittle-Methode", __ebenen)
+        __inhalt_ressource: json = {}
+        __inhalt_ressource = json.loads(self.persistenz.lese_speicherinhalt(__ebenen))
+        print("Inhalt Ressource", __inhalt_ressource)
 
-        return __daten_ressource
+        return __inhalt_ressource
 
-    def ermittle_anzahl_speicherobjekte_nutzer_lese(self, daten_speicherobjekt: dict):
+    def ermittle_anzahl_speicherobjekte_nutzer_lese(self):
         """
         Die Methode ermittelt die Anzahl der Speicherobjekte zum angefragten Schlüssel. Dabei wird nur die erste
         Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
@@ -53,9 +57,8 @@ class CRUD_Rueckmeldung:
         :param: daten_speicherobjekt ist der Inhalt der payload
         :return: Anzahl der Speicherobjekte als Integer
         """
-        __daten_speicherobjekt = daten_speicherobjekt
-        __anzahl_daten_speicherobjekt: int = 0
-        __anzahl_daten_speicherobjekt = len(__daten_speicherobjekt)
+        print("Anzahl Speicherobjekte", self.rueckmeldung_speicherinhalt)
+        __anzahl_daten_speicherobjekt: int = len(self.rueckmeldung_speicherinhalt["speicherinhalt"])
 
         return __anzahl_daten_speicherobjekt
 
@@ -226,20 +229,134 @@ class CRUD_Rueckmeldung:
 
     def rueckmeldung_objekte_filtern_lese(self):
         __rueckmeldung_lese: dict = {}
-        __rueckmeldung_lese.update(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+        __rueckmeldung_lese.update(self.rueckmeldung_speicherinhalt)
         __rueckmeldung_lese.update(self.rueckmeldung_nutzer)
         __rueckmeldung_lese.update(self.rueckmeldung_entwickler)
         __rueckmeldung_lese.update(self.rueckmeldung_programm)
 
-
         return json.dumps(__rueckmeldung_lese)
+
+    def get_request_in_crud(self, ebenen_ein: list) -> str:
+        """
+        1. Read
+        :return:
+        """
+        __ebenen: list = ebenen_ein
+        __payload_get_request: dict = {}
+#        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
+#            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
+        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.ermittle_speicherinhalt_daten_lese(__ebenen)["speicherinhalt"]
+#       __verarbeitungszeit_crud_rueckmeldung_get = \
+#           __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
+#       __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
+#           __verarbeitungszeit_crud_rueckmeldung_get
+        self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
+        __payload_get_request = self.rueckmeldung_objekte_filtern_lese()
+
+        return json.dumps(__payload_get_request)
+
+    def post_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+        """
+        1. Create
+        2. Update
+        :return:
+        """
+        __ebenen = ebenen
+        __inhalt_ein = inhalt_ein
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
+                                        "rueckmeldung": "",
+                                        "fehlercode": 0}
+ #       pers = Persistenz(self.wurzel)
+        __aktuelle_ebene = self.persistenz.datenspeicher
+        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherinhalt(__ebenen, __inhalt_ein))
+        print("self.Datenspeicher", self.persistenz.datenspeicher)
+        if __neues_speicherelement["erzeuge_ressource_erfolgreich"]:
+            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherinhalt(__ebenen, __inhalt_ein))
+        else:
+            print(__neues_speicherelement["rueckmeldung"])
+
+        print("Rückgabe post_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
+
+        return json.dumps(__rueckgaben_daten_aus)
+
+    def put_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+        """
+        1. Delete
+        2. Create
+        3. Update
+        2. + 3. = POST
+        :return:
+        """
+        __ebenen = ebenen
+        __inhalt_ein = inhalt_ein
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
+                                        "rueckmeldung": "",
+                                        "fehlercode": 0}
+
+        speicherelement = json.loads(self.persistenz.loesche_speicherinhalt(__ebenen))
+        __ebenen = ebenen[:len(ebenen) - 1]
+        speicherelement = json.loads(self.post_request_in_crud(__ebenen, __inhalt_ein))
+
+        print("Rückgabe put_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
+
+        return json.dumps(__rueckgaben_daten_aus)
+
+    def patch_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+        """
+        1. Read
+        2. Werte überschreiben
+        3. Delete
+        4. Create
+        5. Update
+        3. + 4. + 5. = PUT
+        :return:
+        """
+        __ebenen = ebenen
+        __inhalt_ein = inhalt_ein
+        __aktuelles_speicherelement: dict = {}
+        __schluessel_ressource = __ebenen[-1]
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
+                                        "rueckmeldung": "",
+                                        "fehlercode": 0}
+
+        __aktuelles_speicherelement = json.loads(self.persistenz.lese_speicherinhalt(__ebenen))
+        __aktuelles_speicherelement = __aktuelles_speicherelement["daten"]
+        for __schluessel in __inhalt_ein:
+            try:
+                __aktuelles_speicherelement[__schluessel] = __inhalt_ein[__schluessel]
+            except KeyError:
+                print(f"Schlüssel {__schluessel} nicht vorhanden")
+        __speicherlement = self.put_request_in_crud(__ebenen, {__schluessel_ressource: __aktuelles_speicherelement})
+
+        print("Rückgabe patch_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
+
+        return json.dumps(__rueckgaben_daten_aus)
+
+    def delete_request_in_crud(self, ebenen) -> json:
+        """
+        1. Delete
+        :return:
+        """
+        __ebenen = ebenen
+        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
+                                        "rueckmeldung": "",
+                                        "fehlercode": 0}
+        __speicherelement_loeschen = self.persistenz.loesche_speicherinhalt(__ebenen)
+        __speicherelement_loeschen = json.loads(__speicherelement_loeschen)
+        if __speicherelement_loeschen["rueckmeldung"] != "":
+            print(__speicherelement_loeschen["rueckmeldung"])
+        __rueckgaben_daten_aus["rueckmeldung"] = f"Element {__ebenen[-1]} aus Speicher gelöscht"
+
+        print("Rückgabe delete_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
+
+        return json.dumps(__rueckgaben_daten_aus)
 
 
 class Persistenz:
 
     def __init__(self, wurzel: str, datenspeicher = False):
         self.__persistenz_datenspeicher = datenspeicher  # steuert, ob die Daten im Datenspeicher abgelegt werden
-        self.datenspeicher: dict = {wurzel: {}}
+        self.datenspeicher: dict = {wurzel: {}} # legt einen neuen leeren Datenspeicher für den Microservice an
 
     def zerlege_pfad(self, pfad: str) -> list:
         __pfad: str = pfad
@@ -312,7 +429,6 @@ class Persistenz:
         """
         __ebenen = ebenen
         __inhalt = inhalt
-#        __neuer_schluessel = neuer_schluessel
         __neues_speicherelement: dict = {}
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
@@ -347,20 +463,24 @@ class Persistenz:
         :return:
         """
         __ebenen = ebenen
+        print("Ebenen in lese Persistenz", __ebenen)
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "lese_ressource_erfolgreich": False,
                                         "fehlercode": 0}
         __ressource_vorhanden: bool = True
         __aktuelle_ebene = self.datenspeicher
+        print("Datenspeicher", __aktuelle_ebene)
         for __schluesselwort in __ebenen:
             try:
                 __aktuelle_ebene = __aktuelle_ebene[__schluesselwort]
             except KeyError:
+                print("Ebene", __aktuelle_ebene, "nicht vorhanden")
                 __ressource_vorhanden = False
                 __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} nicht vorhanden"
                 break
         if __ressource_vorhanden:
+            print("aktuelle Ebene in lese", __aktuelle_ebene)
             __rueckgaben_daten_aus["speicherinhalt"] = __aktuelle_ebene
             __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} erfolgreich abgerufen"
             __rueckgaben_daten_aus["lese_ressource_erfolgreich"] = True
@@ -428,12 +548,20 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def get_request_in_crud(self, ebenen_ein: list) -> str:
+    def get_request_in_crud_alt(self, ebenen_ein: list) -> str:
         """
         1. Read
         :return:
         """
         __ebenen: list = ebenen_ein
+        print("Ebenen in CRUD", __ebenen)
+        __payload_get_request: dict = {}
+        __crud_rueckmeldung_get = CRUD_Rueckmeldung()
+        __crud_rueckmeldung_get.rueckmeldung_speicherinhalt["speicherinhalt"] = \
+            __crud_rueckmeldung_get.ermittle_speicherinhalt_daten_lese(__ebenen)
+        print(__crud_rueckmeldung_get.rueckmeldung_speicherinhalt)
+        __payload_get_request = __crud_rueckmeldung_get.rueckmeldung_objekte_filtern_lese()
+        """
         __crud_rueckmeldung_get = CRUD_Rueckmeldung()
         __rest_rueckmeldung_get = API_UF.REST_Rueckmeldung()
         __speicherinhalt: dict = {}
@@ -450,10 +578,13 @@ class Persistenz:
  #           __verarbeitungszeit_crud_rueckmeldung_get
         __rueckgaben_daten_aus["daten"] = __crud_rueckmeldung_get.rueckmeldung_speicherinhalt["speicherinhalt"]
         __rueckgaben_daten_aus = __crud_rueckmeldung_get.rueckmeldung_objekte_filtern_lese()
-
+        
         return json.dumps(__rueckgaben_daten_aus)
+        """
+        return json.dumps(__payload_get_request)
 
-    def post_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+
+    def post_request_in_crud_alt(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Create
         2. Update
@@ -476,7 +607,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def put_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+    def put_request_in_crud_alt(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Delete
         2. Create
@@ -498,7 +629,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def patch_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+    def patch_request_in_crud_alt(self, ebenen: list, inhalt_ein: dict) -> json:
         """
         1. Read
         2. Werte überschreiben
@@ -529,7 +660,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
     
-    def delete_request_in_crud(self, ebenen) -> json:
+    def delete_request_in_crud_alt(self, ebenen) -> json:
         """
         1. Delete
         :return:

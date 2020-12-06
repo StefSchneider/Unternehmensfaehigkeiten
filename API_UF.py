@@ -290,7 +290,7 @@ class API:
         :return:
         """
         __uebergabedaten_get: bytes = uebergabedaten_get_ein
-#        __uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
+        #__uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
         __uebergabedaten_get_aus: bytes = __uebergabedaten_get
 
         return __uebergabedaten_get_aus
