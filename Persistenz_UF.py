@@ -4,6 +4,7 @@ Das ist die Bibliothek der Klasse Persistenz
 
 import json
 import random
+from datetime import datetime
 import API_UF
 
 
@@ -19,21 +20,21 @@ class CRUD_Rueckmeldung:
         self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
                                                   }
         self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
-                                            "status": None,
-                                            "suchschluessel": None,
-                                            "anzahl_rueckgabeobjekte": None,
-                                            "startobjekt": 0,
-                                            "berechtigung": None,
-                                            "daten_veraendert": None
-                                            }
+                                          "status": None,
+                                          "suchschluessel": None,
+                                          "anzahl_rueckgabeobjekte": None,
+                                          "startobjekt": 0,
+                                          "berechtigung": None,
+                                          "daten_veraendert": None
+                                          }
         self.rueckmeldung_entwickler: dict = {"laenge_bytes": None,
-                                                "verarbeitungszeit": None,
-                                                "datenstruktur": None,
-                                                "strukturtiefe": None,
-                                                "speicherart": None
-                                                }
-        self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
+                                              "verarbeitungszeit": None,
+                                              "datenstruktur": None,
+                                              "strukturtiefe": None,
+                                              "speicherart": None
                                               }
+        self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
+                                            }
 
     def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list):
         """
@@ -51,14 +52,21 @@ class CRUD_Rueckmeldung:
     def ermittle_anzahl_speicherobjekte_nutzer_lese(self):
         """
         Die Methode ermittelt die Anzahl der Speicherobjekte zum angefragten Schlüssel. Dabei wird nur die erste
-        Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Damit kann der Nutzer erkennen, wie viele Objekte
-        in der Ressource, die er abfragt, abgespeichert sind. Er kann dann entscheiden, ob er seine Abfrage einschränkt,
-        um weniger Daten zu erhalten. Die Berechnung erfolgt auf Basis der payload.
-        :param: daten_speicherobjekt ist der Inhalt der payload
+        Hierarchiestufe abgefragt, aber keine Unter-Dictionaries. Dabei gilt der Microservice, also die Wurzel (z.B.
+        "prints") als Hierarchiestufe 0, wenn die Speicherobjekte von "prints" gezählt werden sollen. Da im Dictionary
+        mit dem Schlüssel "speicherinhalt" auch Daten aus der übergeordneten Ressource stehen, wie zum Beispiel
+        "auftrag" würdden diese bei einer einfachen Längenbestimmung über die Funktion len mitgezählt. Um dies zu
+        vermeiden, erfolgt bei der Zählung die Einschränkung, dass nur Dictionaries gezählt werden.
+        Mit der Angabe kann der Nutzer erkennen, wie viele Objekte in der Ressource, die er abfragt, abgespeichert sind.
+        Er kann dann entscheiden, ob er seine Abfrage einschränkt, um weniger Daten zu erhalten. Die Berechnung erfolgt
+        auf Basis der payload.
         :return: Anzahl der Speicherobjekte als Integer
         """
-        print("Anzahl Speicherobjekte", self.rueckmeldung_speicherinhalt)
-        __anzahl_daten_speicherobjekt: int = len(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+        __anzahl_daten_speicherobjekt: int = 0
+        __speicherinhalte: list = self.rueckmeldung_speicherinhalt["speicherinhalt"].values()
+        for __listenelement in __speicherinhalte:  # die Values wurden in einer Liste abgespeichert
+            if isinstance(__listenelement, dict):
+                __anzahl_daten_speicherobjekt += 1
 
         return __anzahl_daten_speicherobjekt
 
@@ -167,6 +175,7 @@ class CRUD_Rueckmeldung:
         :return:
         """
         __startzeit: str = startzeit
+        __startzeit = str(__startzeit)
         __url_zeitstempel: str = url_zeitstempel
         __endzeit: str = ""
         __verarbeitungszeit: str = ""
@@ -175,16 +184,18 @@ class CRUD_Rueckmeldung:
         zeitstempel_API.url_partner = __url_zeitstempel
         if __startzeit == "-1":
             __rueckmeldung_startzeit = zeitstempel_API.hole()
-            __startzeit = __rueckmeldung_startzeit["zeitstempel_UTC_original"]
+            __startzeit = __rueckmeldung_startzeit["zeitstempel_UTC"]
         else:
             __rueckmeldung_endzeit = zeitstempel_API.hole()
-            __endzeit = __rueckmeldung_endzeit["zeitstempel_UTC_original"]
-            __verarbeitungszeit = __endzeit - __startzeit
+            __endzeit = __rueckmeldung_endzeit["zeitstempel_UTC"]
+            __startzeit_obj = datetime.strptime(__startzeit, "%Y-%m-%d %H:%M:%S %z")
+            __endzeit_obj = datetime.strptime(__endzeit, "%Y-%m-%d %H:%M:%S %z")
+            __verarbeitungszeit = str(__endzeit_obj - __startzeit_obj)
         __zeitstempel_daten_aus["startzeit"] = __startzeit
         __zeitstempel_daten_aus["endzeit"] = __endzeit
         __zeitstempel_daten_aus["verarbeitungszeit"] = __verarbeitungszeit
 
-        return json.dumps(__zeitstempel_daten_aus)
+        return __zeitstempel_daten_aus
 
     def ermittle_datenstruktur_entwickler_lese(self, daten_speicherobjekt: dict):
         """
@@ -243,13 +254,12 @@ class CRUD_Rueckmeldung:
         """
         __ebenen: list = ebenen_ein
         __payload_get_request: dict = {}
-#        __startzeit_crud_rueckmeldung_get = __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese\
-#            (startzeit = "-1", url_zeitstempel = "http://localhost:30001/zeitstempel/")["startzeit"]
-        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.ermittle_speicherinhalt_daten_lese(__ebenen)["speicherinhalt"]
-#       __verarbeitungszeit_crud_rueckmeldung_get = \
-#           __crud_rueckmeldung_get.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:30001/zeitstempel/")["verarbeitungszeit"]
-#       __crud_rueckmeldung_get.__rueckmeldung_entwickler["verarbeitungszeit"] = \
-#           __verarbeitungszeit_crud_rueckmeldung_get
+        __startzeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(startzeit = "-1", url_zeitstempel = "http://localhost:31005/zeitstempel")["startzeit"]
+    #    __startzeit_crud_rueckmeldung_get = json.loads(__startzeit_crud_rueckmeldung_get)["startzeit"]
+        self.rueckmeldung_speicherinhalt["speicherinhalt"] = \
+            self.ermittle_speicherinhalt_daten_lese(__ebenen)["speicherinhalt"]
+        __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]
+        self.rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
         self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
         __payload_get_request = self.rueckmeldung_objekte_filtern_lese()
 
@@ -266,7 +276,6 @@ class CRUD_Rueckmeldung:
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
- #       pers = Persistenz(self.wurzel)
         __aktuelle_ebene = self.persistenz.datenspeicher
         __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherinhalt(__ebenen, __inhalt_ein))
         print("self.Datenspeicher", self.persistenz.datenspeicher)

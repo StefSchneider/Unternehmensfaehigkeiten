@@ -26,6 +26,7 @@ class Zeitstempel:
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.astimezone(tz = None)
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.strftime("%Y-%m-%d %H:%M:%S %z")
         self.__zeitstempel_UTC = self.__zeitstempel_UTC_original.strftime("%Y-%m-%d %H:%M:%S %z")
+        print(type(self.__zeitstempel_UTC))
         self.__zeitstempel_daten["zeitstempel_lokal"] = self.__zeitstempel_lokal
         self.__zeitstempel_daten["zeitstempel_UTC"] = self.__zeitstempel_UTC
         self.__zeitstempel_daten["zeitstempel_UTC_original"] = self.__zeitstempel_UTC_original
