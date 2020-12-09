@@ -12,6 +12,7 @@ server_port: int = 31005
 eigener_pfad = "http://localhost:31005/zeitstempel"
 eigener_pfad_kurz = "/zeitstempel"
 
+
 class Zeitstempel:
 
     def __init__(self):
