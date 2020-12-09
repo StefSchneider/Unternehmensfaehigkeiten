@@ -184,12 +184,12 @@ class CRUD_Rueckmeldung:
         zeitstempel_API.url_partner = __url_zeitstempel
         if __startzeit == "-1":
             __rueckmeldung_startzeit = zeitstempel_API.hole()
-            __startzeit = __rueckmeldung_startzeit["zeitstempel_UTC"]
+            __startzeit = __rueckmeldung_startzeit["zeitstempel_genau"]
         else:
             __rueckmeldung_endzeit = zeitstempel_API.hole()
-            __endzeit = __rueckmeldung_endzeit["zeitstempel_UTC"]
-            __startzeit_obj = datetime.strptime(__startzeit, "%Y-%m-%d %H:%M:%S %z")
-            __endzeit_obj = datetime.strptime(__endzeit, "%Y-%m-%d %H:%M:%S %z")
+            __endzeit = __rueckmeldung_endzeit["zeitstempel_genau"]
+            __startzeit_obj = datetime.strptime(__startzeit, "%Y-%m-%d %H:%M:%S %f")
+            __endzeit_obj = datetime.strptime(__endzeit, "%Y-%m-%d %H:%M:%S %f")
             __verarbeitungszeit = str(__endzeit_obj - __startzeit_obj)
         __zeitstempel_daten_aus["startzeit"] = __startzeit
         __zeitstempel_daten_aus["endzeit"] = __endzeit

@@ -26,10 +26,11 @@ class Zeitstempel:
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.astimezone(tz = None)
         self.__zeitstempel_lokal = self.__zeitstempel_lokal.strftime("%Y-%m-%d %H:%M:%S %z")
         self.__zeitstempel_UTC = self.__zeitstempel_UTC_original.strftime("%Y-%m-%d %H:%M:%S %z")
-        print(type(self.__zeitstempel_UTC))
+        self.__zeitstempel_genau = self.__zeitstempel_UTC_original.strftime("%Y-%m-%d %H:%M:%S %f")
         self.__zeitstempel_daten["zeitstempel_lokal"] = self.__zeitstempel_lokal
         self.__zeitstempel_daten["zeitstempel_UTC"] = self.__zeitstempel_UTC
         self.__zeitstempel_daten["zeitstempel_UTC_original"] = self.__zeitstempel_UTC_original
+        self.__zeitstempel_daten["zeitstempel_genau"] = self.__zeitstempel_genau
 
         return self.__zeitstempel_daten
 
@@ -103,6 +104,7 @@ def zeitstempel() -> str:
     __zeitstempel_obj_aus["zeitstempel_lokal"] = __zeitstempel["zeitstempel_lokal"]
     __zeitstempel_obj_aus["zeitstempel_UTC"] = __zeitstempel["zeitstempel_UTC"]
     __zeitstempel_obj_aus["zeitstempel_UTC_original"] = __zeitstempel["zeitstempel_UTC_original"]
+    __zeitstempel_obj_aus["zeitstempel_genau"] = __zeitstempel["zeitstempel_genau"]
 
     return jsonify(__zeitstempel_obj_aus)
 
