@@ -18,7 +18,8 @@ class Zeitstempel:
     def __init__(self):
         self.__zeitstempel_lokal: str = ""
         self.__zeitstempel_UTC: str = ""
-#        self.__zeitstempel_UTC_original: datetime.datetime
+        self.__zeitstempel_UTC_original: str = ""
+        self.__zeitstempel_genau: str = ""
         self.__zeitstempel_daten: dict = {}
 
     def hole(self):
@@ -67,13 +68,15 @@ class Zeitstempel:
 
         return self.__zeitstempel_daten
 
+
 app = Flask(__name__)
 
 
 @app.route("/zeitstempel", methods = ["GET", "POST", "PUT", "PATCH", "DELETE"])
 def zeitstempel() -> str:
-    zeitstempel_API = API_UF.API(get_request_zulassen = True, post_request_zulassen =  True, put_request_zulassen = True,
-                            patch_request_zulassen = True, delete_request_zulassen = True)
+    zeitstempel_API = API_UF.API(get_request_zulassen = True, post_request_zulassen = True,
+                                 put_request_zulassen = True, patch_request_zulassen = True,
+                                 delete_request_zulassen = True)
     __zeitstempel = Zeitstempel()
     __zeitstempel_obj_aus: dict = {}
     if request.method == "GET":

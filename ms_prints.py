@@ -22,7 +22,7 @@ eigener_pfad_kurz = "/prints"
 server_port: int = 31002
 
 id = 0
-prints_PRS = PRS.Persistenz("prints", datenspeicher = True)
+prints_PRS = PRS.Persistenz("prints", datenspeicher = True, speicherart = "Hauptspeicher")
 prints_CRUD_Rueckmeldung = PRS.CRUD_Rueckmeldung(prints_PRS)
 
 app = Flask(__name__)

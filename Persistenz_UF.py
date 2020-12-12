@@ -5,6 +5,7 @@ Das ist die Bibliothek der Klasse Persistenz
 import json
 import random
 from datetime import datetime
+import sys
 import API_UF
 
 
@@ -17,7 +18,11 @@ class CRUD_Rueckmeldung:
         self.persistenz = persistenz
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.rueckmeldung: dict = {}
-        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
+        self.rueckmeldung_speicherinhalt_gesamt: dict = {}
+        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None,
+                                                  "rueckmeldung": None,
+                                                  "lese_ressource__erfolgreich": None,
+                                                  "fehlercode": None
                                                   }
         self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
                                           "status": None,
@@ -36,16 +41,14 @@ class CRUD_Rueckmeldung:
         self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
                                             }
 
-    def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list):
+    def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list)-> dict:
         """
         Die Methode liefert den Inhalt des Speicherobjekts bei einem GET-Request zurück.
         :return: Inhalt der Ressource
         """
         __ebenen: list = ebenen_ein
-        print("Ebenen in ermittle-Methode", __ebenen)
         __inhalt_ressource: json = {}
         __inhalt_ressource = json.loads(self.persistenz.lese_speicherinhalt(__ebenen))
-        print("Inhalt Ressource", __inhalt_ressource)
 
         return __inhalt_ressource
 
@@ -78,7 +81,9 @@ class CRUD_Rueckmeldung:
         __status_speicherobjekt: dict = {}
         __objekt_vorhanden: bool = False
         __rueckmeldung_objekt_vorhanden: str = "Ressource nicht vorhanden"
-        # Hier die Prüfungsabfrage einfügen
+        if self.rueckmeldung_speicherinhalt_gesamt["lese_ressource_erfolgreich"]:
+            __objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["lese_ressource_erfolgreich"]
+            __rueckmeldung_objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["rueckmeldung"]
         __status_speicherobjekt["objekt_vorhanden"] = __objekt_vorhanden
         __status_speicherobjekt["rueckmeldung"] = __rueckmeldung_objekt_vorhanden
 
@@ -98,7 +103,7 @@ class CRUD_Rueckmeldung:
         __status_suchschluessel["objekt_vorhanden"] = __suchschluessel_vorhanden
         __status_suchschluessel["rueckmeldung"] = __rueckmeldung_suchschluessel_vorhanden
 
-        return __status_suchschluessel
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_laenge_liste_speicherobjekte_nutzer_lese(self):
         """
@@ -111,7 +116,8 @@ class CRUD_Rueckmeldung:
         :return: Anzahl der tatsächlichen Speicherobjekte als int
         """
         # derzeit = Anzahl der Speichelemente
-        pass
+
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_startobjekt_nutzer_lese(self):
         """
@@ -121,7 +127,8 @@ class CRUD_Rueckmeldung:
         Berechnung erfolgt auf Basis der payload.
         :return: Position des Startobjekts in der Gesamtliste als int
         """
-        pass
+
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_zugriffsberechtigung_nutzer_lese(self, benutzer_id: str) -> bool:
         """
@@ -136,7 +143,7 @@ class CRUD_Rueckmeldung:
         __zugriff_erlaubt: bool = False
         # Hier Abfrage der Benutzer-ID beim Microservice ms_berechtigungen einfügen
 
-        return __zugriff_erlaubt
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_status_daten_nutzer_lese(self):
         """
@@ -148,7 +155,7 @@ class CRUD_Rueckmeldung:
         """
         __daten_speicherobjekt_veraendert: bool = False
 
-        return __daten_speicherobjekt_veraendert
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_speicherart_entwickler_lese(self):
         """
@@ -157,15 +164,22 @@ class CRUD_Rueckmeldung:
         :return: Speicherart als str
         """
         __speicherart: str = ""
+        __speicherart = self.persistenz.speicherart
 
         return __speicherart
 
-    def ermittle_laenge_daten_bytes_entwickler_lese(self):
+    def ermittle_laenge_daten_bytes_entwickler_lese(self) -> int:
         """
         Die Methode ermittelt die Größe der payload in Byte. Grundlage für die Berechnung ist die payload.
-        :return: Länge der Daten in bytes
+        Da die Funktion sys.getsizeof die Länge von verschachtelten und unverschachtelten Dictionaries gleich ermittelt,
+        müssen die Daten zunächst in einen JSON-String umgewandelt werden, dessen Länge dann ermittelt werden kann.
+        :return: Länge der Daten in bytes als Integer
         """
-        pass
+        __laenge_daten_bytes: int = 0
+        __speicherinhalt = json.dumps(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+        __laenge_daten_bytes = sys.getsizeof(__speicherinhalt)
+
+        return __laenge_daten_bytes
 
     def ermittle_verarbeitungszeit_entwickler_lese(self, startzeit: str, url_zeitstempel: str) -> json:
         """
@@ -197,20 +211,16 @@ class CRUD_Rueckmeldung:
 
         return __zeitstempel_daten_aus
 
-    def ermittle_datenstruktur_entwickler_lese(self, daten_speicherobjekt: dict):
+    def ermittle_datenstruktur_entwickler_lese(self):
         """
         Die Methode ermittelt zu allen Werten des eingehenden Speicherobjektes den entsprechendden Datentyp. Sie soll
         damit Entwicklern schnell Auskunft über die verwendeten Datentypen innerhalb eines Speicherobjektes geben.
-        :param daten_speicherobjekt: Schlüssel-Wert-Paare des zu prüfenden Speicherobjekts
         :return: Datentyp für jedes Schlüssel-Wert-Paar
         """
-        __daten_speicherobjekt = daten_speicherobjekt
-        __daten_speicherobjekt_basisschluessel = __daten_speicherobjekt.keys()
-        __daten_speicherobjekt_werte = __daten_speicherobjekt.values()  # Abschneiden des Basisschlüssels
+        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["speicherinhalt"]
         __datenstruktur_speicherobjekt: dict = {}
-        for __schluessel, __werte in __daten_speicherobjekt_werte.items():
-            __datenstruktur_speicherobjekt[__schluessel] = type(__werte)
-        __datenstruktur_speicherobjekt[__daten_speicherobjekt_basisschluessel] = __datenstruktur_speicherobjekt
+        for __schluessel, __werte in __daten_speicherobjekt.items():
+            __datenstruktur_speicherobjekt[__schluessel] = str(type(__werte))
 
         return __datenstruktur_speicherobjekt
 
@@ -222,7 +232,7 @@ class CRUD_Rueckmeldung:
         """
         __strukturtiefe: int = 0
 
-        return __strukturtiefe
+        return "Funktion noch nicht im Einsatz"
 
     def ermittle_datentyp_rueckgabeobjekt_programm_lese(self):
         """
@@ -232,7 +242,7 @@ class CRUD_Rueckmeldung:
         """
         __datentyp_rueckgabeobjekt: str = ""
 
-        return __datentyp_rueckgabeobjekt
+        return "Funktion noch nicht im Einsatz"
 
     def rueckmeldung_objekte_fuellen_lese(self):
         pass
@@ -244,6 +254,7 @@ class CRUD_Rueckmeldung:
         __rueckmeldung_lese.update(self.rueckmeldung_nutzer)
         __rueckmeldung_lese.update(self.rueckmeldung_entwickler)
         __rueckmeldung_lese.update(self.rueckmeldung_programm)
+        print(__rueckmeldung_lese)
 
         return json.dumps(__rueckmeldung_lese)
 
@@ -254,13 +265,27 @@ class CRUD_Rueckmeldung:
         """
         __ebenen: list = ebenen_ein
         __payload_get_request: dict = {}
-        __startzeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(startzeit = "-1", url_zeitstempel = "http://localhost:31005/zeitstempel")["startzeit"]
-    #    __startzeit_crud_rueckmeldung_get = json.loads(__startzeit_crud_rueckmeldung_get)["startzeit"]
-        self.rueckmeldung_speicherinhalt["speicherinhalt"] = \
-            self.ermittle_speicherinhalt_daten_lese(__ebenen)["speicherinhalt"]
-        __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(startzeit = __startzeit_crud_rueckmeldung_get, url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]
+        __startzeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
+            startzeit = "-1",
+            url_zeitstempel = "http://localhost:31005/zeitstempel")["startzeit"]  # Beginn der Zeitmessung
+        self.rueckmeldung_speicherinhalt_gesamt = self.ermittle_speicherinhalt_daten_lese(__ebenen)
+        __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
+            startzeit = __startzeit_crud_rueckmeldung_get,
+            url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
+        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["speicherinhalt"]
         self.rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
         self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
+        self.rueckmeldung_nutzer["status"] = self.ermittle_status_objekt_nutzer_lese()["objekt_vorhanden"]
+        self.rueckmeldung_nutzer["suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()
+        self.rueckmeldung_nutzer["anzahl_rueckgabeobjekte"] = self.ermittle_laenge_liste_speicherobjekte_nutzer_lese()
+        self.rueckmeldung_nutzer["startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
+        self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(0)
+        self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
+        self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
+        self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
+        self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
+        self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
+        self.rueckmeldung_programm["datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
         __payload_get_request = self.rueckmeldung_objekte_filtern_lese()
 
         return json.dumps(__payload_get_request)
@@ -363,9 +388,10 @@ class CRUD_Rueckmeldung:
 
 class Persistenz:
 
-    def __init__(self, wurzel: str, datenspeicher = False):
+    def __init__(self, wurzel: str, datenspeicher = False, speicherart: str = "Hauptspeicher"):
         self.__persistenz_datenspeicher = datenspeicher  # steuert, ob die Daten im Datenspeicher abgelegt werden
         self.datenspeicher: dict = {wurzel: {}} # legt einen neuen leeren Datenspeicher für den Microservice an
+        self.speicherart: str = speicherart
 
     def zerlege_pfad(self, pfad: str) -> list:
         __pfad: str = pfad
