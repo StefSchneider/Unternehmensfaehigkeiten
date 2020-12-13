@@ -221,15 +221,17 @@ class CRUD_Rueckmeldung:
 
         return __datenstruktur_speicherobjekt
 
-    def ermittle_strukturtiefe_baum_entwickler_lese(self):
+    def ermittle_strukturtiefe_baum_entwickler_lese(self, ebenen_ein: list):
         """
         Diese Methode ermittelt die Anzahl der Baumebenen, ausgehend von der Wurzel. Dabei wird die Wurzel nicht
         mitgezählt. So erhalten Entwickler Auskunft darüber, aus wie vielen Ebenen die komplette Ressource besteht.
         :return: Anzahl der Ebenen als Integer
         """
+        __ebenen = ebenen_ein
         __strukturtiefe: int = 0
+        __strukturtiefe = len(__ebenen)
 
-        return "Funktion noch nicht im Einsatz"
+        return __strukturtiefe
 
     def ermittle_datentyp_rueckgabeobjekt_programm_lese(self):
         """
@@ -282,7 +284,7 @@ class CRUD_Rueckmeldung:
             self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
             self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
             self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
-            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
+            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese(__ebenen)
             self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
             self.rueckmeldung_programm[
                 "datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
