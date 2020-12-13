@@ -57,7 +57,6 @@ def drucke(pfad):
             neuer_eintrag_in_datenspeicher: dict = {__schluessel_neue_ressource: rueckmeldung.copy()}
             text_zum_drucken = rueckmeldung["text"]
             neuer_speicher = prints_CRUD_Rueckmeldung.post_request_in_crud(__hierarchien, neuer_eintrag_in_datenspeicher)
-            print("Neuer Eintrag", neuer_eintrag_in_datenspeicher)
             if rueckmeldung["auftrag"] == "drucke_daten":
                 drucke_daten = True
         else:
@@ -69,7 +68,6 @@ def drucke(pfad):
             __schluessel_ressource = __hierarchien[-1]
             __eintrag_in_datenspeicher: dict = {__schluessel_ressource: rueckmeldung.copy()}
             neuer_speicher = prints_CRUD_Rueckmeldung.put_request_in_crud(__hierarchien, __eintrag_in_datenspeicher)
-            print("Neuer Eintrag", __eintrag_in_datenspeicher)
             text_zum_drucken = rueckmeldung["text"]
             if rueckmeldung["auftrag"] == "drucke_daten":
                 drucke_daten = True

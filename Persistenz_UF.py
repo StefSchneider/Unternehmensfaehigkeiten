@@ -19,10 +19,7 @@ class CRUD_Rueckmeldung:
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.rueckmeldung: dict = {}
         self.rueckmeldung_speicherinhalt_gesamt: dict = {}
-        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None,
-                                                  "rueckmeldung": None,
-                                                  "lese_ressource__erfolgreich": None,
-                                                  "fehlercode": None
+        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
                                                   }
         self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
                                           "status": None,
@@ -198,12 +195,12 @@ class CRUD_Rueckmeldung:
         zeitstempel_API.url_partner = __url_zeitstempel
         if __startzeit == "-1":
             __rueckmeldung_startzeit = zeitstempel_API.hole()
-            __startzeit = __rueckmeldung_startzeit["zeitstempel_genau"]
+            __startzeit = __rueckmeldung_startzeit["zeitstempel_UTC"]
         else:
             __rueckmeldung_endzeit = zeitstempel_API.hole()
-            __endzeit = __rueckmeldung_endzeit["zeitstempel_genau"]
-            __startzeit_obj = datetime.strptime(__startzeit, "%Y-%m-%d %H:%M:%S %f")
-            __endzeit_obj = datetime.strptime(__endzeit, "%Y-%m-%d %H:%M:%S %f")
+            __endzeit = __rueckmeldung_endzeit["zeitstempel_UTC"]
+            __startzeit_obj = datetime.strptime(__startzeit, "%Y-%m-%d %H:%M:%S %z")
+            __endzeit_obj = datetime.strptime(__endzeit, "%Y-%m-%d %H:%M:%S %z")
             __verarbeitungszeit = str(__endzeit_obj - __startzeit_obj)
         __zeitstempel_daten_aus["startzeit"] = __startzeit
         __zeitstempel_daten_aus["endzeit"] = __endzeit
@@ -274,18 +271,22 @@ class CRUD_Rueckmeldung:
             url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
         self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["speicherinhalt"]
         self.rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
-        self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
+        if (isinstance(self.rueckmeldung_speicherinhalt["speicherinhalt"], dict) and
+                self.rueckmeldung_speicherinhalt["speicherinhalt"] != {}):
+            self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
+            self.rueckmeldung_nutzer["suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()
+            self.rueckmeldung_nutzer["anzahl_rueckgabeobjekte"] = \
+                self.ermittle_laenge_liste_speicherobjekte_nutzer_lese()
+            self.rueckmeldung_nutzer["startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
+            self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(benutzer_id="0")
+            self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
+            self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
+            self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
+            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
+            self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
+            self.rueckmeldung_programm[
+                "datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
         self.rueckmeldung_nutzer["status"] = self.ermittle_status_objekt_nutzer_lese()["objekt_vorhanden"]
-        self.rueckmeldung_nutzer["suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()
-        self.rueckmeldung_nutzer["anzahl_rueckgabeobjekte"] = self.ermittle_laenge_liste_speicherobjekte_nutzer_lese()
-        self.rueckmeldung_nutzer["startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
-        self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(0)
-        self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
-        self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
-        self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
-        self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
-        self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
-        self.rueckmeldung_programm["datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
         __payload_get_request = self.rueckmeldung_objekte_filtern_lese()
 
         return json.dumps(__payload_get_request)
@@ -309,8 +310,6 @@ class CRUD_Rueckmeldung:
         else:
             print(__neues_speicherelement["rueckmeldung"])
 
-        print("Rückgabe post_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
-
         return json.dumps(__rueckgaben_daten_aus)
 
     def put_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
@@ -330,8 +329,6 @@ class CRUD_Rueckmeldung:
         speicherelement = json.loads(self.persistenz.loesche_speicherinhalt(__ebenen))
         __ebenen = ebenen[:len(ebenen) - 1]
         speicherelement = json.loads(self.post_request_in_crud(__ebenen, __inhalt_ein))
-
-        print("Rückgabe put_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
 
@@ -403,7 +400,6 @@ class Persistenz:
         for __elemente in __hierarchien:
             if __elemente == "":
                 __hierarchien.remove("")
-        print("Liste der Hierachien:", __hierarchien)
 
         return __hierarchien
 
@@ -487,8 +483,6 @@ class Persistenz:
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
 
-        print("Rückgabe erzeuge_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
-
         return json.dumps(__rueckgaben_daten_aus)
 
     def lese_speicherinhalt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
@@ -498,14 +492,12 @@ class Persistenz:
         :return:
         """
         __ebenen = ebenen
-        print("Ebenen in lese Persistenz", __ebenen)
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "lese_ressource_erfolgreich": False,
                                         "fehlercode": 0}
         __ressource_vorhanden: bool = True
         __aktuelle_ebene = self.datenspeicher
-        print("Datenspeicher", __aktuelle_ebene)
         for __schluesselwort in __ebenen:
             try:
                 __aktuelle_ebene = __aktuelle_ebene[__schluesselwort]
@@ -513,14 +505,12 @@ class Persistenz:
                 print("Ebene", __aktuelle_ebene, "nicht vorhanden")
                 __ressource_vorhanden = False
                 __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} nicht vorhanden"
+                __rueckgaben_daten_aus["speicherinhalt"] = {}
                 break
         if __ressource_vorhanden:
-            print("aktuelle Ebene in lese", __aktuelle_ebene)
             __rueckgaben_daten_aus["speicherinhalt"] = __aktuelle_ebene
             __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} erfolgreich abgerufen"
             __rueckgaben_daten_aus["lese_ressource_erfolgreich"] = True
-
-        print("Rückgabe lese_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
 
