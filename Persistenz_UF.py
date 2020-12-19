@@ -385,6 +385,12 @@ class CRUD_Rueckmeldung:
         return json.dumps(__rueckgaben_daten_aus)
 
 
+class Speicherinhalt:
+
+    def __init__(self):
+        self.speicherinhalt: dict = {}
+
+
 class Persistenz:
 
     def __init__(self, wurzel: str, datenspeicher = False, speicherart: str = "Hauptspeicher"):
