@@ -248,7 +248,9 @@ class CRUD_Rueckmeldung:
                     __aktuelle_ebene = __aktuelle_ebene[__elemente]
             __laenge_letzte_ebene = len(__aktuelles_element)
             __aktueller_schluessel = str(__aktuelles_element[-1])
-            if type(__aktuelle_ebene[__aktueller_schluessel]) == dict:
+#            if type(__aktuelle_ebene[__aktueller_schluessel]) == dict:
+            print(type(__aktuelle_ebene[__aktueller_schluessel]))
+            if (type(__aktuelle_ebene[__aktueller_schluessel]) == dict and type (__aktuelle_ebene[__aktueller_schluessel]) != Speicherinhalt):
                 __aktuelle_ebene = __aktuelle_ebene[__aktueller_schluessel]
                 if len(__aktuelles_element) > __strukturtiefe:
                     __strukturtiefe = len(__aktuelles_element)
@@ -411,10 +413,21 @@ class CRUD_Rueckmeldung:
         return json.dumps(__rueckgaben_daten_aus)
 
 
+class Baum:
+
+    def __init__(self):
+        self.wurzel = None
+
+
+class Knoten:
+    def __init__(self):
+        self.speicherinhalt = Speicherinhalt()
+
+
 class Speicherinhalt:
 
     def __init__(self):
-        self.speicherinhalt: dict = {}
+        self.speicherobjekt: dict = {}
 
 
 class Persistenz:
@@ -494,7 +507,9 @@ class Persistenz:
         """
         __ebenen = ebenen
         __inhalt = inhalt
-        __neues_speicherelement: dict = {}
+    #    __neues_speicherelement: dict = {}
+        __neues_speicherelement = Speicherinhalt()
+        print(type(__neues_speicherelement))
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "erzeuge_ressource_erfolgreich": False,
@@ -513,7 +528,8 @@ class Persistenz:
                 break
         if __ressource_vorhanden:
             __aktuelle_ebene.update(__inhalt)
-            __rueckgaben_daten_aus["daten"] = __neues_speicherelement
+            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherobjekt
+            print(type(__neues_speicherelement.speicherobjekt))
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
 
