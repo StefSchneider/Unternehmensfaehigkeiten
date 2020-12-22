@@ -6,6 +6,7 @@ import json
 import random
 from datetime import datetime
 import sys
+import collections
 import API_UF
 
 
@@ -221,15 +222,40 @@ class CRUD_Rueckmeldung:
 
         return __datenstruktur_speicherobjekt
 
-    def ermittle_strukturtiefe_baum_entwickler_lese(self, ebenen_ein: list):
+    def ermittle_strukturtiefe_baum_entwickler_lese(self):
         """
         Diese Methode ermittelt die Anzahl der Baumebenen, ausgehend von der Wurzel. Dabei wird die Wurzel nicht
         mitgezählt. So erhalten Entwickler Auskunft darüber, aus wie vielen Ebenen die komplette Ressource besteht.
         :return: Anzahl der Ebenen als Integer
         """
-        __ebenen = ebenen_ein
+        __ebenen = collections.deque()
+        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["speicherinhalt"]
         __strukturtiefe: int = 0
-        __strukturtiefe = len(__ebenen)
+        __laenge_letzte_ebene: int = 0
+        __startebene = __daten_speicherobjekt
+        __aktuelle_ebene = __startebene
+        __schluessel_aktuelle_ebene = list(__aktuelle_ebene.keys())  # initiale Befüllung der Queue
+        for __elemente in __schluessel_aktuelle_ebene:
+            __ebenen.append([__elemente])
+        while len(__ebenen) > 0:
+            __aktuelles_element = __ebenen.popleft()
+            if len(__aktuelles_element) < __laenge_letzte_ebene:
+                # Der Vergleich steuert, ob im Baum wieder in den Ebenen wieder nach oben gesprungen werden muss. Das
+                # erfolgt, wenn im aktuellen Zweig das letzte Element erreicht wurde.
+                __laenge_letzte_ebene = len(__aktuelles_element)
+                __aktuelle_ebene = __startebene
+                for __elemente in __aktuelles_element[:-1]:
+                    __aktuelle_ebene = __aktuelle_ebene[__elemente]
+            __laenge_letzte_ebene = len(__aktuelles_element)
+            __aktueller_schluessel = str(__aktuelles_element[-1])
+            if type(__aktuelle_ebene[__aktueller_schluessel]) == dict:
+                __aktuelle_ebene = __aktuelle_ebene[__aktueller_schluessel]
+                if len(__aktuelles_element) > __strukturtiefe:
+                    __strukturtiefe = len(__aktuelles_element)
+                __schluessel_aktuelle_ebene = list(__aktuelle_ebene.keys())
+                for __elemente in __schluessel_aktuelle_ebene:
+                    __neues_element = __aktuelles_element + [__elemente]
+                    __ebenen.appendleft(__neues_element)
 
         return __strukturtiefe
 
@@ -280,11 +306,11 @@ class CRUD_Rueckmeldung:
             self.rueckmeldung_nutzer["anzahl_rueckgabeobjekte"] = \
                 self.ermittle_laenge_liste_speicherobjekte_nutzer_lese()
             self.rueckmeldung_nutzer["startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
-            self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(benutzer_id="0")
+            self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(benutzer_id = "0")
             self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
             self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
             self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
-            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese(__ebenen)
+            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
             self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
             self.rueckmeldung_programm[
                 "datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
