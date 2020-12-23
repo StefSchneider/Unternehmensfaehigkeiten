@@ -2,7 +2,7 @@
 
 
 
-# Umgang mit Daten/Namen in Methden
+# Umgang mit Daten/Namen in Methoden
 
 ## Bennenung von Parametern/Variablen
 - **eingehende Parameter**: Ergänzung des Namens mit "_ein". Beispiel: daten_patch_ein
@@ -17,6 +17,12 @@ Neue Variablen bzw. Variablen, deren Typ sich durch Bearbeitung ändert, werden 
 - in letzten Schritt werden die veränderten Daten den Ausgabedaten der Methode zugewiesen. Beispiel: __daten_post_aus = __daten_post
 - return __daten_post_aus
 
+
+Parameter in einer Methode werden mit einer Typ-Annotation versehen.
+
+Alle Variablen werden mit einer Typ-Annotation versehen, auch die lokalen Variablen, die aus einem Parameter in der Methode übernommen werden
+
+Alle Variablen werden am Anfang einer Methode initialisiert. Zuerst werden die lokalen Vriablen aus den Parametern erzeugt.
 
 
 
