@@ -6,6 +6,7 @@ Er druckt die Textzeile aus, wenn der Auftrag auf "drucke_daten" steht
 
 import API_UF
 import Persistenz_UF as PRS
+import CRUD_Rueckmeldung_UF
 from flask import Flask, request, jsonify
 import json
 
@@ -23,7 +24,7 @@ server_port: int = 31002
 
 id = 0
 prints_PRS = PRS.Persistenz("prints", datenspeicher = True, speicherart = "Hauptspeicher")
-prints_CRUD_Rueckmeldung = PRS.CRUD_Rueckmeldung(prints_PRS)
+prints_CRUD_Rueckmeldung = CRUD_Rueckmeldung_UF.CRUD_Rueckmeldung(prints_PRS)
 
 app = Flask(__name__)
 

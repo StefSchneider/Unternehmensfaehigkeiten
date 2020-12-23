@@ -5,27 +5,22 @@
 # Umgang mit Daten/Namen in Methoden
 
 ## Bennenung von Parametern/Variablen
-- **eingehende Parameter**: Ergänzung des Namens mit "_ein". Beispiel: daten_patch_ein
-- **Rückgabedaten**: Ergänzung des Namens mit "_aus". Beispiel: daten_patch_aus
+- **eingehende Parameter**: normales sprechende Benamung 
+- **lokale Variablen aus eingehenden Parametern**: Ergänzung des Namens mit Suffix "_ein". Beispiel: __ebenen_ein 
+- **lokale Variablen**: Ergänzung des Namens mit Prefix "__" zur Kennzeichnung, dass es sich um eine private Variable handelt
+- **Rückgabedaten**: Ergänzung des Namens mit Suffix "_aus". Beispiel: __daten_patch_aus
 
 ## Annotation
-Neue Variablen bzw. Variablen, deren Typ sich durch Bearbeitung ändert, werden mit einer Typ-Annotation versehen.
+- **Parameter in Methodenköpfen**: werden mit einer Typ-Annotation versehen
+- **lokale Variablen**: werden mit einer Typ-Annotation versehen, auch wenn sie aus eingehenden Parametern übernommen werden
+- **globale Variablen**: werden mit einer Typ-Annotation versehen
 
-## Bennung bei Verarbeitung
-- im ersten Schritt werden die mitgegebenen Parameter in die Methode übernommen. Beispiel: __daten_post = daten_post_ein
-- im zweiten Schritt werden die Berechnungen mit den übernommenen Daten durchgeführt
-- in letzten Schritt werden die veränderten Daten den Ausgabedaten der Methode zugewiesen. Beispiel: __daten_post_aus = __daten_post
-- return __daten_post_aus
-
-
-Parameter in einer Methode werden mit einer Typ-Annotation versehen.
-
-Alle Variablen werden mit einer Typ-Annotation versehen, auch die lokalen Variablen, die aus einem Parameter in der Methode übernommen werden
-
-Alle Variablen werden am Anfang einer Methode initialisiert. Zuerst werden die lokalen Vriablen aus den Parametern erzeugt.
-
-
-
+## Vorgehen bei Berechnungen mit Variablen
+1. Übernahme der Parameter in lokale Variablen. Beispiel: Parameter "ebenen" wird zu lokaler Variable "__ebenen_ein"
+2. Die Parameter werden in der gleichen Reihenfolge wie im Methodenkopf in lokale Variablen überführt 
+3. Alle Variablen werden zu Beginn der Methode initialisiert
+4. Berechnungen auf Basis der lokalen Variablen erfolgen in anderen Variablen. Bespiel: __anzahl_ebenen = len(__ebenen_ein)
+5. Der Datentyp einer Varablen darf nicht verändert werden - statdessen erfolgt die Veränderung in einer neuen Variablen
 
 
 
