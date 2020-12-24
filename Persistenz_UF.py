@@ -15,7 +15,7 @@ class Baum:
 
     def __init__(self, wurzel: str):
         self.wurzel_ein: str = wurzel
-        self.kinder: list = []
+        self.knoten = Knoten()
 
 
 class Knoten:
