@@ -11,34 +11,24 @@ import API_UF
 import CRUD_Rueckmeldung_UF
 
 
-class Baum:
-
-    def __init__(self, wurzel: str):
-        self.wurzel_ein: str = wurzel
-        self.knoten = Knoten()
-
-
-class Knoten:
-    def __init__(self):
-        self.schluessel_ressource: str = ""
-        self.speicherinhalt = Speicherinhalt()
-        self.eltern: str = ""
-        self.kinder: list = []
-
-    def __str__(self):
-        self.inhalt_knoten: dict = {}
-        self.inhalt_knoten["Ressource"] = self.schluessel_ressource
-        self.inhalt_knoten["Kinder"] = self.kinder
-        self.inhalt_knoten["Eltern"] = self.eltern
-        self.inhalt_knoten["Speicherinhalt"] = self.speicherinhalt
-
-        return self.inhalt_knoten
-
-
 class Speicherinhalt:
 
     def __init__(self):
-        self.speicherobjekt: dict = {}
+        self.speicherdaten: dict = {}
+
+
+class Speicherelement:
+
+    def __init__(self, schluessel: str = ""):
+        self.schluessel_ein = schluessel
+        self.speicherinhalt = Speicherinhalt()
+
+class Baum:
+
+    def __init__(self):
+        self.speicherelement = None
+        self.kinder: list = []
+        self.eltern: str = ""
 
 
 class Persistenz:
