@@ -132,8 +132,8 @@ class Persistenz:
                 break
         if __ressource_vorhanden:
             __aktuelle_ebene.update(__inhalt_ein)
-            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherobjekt
-            print(type(__neues_speicherelement.speicherobjekt))
+            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherdaten
+            print(type(__neues_speicherelement.speicherdaten))
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
 
@@ -168,8 +168,8 @@ class Persistenz:
                 break
         if __ressource_vorhanden:
             __aktuelle_ebene.update(__inhalt)
-            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherobjekt
-            print(type(__neues_speicherelement.speicherobjekt))
+            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherdaten
+            print(type(__neues_speicherelement.speicherdaten))
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
 
