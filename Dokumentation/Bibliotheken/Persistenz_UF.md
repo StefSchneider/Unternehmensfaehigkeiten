@@ -15,7 +15,7 @@ haben keine Kinder.
 Zur Umsetzung werden drei Klassen eingeführt: **Baum**, **Speicherelement** und **Speicherinhalt**. Jede neue Ressource
 wird als neuer Baum in die Persistenz eingebunden. 
 
-Grafik
+![Klassen](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_Bestandteile_Persistenz.png)
 
 Jeder **Baum** besteht aus drei Bestandteilen:
 1. Speicherelement
@@ -44,8 +44,7 @@ Beispiel: „prints“ hat die Hierarchiestufe 0, „prints/1000_4711“ wird au
 Die Höhe des Baums ergibt sich aus der Anzahl der Hierarchiestufen. Die Breite einer Hierarchiestufe ergibt sich aus der
 Anzahl ihrer Knoten; die Breite des Baums ergibt sich aus der maximalen Breite der einzelnen Hierarchiestufen.
 
-
-Grafik
+![Beispiel für Speicheraufbau](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_Aufbau_Persistenz_Datenspeicher.png)
 
 
 # Klassen
