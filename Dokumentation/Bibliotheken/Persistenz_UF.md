@@ -26,8 +26,9 @@ Im **Speicherelement** werden die abgespeicherten Daten zu der Ressource hinterl
 und dem **Speicherinhalt**. **Kinder** ist eine Liste, in der die Unterressourcen zu der aktuellen Ressource abgelegt
 werden. Hat die Ressource keine Unterressourcen, bleibt die Kinderliste leer. Neue Unterressourcen (Kinder) werden als
 Baum-Objekte in der Kinder-Liste abgespeichert. Der **Elternpfad** enthält ebenfalls eine Liste. Dort werden die Namen
-der einzelnen Hierarchien bis zur aktuellen Ressource abgelegt. Eine solche Vorgehensweise erleichtert die spätere
-Umwandlung des Baums in ein Dictionary (siehe Docstring Methode *wandle_baum_in_dict*.
+der einzelnen Hierarchien bis zur aktuellen Ressource abgelegt, bespielsweise ["prints", "1000_4711"]. Eine solche 
+Vorgehensweise erleichtert die spätere Umwandlung des Baums in ein Dictionary (siehe Docstring Methode 
+*wandle_baum_in_dict*.
 
 Jedes **Speicherelement** besteht aus zwei Betandteilen:
 1. Schlüssel
