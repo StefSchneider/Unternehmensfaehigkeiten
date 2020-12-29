@@ -33,15 +33,18 @@ class Baum:
     def wandle_baum_in_dict(self) -> dict:
         """
         Diese Methode wandelt die Baumstruktur der Persistenz in ein Dictionary um, damit dieses später im JSON-Format
-        übertragen werden kann. Dazu werden der Reihe nach alle Speicherobjekte im Baum durchgegangen und in eine 
+        übertragen werden kann. Dazu werden der Reihe nach alle Speicherobjekte im Baum durchlaufen und in eine
         Queue geschrieben, bis das letzte Objekt eines Pfads erreicht ist (die Variable kinder enthält eine leere 
         Liste). Der Vorteil der Speicherung von Objekten in der Queue besteht darin, dass sobald das Pfadende erreicht
         ist, der Baum nicht wieder von oben durchlaufen werden muss - anders als beim Dictionary. Die Methode endet,
         wenn kein Objekt mehr in der Queue liegt, d.h. alle Objekte abgearbeitet wurden. Es müssen zwei Pfade gesteuert
-        werden: der Pfad durch den Baum und der Pfad durch das Dictionary.
+        werden: der Pfad durch den Baum und der Pfad durch das Dictionary. Die Speicherinhalte werden als eigene Klasse
+        (Speicherinhalt) im Dictionary gespeichert, um bei anderen Methoden, die ein entsprechendes Dictionary
+        analysieren, ein Ende des Pfades zu markieren, d.h. der Eintrag Speicherinhalt in einem Dictionary das Ende,
+        das die Speicherdaten enthält.
         :return: den umgewandelten Baum als dict
         """
-        __aktuelles_element_baum = self  # datenspeicher statt self
+        __aktuelles_element_baum = self
         __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
         __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
         # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherelement nur auf der entsprechenden
@@ -66,9 +69,9 @@ class Baum:
             __aktuelles_element_queue = __speicherelemente_in_queue.popleft()
             if len(__aktuelles_element_queue.elternpfad) < __laenge_letzter_pfad_dict:
                 # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
-                # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue Elternpfad
-                # weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die richtige
-                # Hierarchiestufe durchlaufen.
+                # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue
+                # Elternpfad aus weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die
+                # richtige Hierarchiestufe durchlaufen.
                 __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
                 __aktueller_teil_dictionary = __start_dictionary
                 for __elemente in __aktuelles_element_queue.elternpfad:
