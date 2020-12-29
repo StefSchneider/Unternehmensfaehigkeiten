@@ -1,10 +1,20 @@
 import collections
 
+
 class Speicherinhalt:
 
     def __init__(self):
         self.speicherdaten: dict = {}
 
+    def __str__(self):
+
+        return str(self.speicherdaten)
+
+"""
+    def __repr__(self):
+
+        return str(self.speicherdaten)
+"""
 
 class Speicherelement:
 
@@ -31,56 +41,54 @@ class Baum:
         werden: der Pfad durch den Baum und der Pfad durch das Dictionary.
         :return: den umgewandelten Baum als dict
         """
-        __aktuelle_hierarchie_in_baum = datenspeicher
-        __dictionary_aus_baum: dict = {}
-        __aktueller_teil_dictionary: dict = {}  
+        __aktuelles_element_baum = self  # datenspeicher statt self
+        __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
+        __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
         # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherelement nur auf der entsprechenden
         # Hierarchie stattfindet, muss ein Teil-Dictionary die aktuelle Hierarchie abbilden. Auf diesem erfolgt das
         # Update.
-        __starthierarchie_in_dict: str = ""
-        __starthierarchie_in_dict = __aktuelle_hierarchie_in_baum.speicherelement.schluessel_ein
-        __dictionary_aus_baum[__starthierarchie_in_dict] = {}
-        __aktuelle_hierarchie_in_dict: str = ""
-        __aktuelles_speicherelement = Speicherinhalt()
-        __laenge_letzter_pfad: int = 0
-        __aktuelles_speicherelement.speicherdaten = \
-            __aktuelle_hierarchie_in_baum.speicherelement.speicherinhalt.speicherdaten
-        print("Aktuelles Speicherelement", __aktuelles_speicherelement, type(__aktuelles_speicherelement))
-        __dictionary_aus_baum[__starthierarchie_in_dict] = __aktuelles_speicherelement.speicherdaten
-        print("Dict aus Baum", __dictionary_aus_baum, type(__dictionary_aus_baum["prints"]))
+        __startschluessel_dict: str = ""
+        __startschluessel_dict = __aktuelles_element_baum.speicherelement.schluessel_ein
+        __aktueller_schluessel_dict: str = ""
+        __aktueller_speicherinhalt_dict = Speicherinhalt()
+        __aktuelles_speicherelement_dict: dict = {}
+        __laenge_letzter_pfad_dict: int = 0
+        __aktuelles_speicherelement_dict[__startschluessel_dict] = \
+            {"__speicherinhalt": __aktuelles_element_baum.speicherelement.speicherinhalt}
+        __dictionary_aus_baum.update(__aktuelles_speicherelement_dict)
         # initiales Befüllen des Dictionaries mit der obersten Ebene
         __aktueller_teil_dictionary = __dictionary_aus_baum
         __start_dictionary = __dictionary_aus_baum
         __speicherelemente_in_queue = collections.deque()
-        for __kinder in __aktuelle_hierarchie_in_baum.kinder:  # initiales Befüllen der Queue
+        for __kinder in __aktuelles_element_baum.kinder:  # initiales Befüllen der Queue
             __speicherelemente_in_queue.append(__kinder)
         while len(__speicherelemente_in_queue) > 0:
-            __aktuelles_element_aus_queue = __speicherelemente_in_queue.popleft()
-            if len(__aktuelles_element_aus_queue.elternpfad) < __laenge_letzter_pfad:
-            # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
-            # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue Elternpfad
-            # weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die richtige
-            # Hierarchiestufe durchlaufen.
-                __laenge_letzter_pfad = len(__aktuelles_element_aus_queue.elternpfad)
+            __aktuelles_element_queue = __speicherelemente_in_queue.popleft()
+            if len(__aktuelles_element_queue.elternpfad) < __laenge_letzter_pfad_dict:
+                # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
+                # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue Elternpfad
+                # weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die richtige
+                # Hierarchiestufe durchlaufen.
+                __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
                 __aktueller_teil_dictionary = __start_dictionary
-                for __elemente in __aktuelles_element_aus_queue.elternpfad:
+                for __elemente in __aktuelles_element_queue.elternpfad:
                     __aktueller_teil_dictionary = __aktueller_teil_dictionary[__elemente]
             else:
-                __aktuelle_hierarchie_in_dict = str(__aktuelles_element_aus_queue.elternpfad[-1])
+                __aktueller_schluessel_dict = str(__aktuelles_element_queue.elternpfad[-1])
                 # Abgreifen des letzten Teil des Elternpfades. Umwandlung in einen String nötig , da sonst nicht immer
                 # der Schlüssel richtig gelesen werden kann, z.B. bei Integer-Zahlen.
-                __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktuelle_hierarchie_in_dict]
-                print("Typ __aktueller_teil_dictionary", __aktueller_teil_dictionary, type(__aktueller_teil_dictionary))
-            __laenge_letzter_pfad = len(__aktuelles_element_aus_queue.elternpfad)
-            __aktuelles_speicherelement.speicherdaten = {}
+                __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktueller_schluessel_dict]
+            __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
+            __aktuelles_speicherelement_dict = {}
             # Speicherelement muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
             # wird, nicht das alte Schlüssel-Wert-Paar ersetzt wird.
-            __aktuelles_speicherelement.speicherdaten[__aktuelles_element_aus_queue.speicherelement.schluessel_ein] = \
-                __aktuelles_element_aus_queue.speicherelement.speicherinhalt.speicherdaten
-            __aktueller_teil_dictionary.update(__aktuelles_speicherelement)
-            print("Dictionary",__dictionary_aus_baum)
-            if __aktuelles_element_aus_queue.kinder != []:
-                __speicherelemente_in_queue.extendleft(__aktuelles_element_aus_queue.kinder)
+            __aktueller_speicherinhalt_dict = {"__speicherinhalt" : __aktuelles_element_queue.speicherelement.speicherinhalt}
+            __aktuelles_speicherelement_dict[__aktuelles_element_queue.speicherelement.schluessel_ein] = \
+                __aktueller_speicherinhalt_dict
+            __aktueller_teil_dictionary.update(__aktuelles_speicherelement_dict)
+            print("Dictionary", __dictionary_aus_baum)
+            if __aktuelles_element_queue.kinder != []:
+                __speicherelemente_in_queue.extendleft(__aktuelles_element_queue.kinder)
 
         return __dictionary_aus_baum
 
@@ -88,7 +96,6 @@ class Baum:
         __baum_aus_dictionary = Baum()
 
         return __baum_aus_dictionary
-
 
 
 datenspeicher = Baum()
@@ -106,6 +113,7 @@ print("Aktuelle Hierarchie", aktuelle_hierarchie.kinder)
 
 neues_speicherelement = Speicherelement("1000_4711")
 neues_speicherelement.speicherinhalt.speicherdaten["1"] = "Test 1"
+neues_speicherelement.speicherinhalt.speicherdaten["a"] = "Test a"
 neue_ressource = Baum()
 neue_ressource.elternpfad = ["prints"]
 neue_ressource.speicherelement = neues_speicherelement
@@ -137,7 +145,6 @@ print("Aktuelle Hierarchie Kinder", aktuelle_hierarchie.kinder)
 aktuelle_hierarchie = aktuelle_hierarchie.kinder[1]
 print(aktuelle_hierarchie)
 print(aktuelle_hierarchie.speicherelement.schluessel_ein)
-
 
 print("Aktuelle Hierarchie", aktuelle_hierarchie.speicherelement.schluessel_ein)
 
