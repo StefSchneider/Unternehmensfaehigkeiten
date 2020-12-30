@@ -13,7 +13,7 @@ class Speicherinhalt:
 """
     def __repr__(self):
 
-        return str(self.speicherdaten)
+        return str(self.speicherelement)
 """
 
 class Speicherelement:
@@ -47,11 +47,11 @@ class Baum:
         __aktuelles_element_baum = self
         __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
         __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
-        # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherelement nur auf der entsprechenden
+        # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherdaten nur auf der entsprechenden
         # Hierarchie stattfindet, muss ein Teil-Dictionary die aktuelle Hierarchie abbilden. Auf diesem erfolgt das
         # Update.
         __startschluessel_dict: str = ""
-        __startschluessel_dict = __aktuelles_element_baum.speicherelement.schluessel_ein
+        __startschluessel_dict = __aktuelles_element_baum.speicherelement.schluessel
         __aktueller_schluessel_dict: str = ""
         __aktueller_speicherinhalt_dict = Speicherinhalt()
         __aktuelles_speicherelement_dict: dict = {}
@@ -83,10 +83,10 @@ class Baum:
                 __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktueller_schluessel_dict]
             __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
             __aktuelles_speicherelement_dict = {}
-            # Speicherelement muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
+            # Speicherdaten muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
             # wird, nicht das alte Schlüssel-Wert-Paar ersetzt wird.
-            __aktueller_speicherinhalt_dict = {"__speicherinhalt" : __aktuelles_element_queue.speicherelement.speicherinhalt}
-            __aktuelles_speicherelement_dict[__aktuelles_element_queue.speicherelement.schluessel_ein] = \
+            __aktueller_speicherinhalt_dict = {"__speicherinhalt" : __aktuelles_element_queue.speicherdaten.speicherinhalt}
+            __aktuelles_speicherelement_dict[__aktuelles_element_queue.speicherdaten.schluessel] = \
                 __aktueller_speicherinhalt_dict
             __aktueller_teil_dictionary.update(__aktuelles_speicherelement_dict)
             print("Dictionary", __dictionary_aus_baum)
@@ -123,7 +123,7 @@ neue_ressource.speicherelement = neues_speicherelement
 aktuelle_hierarchie.kinder.append(neue_ressource)
 
 aktuelle_hierarchie = aktuelle_hierarchie.kinder[0]
-print("Aktuelle Hierarchie", aktuelle_hierarchie.speicherelement.schluessel_ein)
+print("Aktuelle Hierarchie", aktuelle_hierarchie.speicherdaten.schluessel)
 
 neues_speicherelement = Speicherelement("3000_0815")
 neues_speicherelement.speicherinhalt.speicherdaten["3"] = "Test 3"
@@ -131,7 +131,7 @@ neue_ressource = Baum()
 neue_ressource.elternpfad = ["prints", "1000_4711"]
 neue_ressource.speicherelement = neues_speicherelement
 aktuelle_hierarchie.kinder.append(neue_ressource)
-print("Aktuelle Hierarchie Kinder", aktuelle_hierarchie.kinder[0].speicherelement.schluessel_ein)
+print("Aktuelle Hierarchie Kinder", aktuelle_hierarchie.kinder[0].speicherdaten.schluessel)
 print("Aktuelle Hierarchie Elternpfad", aktuelle_hierarchie.kinder[0].elternpfad)
 
 aktuelle_hierarchie = datenspeicher
@@ -147,13 +147,13 @@ print("Aktuelle Hierarchie Kinder", aktuelle_hierarchie.kinder)
 
 aktuelle_hierarchie = aktuelle_hierarchie.kinder[1]
 print(aktuelle_hierarchie)
-print(aktuelle_hierarchie.speicherelement.schluessel_ein)
+print(aktuelle_hierarchie.speicherdaten.schluessel)
 
-print("Aktuelle Hierarchie", aktuelle_hierarchie.speicherelement.schluessel_ein)
+print("Aktuelle Hierarchie", aktuelle_hierarchie.speicherdaten.schluessel)
 
 for kinder in datenspeicher.kinder:
-    print("Schlüssel", kinder.speicherelement.schluessel_ein)
-    print("Speicherinhalt", kinder.speicherelement.speicherinhalt.speicherdaten)
+    print("Schlüssel", kinder.speicherdaten.schluessel)
+    print("Speicherinhalt", kinder.speicherdaten.speicherinhalt.speicherelement)
     print("Eltern", kinder.elternpfad)
 
 print("--------------------------------------------")
@@ -164,13 +164,13 @@ print("--------------------------------------------")
 aktuelle_hierarchie = datenspeicher
 
 for nummer, kinder in enumerate(aktuelle_hierarchie.kinder):
-    if str(kinder.speicherelement.schluessel_ein) == "2000_0815":
+    if str(kinder.speicherdaten.schluessel) == "2000_0815":
         nummer_loesch_ressource = nummer
 del datenspeicher.kinder[nummer_loesch_ressource]
 
 for kinder in aktuelle_hierarchie.kinder:
-    print("Schlüssel", kinder.speicherelement.schluessel_ein)
-    print("Speicherinhalt", kinder.speicherelement.speicherinhalt.speicherdaten)
+    print("Schlüssel", kinder.speicherdaten.schluessel)
+    print("Speicherinhalt", kinder.speicherdaten.speicherinhalt.speicherelement)
     print("Eltern", kinder.eltern)
 
 """

@@ -10,31 +10,31 @@ import collections
 class Speicherinhalt:
 
     def __init__(self):
-        self.speicherdaten: dict = {}
+        self.speicherelement: dict = {}
 
     def __str__(self):
 
-        return str(self.speicherdaten)
+        return str(self.speicherelement)
 
 
 """
     def __repr__(self):
 
-        return str(self.speicherdaten)
+        return str(self.speicherelement)
 """
 
 
-class Speicherelement:
+class Speicherdaten:
 
-    def __init__(self, schluessel: str = ""):
-        self.schluessel_ein = schluessel
+    def __init__(self):
+        self.schluessel: str = ""
         self.speicherinhalt = Speicherinhalt()
 
 
 class Baum:
 
     def __init__(self):
-        self.speicherelement = None
+        self.speicherdaten = Speicherdaten()
         self.kinder: list = []
         self.elternpfad: list = []
 
@@ -46,9 +46,9 @@ class Persistenz:
         self.__persistenz_datenspeicher: bool = datenspeicher  # steuert, ob die Daten im Datenspeicher abgelegt werden
         self.datenspeicher: dict = {wurzel: {}}  # legt einen neuen leeren Datenspeicher für den Microservice an
         self.datenspeicher = Baum()
-        self.datenspeicher.speicherelement = Speicherelement()
-        print(self.datenspeicher.speicherelement)
-        self.datenspeicher.speicherelement.schluessel_ein = self.__wurzel
+        self.datenspeicher.speicherdaten = Speicherdaten()
+        print(self.datenspeicher.speicherdaten)
+        self.datenspeicher.speicherdaten.schluessel = self.__wurzel
         self.speicherart: str = speicherart
 
     def zerlege_pfad(self, pfad: str) -> list:
@@ -128,103 +128,103 @@ class Persistenz:
         das die Speicherdaten enthält.
         :return: den umgewandelten Baum als dict
         """
-        __aktuelles_element_baum = self.datenspeicher
+        __aktuelles_speicherobjekt_baum = self.datenspeicher
         __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
         __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
-        # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherelement nur auf der entsprechenden
+        # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherdaten nur auf der entsprechenden
         # Hierarchie stattfindet, muss ein Teil-Dictionary die aktuelle Hierarchie abbilden. Auf diesem erfolgt das
         # Update.
         __startschluessel_dict: str = ""
-        __startschluessel_dict = __aktuelles_element_baum.speicherelement.schluessel_ein
+        __startschluessel_dict = __aktuelles_speicherobjekt_baum.speicherdaten.schluessel
         __aktueller_schluessel_dict: str = ""
         __aktueller_speicherinhalt_dict = Speicherinhalt()
-        __aktuelles_speicherelement_dict: dict = {}
+        __aktuelles_speicherobjekt_dict: dict = {}
         __laenge_letzter_pfad_dict: int = 0
-        __aktuelles_speicherelement_dict[__startschluessel_dict] = \
-            {"__speicherinhalt": __aktuelles_element_baum.speicherelement.speicherinhalt}
-        __dictionary_aus_baum.update(__aktuelles_speicherelement_dict)
+        __aktuelles_speicherobjekt_dict[__startschluessel_dict] = \
+            {"__speicherinhalt": __aktuelles_speicherobjekt_baum.speicherdaten.speicherinhalt}
+        __dictionary_aus_baum.update(__aktuelles_speicherobjekt_dict)
         # initiales Befüllen des Dictionaries mit der obersten Ebene
         __aktueller_teil_dictionary = __dictionary_aus_baum
         __start_dictionary = __dictionary_aus_baum
-        __speicherelemente_in_queue = collections.deque()
-        for __kinder in __aktuelles_element_baum.kinder:  # initiales Befüllen der Queue
-            __speicherelemente_in_queue.append(__kinder)
-        while len(__speicherelemente_in_queue) > 0:
-            __aktuelles_element_queue = __speicherelemente_in_queue.popleft()
-            if len(__aktuelles_element_queue.elternpfad) < __laenge_letzter_pfad_dict:
+        __speicherobjekte_in_queue = collections.deque()
+        for __kinder in __aktuelles_speicherobjekt_baum.kinder:  # initiales Befüllen der Queue
+            __speicherobjekte_in_queue.append(__kinder)
+        while len(__speicherobjekte_in_queue) > 0:
+            __aktuelles_speicherobjekt_queue = __speicherobjekte_in_queue.popleft()
+            if len(__aktuelles_speicherobjekt_queue.elternpfad) < __laenge_letzter_pfad_dict:
                 # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
                 # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue
                 # Elternpfad aus weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die
                 # richtige Hierarchiestufe durchlaufen.
-                __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
+                __laenge_letzter_pfad_dict = len(__aktuelles_speicherobjekt_queue.elternpfad)
                 __aktueller_teil_dictionary = __start_dictionary
-                for __elemente in __aktuelles_element_queue.elternpfad:
-                    __aktueller_teil_dictionary = __aktueller_teil_dictionary[__elemente]
+                for __objekte in __aktuelles_speicherobjekt_queue.elternpfad:
+                    __aktueller_teil_dictionary = __aktueller_teil_dictionary[__objekte]
             else:
-                __aktueller_schluessel_dict = str(__aktuelles_element_queue.elternpfad[-1])
+                __aktueller_schluessel_dict = str(__aktuelles_speicherobjekt_queue.elternpfad[-1])
                 # Abgreifen des letzten Teil des Elternpfades. Umwandlung in einen String nötig , da sonst nicht immer
                 # der Schlüssel richtig gelesen werden kann, z.B. bei Integer-Zahlen.
                 __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktueller_schluessel_dict]
-            __laenge_letzter_pfad_dict = len(__aktuelles_element_queue.elternpfad)
-            __aktuelles_speicherelement_dict = {}
-            # Speicherelement muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
+            __laenge_letzter_pfad_dict = len(__aktuelles_speicherobjekt_queue.elternpfad)
+            __aktuelles_speicherobjekt_dict = {}
+            # Speicherdaten muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
             # wird, nicht das alte Schlüssel-Wert-Paar ersetzt wird.
             __aktueller_speicherinhalt_dict = \
-                {"__speicherinhalt": __aktuelles_element_queue.speicherelement.speicherinhalt}
-            __aktuelles_speicherelement_dict[__aktuelles_element_queue.speicherelement.schluessel_ein] = \
+                {"__speicherinhalt": __aktuelles_speicherobjekt_queue.speicherdaten.speicherinhalt}
+            __aktuelles_speicherobjekt_dict[__aktuelles_speicherobjekt_queue.speicherdaten.schluessel] = \
                 __aktueller_speicherinhalt_dict
-            __aktueller_teil_dictionary.update(__aktuelles_speicherelement_dict)
+            __aktueller_teil_dictionary.update(__aktuelles_speicherobjekt_dict)
             print("Dictionary", __dictionary_aus_baum)
-            if len(__aktuelles_element_queue.kinder) > 0:  # Überprüfung, ob Kinder vorhanden sind
-                __speicherelemente_in_queue.extendleft(__aktuelles_element_queue.kinder)
+            if len(__aktuelles_speicherobjekt_queue.kinder) > 0:  # Überprüfung, ob Kinder vorhanden sind
+                __speicherobjekte_in_queue.extendleft(__aktuelles_speicherobjekt_queue.kinder)
 
         return __dictionary_aus_baum
 
-    def erzeuge_speicherinhalt(self, hierarchien: list, schluessel_neue_ressource: str):  # neue Methode mit Baumstruktur
+    def erzeuge_speicherinhalt(self, hierarchien: list, schluessel_neues_speicherobjekt: str):
         """
-        Mit der Methode wird ein leeres Speicherelement unter der richtigen Ressource angelegt, das später über die
+        Mit der Methode wird ein leeres Speicherdaten unter der richtigen Ressource angelegt, das später über die
         Methode aendere_speicherinhalt gefüllt wird.
         Grundlage: CRUD - Create
-        :return: neu angelegtes Speicherelement als leeres Dictionary
+        :return: neu angelegtes Speicherdaten als leeres Dictionary
         """
         __hierarchien_ein: list = hierarchien
-        __schluessel_neue_ressource_ein = schluessel_neue_ressource
-        __neue_ressource = Baum()
-        __neue_ressource.speicherelement = Speicherelement()
-        __neue_ressource.speicherelement.schluessel_ein = __schluessel_neue_ressource_ein
+        __schluessel_neues_speicherobjekt_ein = schluessel_neues_speicherobjekt
+        __neues_speicherobjekt = Baum()
+        __neues_speicherobjekt.speicherdaten = Speicherdaten()
+        __neues_speicherobjekt.speicherdaten.schluessel = __schluessel_neues_speicherobjekt_ein
         __neuer_speicherinhalt = Speicherinhalt()
-        __neue_ressource.speicherelement.speicherinhalt = __neuer_speicherinhalt
-        __neue_ressource.elternpfad = __hierarchien_ein[-1]
-        print("erzeuge", __neue_ressource, __neue_ressource.speicherelement, __neue_ressource.speicherelement.schluessel_ein)
+        __neues_speicherobjekt.speicherdaten.speicherinhalt = __neuer_speicherinhalt
+        __neues_speicherobjekt.elternpfad = __hierarchien_ein[-1]
+        print("erzeuge", __neues_speicherobjekt, __neues_speicherobjekt.speicherdaten, __neues_speicherobjekt.speicherdaten.schluessel)
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "erzeuge_ressource_erfolgreich": False,
                                         "fehlercode": 0}
-        __ressource_vorhanden: bool = True
-        __aktuelles_speicherelement = self.datenspeicher
-        print("Aktuelles Speicherelement start", __aktuelles_speicherelement)
+        __speicherobjekt_vorhanden: bool = True
+        __aktuelles_speicherobjekt = self.datenspeicher
+        print("Aktuelles Speicherdaten start", __aktuelles_speicherobjekt)
         for __position, __schluessel in enumerate(__hierarchien_ein):
             print("Schlüssel", __schluessel)
-            if __aktuelles_speicherelement.kinder == []:
-                __aktuelles_speicherelement.kinder.append(__neue_ressource)
-                print(__aktuelles_speicherelement.kinder[0].speicherelement.schluessel_ein)
+            if __aktuelles_speicherobjekt.kinder == []:
+                __aktuelles_speicherobjekt.kinder.append(__neues_speicherobjekt)
+                print(__aktuelles_speicherobjekt.kinder[0].speicherdaten.schluessel)
             else:
-                for __kinder in __aktuelles_speicherelement.kinder:
+                for __kinder in __aktuelles_speicherobjekt.kinder:
                     print(__schluessel, __kinder)
-                    if __schluessel in __kinder.speicherelement.schluessel_ein:
-                        __aktuelles_speicherelement = __aktuelles_speicherelement[__schluessel]
-                        print(__aktuelles_speicherelement)
+                    if __schluessel in __kinder.speicherdaten.schluessel:
+                        __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__schluessel]
+                        print(__aktuelles_speicherobjekt)
                     else:
                         __rueckgaben_daten_aus["rueckmeldung"] = "Ressource kann nicht angelegt werden:" \
                                                                  + " ... " \
                                                                  + "/".join(__hierarchien_ein[__position - 1:]) \
                                                                  + " fehlt."
-                        __ressource_vorhanden = False
+                        __speicherobjekt_vorhanden = False
                         break
-        if __ressource_vorhanden:
-            __aktuelles_speicherelement.speicherelement.speicherinhalt = __neuer_speicherinhalt
-            __rueckgaben_daten_aus["daten"] = __neue_ressource.speicherelement.speicherinhalt.speicherdaten
-            print(type(__neue_ressource.speicherelement.speicherinhalt.speicherdaten))
+        if __speicherobjekt_vorhanden:
+            __aktuelles_speicherobjekt.speicherdaten.speicherinhalt = __neuer_speicherinhalt
+            __rueckgaben_daten_aus["speicherinhalt"] = __neues_speicherobjekt.speicherdaten.speicherinhalt.speicherelement
+            print(type(__neues_speicherobjekt.speicherdaten.speicherinhalt.speicherelement))
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
             print(__rueckgaben_daten_aus)
@@ -275,15 +275,15 @@ class Persistenz:
                                         "rueckmeldung": "",
                                         "aendere_ressource_erfolgreich": False,
                                         "fehlercode": 0}
-        __aktuelles_speicherelement = self.datenspeicher
+        __aktuelles_speicherobjekt = self.datenspeicher
         for __position, __schluessel in enumerate(hierarchien_ein):
             if __position == len(hierarchien_ein) - 1:
                 print("Schlüssel letzter", __schluessel)
-                print("Kinder", __aktuelles_speicherelement.kinder[0].schluessel_ein)
-                __aktuelles_speicherelement.speicherelement.schluessel_ein = __schluessel
-                __aktuelles_speicherelement.speicherelement.speicherinhalt.speicherdaten = __inhalt_ein
+                print("Kinder", __aktuelles_speicherobjekt.kinder[0].schluessel)
+                __aktuelles_speicherobjekt.speicherdaten.schluessel = __schluessel
+                __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement = __inhalt_ein
             else:
-                __aktuelles_speicherelement = __aktuelles_speicherelement[__schluessel]
+                __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__schluessel]
 
         print("Rückgabe aendere_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
 
