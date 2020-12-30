@@ -180,7 +180,7 @@ class Persistenz:
 
         return __dictionary_aus_baum
 
-    def erzeuge_speicherinhalt(self, hierarchien: list, inhalt: dict):  # neue Methode mit Baumstruktur
+    def erzeuge_speicherinhalt(self, hierarchien: list, schluessel_neue_ressource: str):  # neue Methode mit Baumstruktur
         """
         Mit der Methode wird ein leeres Speicherelement unter der richtigen Ressource angelegt, das später über die
         Methode aendere_speicherinhalt gefüllt wird.
@@ -188,9 +188,14 @@ class Persistenz:
         :return: neu angelegtes Speicherelement als leeres Dictionary
         """
         __hierarchien_ein: list = hierarchien
-        __inhalt_ein: dict = inhalt
-        __neues_speicherelement = Speicherelement()
+        __schluessel_neue_ressource_ein = schluessel_neue_ressource
+        __neue_ressource = Baum()
+        __neue_ressource.speicherelement = Speicherelement()
+        __neue_ressource.speicherelement.schluessel_ein = __schluessel_neue_ressource_ein
         __neuer_speicherinhalt = Speicherinhalt()
+        __neue_ressource.speicherelement.speicherinhalt = __neuer_speicherinhalt
+        __neue_ressource.elternpfad = __hierarchien_ein[-1]
+        print("erzeuge", __neue_ressource, __neue_ressource.speicherelement, __neue_ressource.speicherelement.schluessel_ein)
         __rueckgaben_daten_aus: dict = {"daten": None,
                                         "rueckmeldung": "",
                                         "erzeuge_ressource_erfolgreich": False,
@@ -201,11 +206,8 @@ class Persistenz:
         for __position, __schluessel in enumerate(__hierarchien_ein):
             print("Schlüssel", __schluessel)
             if __aktuelles_speicherelement.kinder == []:
-                __neues_speicherelement.schluessel_ein = __schluessel
-                __aktuelles_speicherelement.speicherinhalt = __neuer_speicherinhalt
-                __aktuelles_speicherelement.kinder.append(__neues_speicherelement)
-                print(__neues_speicherelement.schluessel_ein)
-                print(__aktuelles_speicherelement.kinder)
+                __aktuelles_speicherelement.kinder.append(__neue_ressource)
+                print(__aktuelles_speicherelement.kinder[0].speicherelement.schluessel_ein)
             else:
                 for __kinder in __aktuelles_speicherelement.kinder:
                     print(__schluessel, __kinder)
@@ -220,17 +222,14 @@ class Persistenz:
                         __ressource_vorhanden = False
                         break
         if __ressource_vorhanden:
-            __aktuelles_speicherelement.speicherelement.speicherinhalt = __inhalt_ein
-            __rueckgaben_daten_aus["daten"] = __neues_speicherelement.speicherinhalt.speicherdaten
-            print(type(__neues_speicherelement.speicherinhalt.speicherdaten))
+            __aktuelles_speicherelement.speicherelement.speicherinhalt = __neuer_speicherinhalt
+            __rueckgaben_daten_aus["daten"] = __neue_ressource.speicherelement.speicherinhalt.speicherdaten
+            print(type(__neue_ressource.speicherelement.speicherinhalt.speicherdaten))
             __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
             __rueckgaben_daten_aus["fehlercode"] = 201
             print(__rueckgaben_daten_aus)
 
         return json.dumps(__rueckgaben_daten_aus)
-
-
-
 
 
     def lese_speicherinhalt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
@@ -262,24 +261,29 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def aendere_speicherinhalt(self, ebenen: list, inhalt_ein: dict):
+    def aendere_speicherinhalt(self, hierarchien: list, inhalt_ein: dict):
         """
 
         Grundlage: CRUD - Update
         :return:
         """
-        __ebenen = ebenen
+        hierarchien_ein = hierarchien
+        print("Hierarchien ein", hierarchien_ein)
         __inhalt_ein = inhalt_ein
+        print("Inhalt ein", __inhalt_ein)
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "aendere_ressource_erfolgreich": False,
                                         "fehlercode": 0}
-        __aktuelle_ebene = self.datenspeicher
-        for __position, __schluessel in enumerate(__ebenen):
-            if __position == len(__ebenen) - 1:
-                __aktuelle_ebene = __inhalt_ein
+        __aktuelles_speicherelement = self.datenspeicher
+        for __position, __schluessel in enumerate(hierarchien_ein):
+            if __position == len(hierarchien_ein) - 1:
+                print("Schlüssel letzter", __schluessel)
+                print("Kinder", __aktuelles_speicherelement.kinder[0].schluessel_ein)
+                __aktuelles_speicherelement.speicherelement.schluessel_ein = __schluessel
+                __aktuelles_speicherelement.speicherelement.speicherinhalt.speicherdaten = __inhalt_ein
             else:
-                __aktuelle_ebene = __aktuelle_ebene[__schluessel]
+                __aktuelles_speicherelement = __aktuelles_speicherelement[__schluessel]
 
         print("Rückgabe aendere_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
 

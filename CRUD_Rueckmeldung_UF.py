@@ -321,22 +321,27 @@ class CRUD_Rueckmeldung:
 
         return json.dumps(__payload_get_request)
 
-    def post_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+    def post_request_in_crud(self, hierarchien: list, inhalt: dict) -> json:
         """
         1. Create
         2. Update
         :return:
         """
-        __ebenen = ebenen
-        __inhalt_ein = inhalt_ein
+        __hierarchien_ein: list = hierarchien
+        __inhalt_ein = inhalt
+        __schluessel_neue_ressource: str = ""
+        __schluessel_neue_ressource = str(list(__inhalt_ein.keys())[0])
+        __hierarchien_erweitert: list = []  # neues Hierarchien_Liste mit Schlüssel der neuen Ressorce
+        __hierarchien_erweitert = __hierarchien_ein.copy()
+        __hierarchien_erweitert.append(__schluessel_neue_ressource)
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
         __aktuelle_ebene = self.persistenz.datenspeicher
-        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherinhalt(__ebenen, __inhalt_ein))
+        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherinhalt(__hierarchien_ein, __schluessel_neue_ressource))
         print("self.Datenspeicher", self.persistenz.datenspeicher)
         if __neues_speicherelement["erzeuge_ressource_erfolgreich"]:
-            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherinhalt(__ebenen, __inhalt_ein))
+            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherinhalt(__hierarchien_erweitert, __inhalt_ein))
         else:
             print(__neues_speicherelement["rueckmeldung"])
 
