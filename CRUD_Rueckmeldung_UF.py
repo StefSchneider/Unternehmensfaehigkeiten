@@ -45,7 +45,7 @@ class CRUD_Rueckmeldung:
         """
         __ebenen: list = ebenen_ein
         __inhalt_ressource: json = {}
-        __inhalt_ressource = json.loads(self.persistenz.lese_speicherinhalt(__ebenen))
+        __inhalt_ressource = json.loads(self.persistenz.lese_speicherobjekt(__ebenen))
 
         return __inhalt_ressource
 
@@ -338,10 +338,10 @@ class CRUD_Rueckmeldung:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
         __aktuelle_ebene = self.persistenz.datenspeicher
-        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherinhalt(__hierarchien_ein, __schluessel_neue_ressource))
+        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherobjekt(__hierarchien_ein, __schluessel_neue_ressource))
         print("self.Datenspeicher", self.persistenz.datenspeicher)
         if __neues_speicherelement["erzeuge_ressource_erfolgreich"]:
-            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherinhalt(__hierarchien_erweitert, __inhalt_ein))
+            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherobjekt(__hierarchien_erweitert, __inhalt_ein))
         else:
             print(__neues_speicherelement["rueckmeldung"])
 
@@ -361,7 +361,7 @@ class CRUD_Rueckmeldung:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
-        speicherelement = json.loads(self.persistenz.loesche_speicherinhalt(__ebenen))
+        speicherelement = json.loads(self.persistenz.loesche_speicherobjekt(__ebenen))
         __ebenen = ebenen[:len(ebenen) - 1]
         speicherelement = json.loads(self.post_request_in_crud(__ebenen, __inhalt_ein))
 
@@ -385,7 +385,7 @@ class CRUD_Rueckmeldung:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
-        __aktuelles_speicherelement = json.loads(self.persistenz.lese_speicherinhalt(__ebenen))
+        __aktuelles_speicherelement = json.loads(self.persistenz.lese_speicherobjekt(__ebenen))
         __aktuelles_speicherelement = __aktuelles_speicherelement["daten"]
         for __schluessel in __inhalt_ein:
             try:
@@ -407,7 +407,7 @@ class CRUD_Rueckmeldung:
         __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
-        __speicherelement_loeschen = self.persistenz.loesche_speicherinhalt(__ebenen)
+        __speicherelement_loeschen = self.persistenz.loesche_speicherobjekt(__ebenen)
         __speicherelement_loeschen = json.loads(__speicherelement_loeschen)
         if __speicherelement_loeschen["rueckmeldung"] != "":
             print(__speicherelement_loeschen["rueckmeldung"])

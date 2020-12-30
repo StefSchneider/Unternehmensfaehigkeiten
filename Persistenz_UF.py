@@ -180,7 +180,7 @@ class Persistenz:
 
         return __dictionary_aus_baum
 
-    def erzeuge_speicherinhalt(self, hierarchien: list, schluessel_neues_speicherobjekt: str):
+    def erzeuge_speicherobjekt(self, hierarchien: list, schluessel_neues_speicherobjekt: str):
         """
         Mit der Methode wird ein leeres Speicherdaten unter der richtigen Ressource angelegt, das später über die
         Methode aendere_speicherinhalt gefüllt wird.
@@ -232,7 +232,7 @@ class Persistenz:
         return json.dumps(__rueckgaben_daten_aus)
 
 
-    def lese_speicherinhalt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
+    def lese_speicherobjekt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
 
         Grundlage: CRUD - Read
@@ -261,7 +261,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def aendere_speicherinhalt(self, hierarchien: list, inhalt_ein: dict):
+    def aendere_speicherobjekt(self, hierarchien: list, inhalt_ein: dict):
         """
 
         Grundlage: CRUD - Update
@@ -289,7 +289,7 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def loesche_speicherinhalt(self, ebenen: list):
+    def loesche_speicherobjekt(self, ebenen: list):
         """
         
         Grundlage: CRUD - Delete
