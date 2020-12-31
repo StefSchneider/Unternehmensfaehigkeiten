@@ -227,32 +227,33 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def lese_speicherobjekt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
+    def lese_speicherobjekt(self, hierarchien: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
 
         Grundlage: CRUD - Read
         :return:
         """
-        __ebenen = ebenen
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "lese_ressource_erfolgreich": False,
-                                        "fehlercode": 0}
+        __hierarchien_ein = hierarchien
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__lese_ressource_erfolgreich": False,
+                                        "__fehlercode": 0}
         __ressource_vorhanden: bool = True
-        __aktuelle_ebene = self.datenspeicher
-        for __schluesselwort in __ebenen:
+        __aktuelles_speicherobjekt = self.datenspeicher
+        for __schluesselwort in __hierarchien_ein:
             try:
-                __aktuelle_ebene = __aktuelle_ebene[__schluesselwort]
+                __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__schluesselwort]
             except KeyError:
-                print("Ebene", __aktuelle_ebene, "nicht vorhanden")
+                print("Ebene", __aktuelles_speicherobjekt, "nicht vorhanden")
                 __ressource_vorhanden = False
                 __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} nicht vorhanden"
                 __rueckgaben_daten_aus["speicherinhalt"] = {}
                 break
         if __ressource_vorhanden:
-            __rueckgaben_daten_aus["speicherinhalt"] = __aktuelle_ebene
+            __rueckgaben_daten_aus["speicherinhalt"] = __aktuelles_speicherobjekt
             __rueckgaben_daten_aus["rueckmeldung"] = f"Ressource {'/'.join(ebenen)} erfolgreich abgerufen"
             __rueckgaben_daten_aus["lese_ressource_erfolgreich"] = True
+        print("Rückgabe lese Speicherobjekt", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
 
