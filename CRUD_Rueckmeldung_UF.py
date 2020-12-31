@@ -334,16 +334,16 @@ class CRUD_Rueckmeldung:
         __hierarchien_erweitert: list = []  # neues Hierarchien_Liste mit Schlüssel der neuen Ressorce
         __hierarchien_erweitert = __hierarchien_ein.copy()
         __hierarchien_erweitert.append(__schluessel_neue_ressource)
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "fehlercode": 0}
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__fehlercode": 0}
         __aktuelle_ebene = self.persistenz.datenspeicher
         __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherobjekt(__hierarchien_ein, __schluessel_neue_ressource))
         print("self.Datenspeicher", self.persistenz.datenspeicher)
-        if __neues_speicherelement["erzeuge_ressource_erfolgreich"]:
+        if __neues_speicherelement["__erzeuge_speicherobjekt_erfolgreich"]:
             __neues_speicherelement = json.loads(self.persistenz.aendere_speicherobjekt(__hierarchien_erweitert, __inhalt_ein))
         else:
-            print(__neues_speicherelement["rueckmeldung"])
+            print(__neues_speicherelement["__rueckmeldung"])
 
         return json.dumps(__rueckgaben_daten_aus)
 

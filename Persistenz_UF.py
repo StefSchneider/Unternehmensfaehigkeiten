@@ -195,42 +195,37 @@ class Persistenz:
         __neuer_speicherinhalt = Speicherinhalt()
         __neues_speicherobjekt.speicherdaten.speicherinhalt = __neuer_speicherinhalt
         __neues_speicherobjekt.elternpfad = __hierarchien_ein[-1]
-        print("erzeuge", __neues_speicherobjekt, __neues_speicherobjekt.speicherdaten, __neues_speicherobjekt.speicherdaten.schluessel)
-        __rueckgaben_daten_aus: dict = {"daten": None,
-                                        "rueckmeldung": "",
-                                        "erzeuge_ressource_erfolgreich": False,
-                                        "fehlercode": 0}
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__erzeuge_speicherobjekt_erfolgreich": False,
+                                        "__fehlercode": 0}
         __speicherobjekt_vorhanden: bool = True
         __aktuelles_speicherobjekt = self.datenspeicher
-        print("Aktuelles Speicherdaten start", __aktuelles_speicherobjekt)
-        for __position, __schluessel in enumerate(__hierarchien_ein):
-            print("Schlüssel", __schluessel)
-            if __aktuelles_speicherobjekt.kinder == []:
-                __aktuelles_speicherobjekt.kinder.append(__neues_speicherobjekt)
-                print(__aktuelles_speicherobjekt.kinder[0].speicherdaten.schluessel)
-            else:
-                for __kinder in __aktuelles_speicherobjekt.kinder:
-                    print(__schluessel, __kinder)
-                    if __schluessel in __kinder.speicherdaten.schluessel:
-                        __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__schluessel]
-                        print(__aktuelles_speicherobjekt)
-                    else:
-                        __rueckgaben_daten_aus["rueckmeldung"] = "Ressource kann nicht angelegt werden:" \
-                                                                 + " ... " \
-                                                                 + "/".join(__hierarchien_ein[__position - 1:]) \
-                                                                 + " fehlt."
-                        __speicherobjekt_vorhanden = False
-                        break
+        __speicherobjekt_fehlt: str = ""
+        for __schluessel in __hierarchien_ein:
+            for __position, __kinder in enumerate(__aktuelles_speicherobjekt.kinder):
+                if __schluessel in __kinder.speicherdaten.schluessel:
+                    __aktuelles_speicherobjekt = __aktuelles_speicherobjekt.kinder[__position]
+                    __speicherobjekt_vorhanden = True
+                    break
+                else:
+                    __speicherobjekt_vorhanden = False
+                    __speicherobjekt_fehlt = schluessel_neues_speicherobjekt
         if __speicherobjekt_vorhanden:
-            __aktuelles_speicherobjekt.speicherdaten.speicherinhalt = __neuer_speicherinhalt
-            __rueckgaben_daten_aus["speicherinhalt"] = __neues_speicherobjekt.speicherdaten.speicherinhalt.speicherelement
-            print(type(__neues_speicherobjekt.speicherdaten.speicherinhalt.speicherelement))
-            __rueckgaben_daten_aus["erzeuge_ressource_erfolgreich"] = True
-            __rueckgaben_daten_aus["fehlercode"] = 201
-            print(__rueckgaben_daten_aus)
+            __aktuelles_speicherobjekt.kinder.append(__neues_speicherobjekt)
+            __rueckgaben_daten_aus["__speicherinhalt"] = {}
+            __rueckgaben_daten_aus["__rueckmeldung"] = "Neues Speicherobjekt konnte angelegt werden"
+            __rueckgaben_daten_aus["__erzeuge_speicherobjekt_erfolgreich"] = True
+            __rueckgaben_daten_aus["__fehlercode"] = 201
+        else:
+            __rueckgaben_daten_aus["__rueckmeldung"] = "Speicherobjekt kann nicht angelegt werden:" \
+                                                       + " ... " \
+                                                       + "/".join(__speicherobjekt_fehlt) \
+                                                       + " fehlt."
+            __rueckgaben_daten_aus["__fehlercode"] = 404
+        print ("Rückgabe erzeuge Speicherobjekt", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
-
 
     def lese_speicherobjekt(self, ebenen: list) -> json:  # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
@@ -267,23 +262,35 @@ class Persistenz:
         Grundlage: CRUD - Update
         :return:
         """
-        hierarchien_ein = hierarchien
-        print("Hierarchien ein", hierarchien_ein)
+        __hierarchien_ein = hierarchien
         __inhalt_ein = inhalt_ein
-        print("Inhalt ein", __inhalt_ein)
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "aendere_ressource_erfolgreich": False,
-                                        "fehlercode": 0}
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__aendere_speicherobjekt_erfolgreich": False,
+                                        "__fehlercode": 0}
         __aktuelles_speicherobjekt = self.datenspeicher
-        for __position, __schluessel in enumerate(hierarchien_ein):
-            if __position == len(hierarchien_ein) - 1:
-                print("Schlüssel letzter", __schluessel)
-                print("Kinder", __aktuelles_speicherobjekt.kinder[0].schluessel)
-                __aktuelles_speicherobjekt.speicherdaten.schluessel = __schluessel
-                __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement = __inhalt_ein
-            else:
-                __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__schluessel]
+        __speicherobjekt_vorhanden: bool = False
+        for __schluessel in __hierarchien_ein:
+            for __position, __kinder in enumerate(__aktuelles_speicherobjekt.kinder):
+                if __schluessel in __kinder.speicherdaten.schluessel:
+                    __aktuelles_speicherobjekt = __aktuelles_speicherobjekt.kinder[__position]
+                    __speicherobjekt_vorhanden = True
+                    break
+                else:
+                    __speicherobjekt_vorhanden = False
+        if __speicherobjekt_vorhanden:
+            __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement = __inhalt_ein[__schluessel]
+            __speicherinhalt_als_dict = __inhalt_ein[__schluessel]
+            # Umwandlung ist erforderlich, da JSON die Klasse Speicherinhalt nicht verarbeiten kann.
+            # Kenzeichnung erfolgt durch Schlüssel "__speicherinhalt". Damit kann an anderer Stelle die Klasse
+            # wiederhergestellt werden
+            __rueckgaben_daten_aus["__speicherinhalt"] = __speicherinhalt_als_dict
+            __rueckgaben_daten_aus["__rueckmeldung"] = "speicherobjekt geändert"
+            __rueckgaben_daten_aus["__aendere_speicherobjekt_erfolgreich"] = True
+            __rueckgaben_daten_aus["__fehlercode"] = 200
+        else:
+            __rueckgaben_daten_aus["__rueckmeldung"] = "speicherobjekt konnte nicht geändert werden, da nicht vorhanden"
+            __rueckgaben_daten_aus["__fehlercode"] = 404
 
         print("Rückgabe aendere_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
 
