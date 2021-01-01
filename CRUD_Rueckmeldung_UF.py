@@ -228,7 +228,7 @@ class CRUD_Rueckmeldung:
         :return: Anzahl der Ebenen als Integer
         """
         __ebenen = collections.deque()
-        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["speicherinhalt"]
+        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["__speicherinhalt"]
         __strukturtiefe: int = 0
         __laenge_letzte_ebene: int = 0
         __startebene = __daten_speicherobjekt

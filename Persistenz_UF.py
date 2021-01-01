@@ -85,7 +85,44 @@ class Persistenz:
 
         return max(__ressourcen)
 
-    def zeige_datenspeicher_json(self, hierarchie: dict):
+    def ersetze_speicherinhalt(self):
+        """
+
+        :return:
+        """
+        __datenspeicher_ein: dict = self
+        __datenspeicher_als_dict: dict = {}
+        __laenge_letzte_ebene: int = 0
+        __startobjekt = __datenspeicher_ein
+        __aktuelles_speicherobjekt = __startobjekt
+        __speicherobjekte_in_queue = collections.deque()
+        __schluessel_aktuelles_speicherobjekt = list(__aktuelles_speicherobjekt.keys())  # initiale Befüllung der Queue
+        for __schluessel in __schluessel_aktuelles_speicherobjekt:
+            __speicherobjekte_in_queue.append([__schluessel])
+        while len(__speicherobjekte_in_queue) > 0:
+            __aktuelles_speicherobjekt = __speicherobjekte_in_queue.popleft()
+            if len(__aktuelles_speicherobjekt) < __laenge_letzte_ebene:
+                # Der Vergleich steuert, ob im Baum wieder in den Ebenen wieder nach oben gesprungen werden muss. Das
+                # erfolgt, wenn im aktuellen Zweig das letzte Element erreicht wurde.
+                __laenge_letzte_ebene = len(__aktuelles_speicherobjekt)
+                __aktuelles_speicherobjekt = __startobjekt
+                for __elemente in __speicherobjekte_in_queue[:-1]:
+                    __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__elemente]
+            __laenge_letzte_ebene = len(__aktuelles_speicherobjekt)
+            __aktueller_schluessel = str(__aktuelles_speicherobjekt[-1])
+            #            if type(__aktuelles_speichrobjekt[__aktueller_schluessel]) == dict:
+            print(type(__aktuelles_speicherobjekt[__aktueller_schluessel]))
+            if (type(__aktuelles_speicherobjekt[__aktueller_schluessel]) == dict and
+                    type(__aktuelles_speicherobjekt[__aktueller_schluessel]) != Speicherinhalt):
+                __aktuelles_speicherobjekt = __aktuelles_speicherobjekt[__aktueller_schluessel]
+                __schluessel_aktuelles_speicherobjekt = list(__aktuelles_speicherobjekt.keys())
+                for __schluessel in __schluessel_aktuelles_speicherobjekt:
+                    __neues_speicherobjekt = __aktuelles_speicherobjekt + [__schluessel]
+                    __speicherobjekte_in_queue.appendleft(__neues_speicherobjekt)
+
+        return __datenspeicher_als_dict
+
+    def zeige_datenspeicher_json(self, datenspeicher: dict):
         """
         Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
         erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
@@ -93,9 +130,11 @@ class Persistenz:
         :param hierarchie:
         :return: None
         """
-        __hierarchie_ein: dict = hierarchie
-        __datenspeicher_json = json.dumps(__hierarchie_ein, sort_keys = True, indent = 4)
+        __datenspeicher_ein: dict = datenspeicher
+        __datenspeicher_json = __datenspeicher_ein.ersetze_datenspeicher()
+        __datenspeicher_json = json.dumps(__datenspeicher_json, sort_keys = True, indent = 4)
         print(__datenspeicher_json)
+
 
     def ersetze_letzen_schluessel(self, hierarchien: list) -> list:
         """
@@ -210,6 +249,8 @@ class Persistenz:
                 else:
                     __speicherobjekt_vorhanden = False
                     __speicherobjekt_fehlt = schluessel_neues_speicherobjekt
+            if not __speicherobjekt_vorhanden:
+                break
         if __speicherobjekt_vorhanden:
             __aktuelles_speicherobjekt.kinder.append(__neues_speicherobjekt)
             __rueckgaben_daten_aus["__speicherinhalt"] = {}
@@ -222,7 +263,7 @@ class Persistenz:
                                                        + "/".join(__speicherobjekt_fehlt) \
                                                        + " fehlt."
             __rueckgaben_daten_aus["__fehlercode"] = 404
-        print ("Rückgabe erzeuge Speicherobjekt", json.dumps(__rueckgaben_daten_aus))
+        print("Rückgabe erzeuge Speicherobjekt", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
 
@@ -238,7 +279,7 @@ class Persistenz:
                                         "__rueckmeldung": "",
                                         "__lese_ressource_erfolgreich": False,
                                         "__fehlercode": 0}
-        __ressource_vorhanden: bool = True
+        __speicherobjekt_vorhanden: bool = True
         __speicherinhalt_als_dict: dict = {}
         __aktuelles_speicherobjekt = self.datenspeicher
         for __schluessel in __hierarchien_ein:
@@ -248,7 +289,9 @@ class Persistenz:
                     break
                 else:
                     __speicherobjekt_vorhanden = False
-        if __ressource_vorhanden:
+            if not __speicherobjekt_vorhanden:
+                break
+        if __speicherobjekt_vorhanden:
             for __schluessel in __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement:
                 __speicherinhalt_als_dict[__schluessel] = \
                     __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement[__schluessel]
@@ -278,15 +321,19 @@ class Persistenz:
         __aktuelles_speicherobjekt = self.datenspeicher
         __speicherinhalt_als_dict: dict = {}
         __speicherobjekt_vorhanden: bool = True
+        __letzter_schluessel: str = ""
         for __schluessel in __hierarchien_ein:
             for __position, __kinder in enumerate(__aktuelles_speicherobjekt.kinder):
                 if __schluessel in __kinder.speicherdaten.schluessel:
                     __aktuelles_speicherobjekt = __aktuelles_speicherobjekt.kinder[__position]
+                    __letzter_schluessel = __schluessel
                     break
                 else:
                     __speicherobjekt_vorhanden = False
+            if not __speicherobjekt_vorhanden:
+                break
         if __speicherobjekt_vorhanden:
-            __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement = __inhalt_ein[__schluessel]
+            __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement = __inhalt_ein[__letzter_schluessel]
             for __schluessel in __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement:
                 __speicherinhalt_als_dict[__schluessel] = \
                     __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement[__schluessel]
@@ -305,38 +352,40 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def loesche_speicherobjekt(self, ebenen: list):
+    def loesche_speicherobjekt(self, hierarchien: list):
         """
         
         Grundlage: CRUD - Delete
         :return:
         """
-        __ebenen = ebenen
-        __rueckgabe_daten_aus_nutzer: dict = {"speicherinhalt": None,
-                                              "rueckmeldung": ""
-                                              }
-        __rueckgaben_daten_aus_entwickler: dict = {"loesche_ressource_erfolgreich": False,
-                                                   "fehlercode": 0
-                                                   }
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "loesche_ressource_erfolgreich": False,
-                                        "fehlercode": 0}
-        __aktuelle_ebene = self.datenspeicher
-        for __position, __schluesselwort in enumerate(__ebenen):
-            try:
-                if __position == len(__ebenen) - 1:
-                    del(__aktuelle_ebene[__schluesselwort])
-                    __rueckgaben_daten_aus["rueckmeldung"] = "Ressource gelöscht"
-                    __rueckgaben_daten_aus["loesche_ressource_erfolgreich"] = True
-                    __rueckgaben_daten_aus["fehlercode"] = 200
+        __hierarchien_ein = hierarchien
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__loesche_ressource_erfolgreich": False,
+                                        "__fehlercode": 0}
+        __aktuelles_speicherobjekt = self.datenspeicher
+        __speicherobjekt_vorhanden: bool = True
+        __letzter_schluessel: str = ""
+        __letzter_schluessel = __hierarchien_ein[-1]
+        for __schluessel in __hierarchien_ein:
+            for __position, __kinder in enumerate(__aktuelles_speicherobjekt.kinder):
+                if __schluessel == __hierarchien_ein[-1]:
+                    del __aktuelles_speicherobjekt.kinder[__position]
+                    break
+                elif __schluessel in __kinder.speicherdaten.schluessel:
+                    __aktuelles_speicherobjekt = __aktuelles_speicherobjekt.kinder[__position]
+                    break
                 else:
-                    __aktuelle_ebene = __aktuelle_ebene[__schluesselwort]
-            except KeyError:
-                __rueckgaben_daten_aus["rueckmeldung"] = "Ressource nicht vorhanden"
-                __rueckgaben_daten_aus["fehlercode"] = 401
+                    __speicherobjekt_vorhanden = False
+            if not __speicherobjekt_vorhanden:
                 break
-
+        if __speicherobjekt_vorhanden:
+            __rueckgaben_daten_aus["__rueckmeldung"] = "Ressource gelöscht"
+            __rueckgaben_daten_aus["__loesche_ressource_erfolgreich"] = True
+            __rueckgaben_daten_aus["__fehlercode"] = 200
+        else:
+            __rueckgaben_daten_aus["__rueckmeldung"] = "Ressource nicht vorhanden"
+            __rueckgaben_daten_aus["__fehlercode"] = 401
         print("Rückgabe loesche_speicherinhalt:", json.dumps(__rueckgaben_daten_aus))
 
         return json.dumps(__rueckgaben_daten_aus)
