@@ -14,7 +14,7 @@ ENTWICKLER_INFORMATIONEN: bool = True
 
 class CRUD_Rueckmeldung:
 
-    def __init__(self, persistenz: str, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
+    def __init__(self, persistenz: object, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         self.persistenz = persistenz
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.rueckmeldung: dict = {}
@@ -299,9 +299,9 @@ class CRUD_Rueckmeldung:
         __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
             startzeit = __startzeit_crud_rueckmeldung_get,
             url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
-        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["speicherinhalt"]
+        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
         self.rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
-        if (isinstance(self.rueckmeldung_speicherinhalt["speicherinhalt"], dict) and
+        if (isinstance(self.rueckmeldung_speicherinhalt["__speicherinhalt"], dict) and
                 self.rueckmeldung_speicherinhalt["speicherinhalt"] != {}):
             self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
             self.rueckmeldung_nutzer["suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()

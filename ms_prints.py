@@ -105,10 +105,10 @@ def drucke(pfad):
         print("API-Fehler!!!")
     if drucke_daten:
         print("Jetzt wird ein Text gedruckt: ", text_zum_drucken)
-    print(prints_PRS.datenspeicher, type(prints_PRS.datenspeicher))
-    prints_PRS.zeige_datenspeicher_json()
+    prints_PRS.datenspeicher.zeige_datenspeicher_json()
+    prints_datenspeicher_dict = prints_PRS.datenspeicher.wandle_baum_in_dict()
 
-    return jsonify(prints_PRS.datenspeicher)
+    return jsonify(prints_datenspeicher_dict)
 
 
 if __name__ == "__main__":
