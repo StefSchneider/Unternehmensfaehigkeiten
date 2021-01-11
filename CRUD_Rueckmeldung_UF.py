@@ -404,14 +404,14 @@ class CRUD_Rueckmeldung:
         :return:
         """
         __ebenen = ebenen
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "fehlercode": 0}
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__fehlercode": 0}
         __speicherelement_loeschen = self.persistenz.loesche_speicherobjekt(__ebenen)
         __speicherelement_loeschen = json.loads(__speicherelement_loeschen)
-        if __speicherelement_loeschen["rueckmeldung"] != "":
-            print(__speicherelement_loeschen["rueckmeldung"])
-        __rueckgaben_daten_aus["rueckmeldung"] = f"Element {__ebenen[-1]} aus Speicher gelöscht"
+        if __speicherelement_loeschen["__rueckmeldung"] != "":
+            print(__speicherelement_loeschen["__rueckmeldung"])
+        __rueckgaben_daten_aus["__rueckmeldung"] = f"Element {__ebenen[-1]} aus Speicher gelöscht"
 
         print("Rückgabe delete_request_in_crud:", json.dumps(__rueckgaben_daten_aus))
 

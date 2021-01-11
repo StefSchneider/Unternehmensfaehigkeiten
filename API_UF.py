@@ -302,6 +302,7 @@ class API:
         :return:
         """
         __uebergabedaten_post: bytes = uebergabedaten_post_ein
+        print("Post", __uebergabedaten_post)
         __uebergabedaten_post: dict = self.__decode_daten(__uebergabedaten_post)
         __uebergabedaten_post_aus: dict = __uebergabedaten_post
 
@@ -338,6 +339,7 @@ class API:
         :return:
         """
         __uebergabedaten_delete: bytes = uebergabedaten_delete_ein
+        print("Übergabedaten Delete", __uebergabedaten_delete)
         __uebergabedaten_delete: dict = self.__decode_daten(__uebergabedaten_delete)
         __uebergabedaten_delete_aus: bytes = __uebergabedaten_delete
 
@@ -408,13 +410,18 @@ class API:
 
         return self.__uebergabedaten_aendere_aus
 
-    def loesche(self) ->str:
+    def loesche(self, uebergabedaten_loesche) ->str:
         """
 
         :return:
         """
+        __uebergabedaten_loesche_ein = uebergabedaten_loesche
+        print("Übergabedaten ein lösche", __uebergabedaten_loesche_ein)
+        __uebergabedaten_loesche_aus = self.__encode_daten(__uebergabedaten_loesche_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
-        urllib.request.urlopen(__anfrage_partner)
+        __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __anfrage_partner.add_header("Content-Length", len(__uebergabedaten_loesche_aus))
+        urllib.request.urlopen(__anfrage_partner, __uebergabedaten_loesche_aus)
         print("DELETE abgeschlossen")
 
         return "OK"

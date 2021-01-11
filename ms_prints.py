@@ -52,6 +52,7 @@ def drucke(pfad):
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
             uebergabedaten_ein = request.data  # hier werden die Daten aus dem Post der Quelle abgerufen
+            print("ÜBERGABEDATEN EIN POST", uebergabedaten_ein)
             rueckmeldung = prints_API.post(uebergabedaten_ein)  # hier werden die Daten in ein dict umgewandelt
             print("in rueckmeldung", rueckmeldung, type(rueckmeldung))
             __schluessel_neue_ressource = prints_PRS.erzeuge_schluessel_neueintrag(int(rueckmeldung["id"]))
@@ -97,8 +98,11 @@ def drucke(pfad):
     elif request.method == "DELETE":
         if prints_API.delete_request_erlaubt:
             uebergabedaten_ein = request.data
+            print("ÜBERGABEDATEN EIN", uebergabedaten_ein)
             prints_CRUD_Rueckmeldung.delete_request_in_crud(__hierarchien)
             rueckmeldung = prints_API.delete(uebergabedaten_ein)
+            print("RÜCKMELDUNG", rueckmeldung)
+
         else:
             return ("DELETE-Request nicht erlaubt")
     else:
