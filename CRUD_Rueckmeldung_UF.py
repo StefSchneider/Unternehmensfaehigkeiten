@@ -19,23 +19,23 @@ class CRUD_Rueckmeldung:
         self.__entwickler_informationen_anzeigen = entwickler_informationen_anzeigen
         self.rueckmeldung: dict = {}
         self.rueckmeldung_speicherinhalt_gesamt: dict = {}
-        self.rueckmeldung_speicherinhalt: dict = {"speicherinhalt": None
+        self.rueckmeldung_speicherinhalt: dict = {"__speicherinhalt": None
                                                   }
-        self.rueckmeldung_nutzer: dict = {"anzahl_speicherobjekte": None,
-                                          "status": None,
-                                          "suchschluessel": None,
-                                          "anzahl_rueckgabeobjekte": None,
-                                          "startobjekt": 0,
-                                          "berechtigung": None,
-                                          "daten_veraendert": None
+        self.rueckmeldung_nutzer: dict = {"__anzahl_speicherobjekte": None,
+                                          "__status": None,
+                                          "__suchschluessel": None,
+                                          "__anzahl_rueckgabeobjekte": None,
+                                          "__startobjekt": 0,
+                                          "__berechtigung": None,
+                                          "__daten_veraendert": None
                                           }
-        self.rueckmeldung_entwickler: dict = {"laenge_bytes": None,
-                                              "verarbeitungszeit": None,
-                                              "datenstruktur": None,
-                                              "strukturtiefe": None,
-                                              "speicherart": None
+        self.rueckmeldung_entwickler: dict = {"__laenge_bytes": None,
+                                              "__verarbeitungszeit": None,
+                                              "__datenstruktur": None,
+                                              "__strukturtiefe": None,
+                                              "__speicherart": None
                                               }
-        self.rueckmeldung_programm: dict = {"datentyp_rueckgabeobjekt": None
+        self.rueckmeldung_programm: dict = {"__datentyp_rueckgabeobjekt": None
                                             }
 
     def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list)-> dict:
@@ -63,7 +63,7 @@ class CRUD_Rueckmeldung:
         :return: Anzahl der Speicherobjekte als Integer
         """
         __anzahl_daten_speicherobjekt: int = 0
-        __speicherinhalte: list = self.rueckmeldung_speicherinhalt["speicherinhalt"].values()
+        __speicherinhalte: list = self.rueckmeldung_speicherinhalt["__speicherinhalt"].values()
         for __listenelement in __speicherinhalte:  # die Values wurden in einer Liste abgespeichert
             if isinstance(__listenelement, dict):
                 __anzahl_daten_speicherobjekt += 1
@@ -78,11 +78,11 @@ class CRUD_Rueckmeldung:
         __status_speicherobjekt: dict = {}
         __objekt_vorhanden: bool = False
         __rueckmeldung_objekt_vorhanden: str = "Ressource nicht vorhanden"
-        if self.rueckmeldung_speicherinhalt_gesamt["lese_ressource_erfolgreich"]:
-            __objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["lese_ressource_erfolgreich"]
-            __rueckmeldung_objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["rueckmeldung"]
+        if self.rueckmeldung_speicherinhalt_gesamt["__lese_ressource_erfolgreich"]:
+            __objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["__lese_ressource_erfolgreich"]
+            __rueckmeldung_objekt_vorhanden = self.rueckmeldung_speicherinhalt_gesamt["__rueckmeldung"]
         __status_speicherobjekt["objekt_vorhanden"] = __objekt_vorhanden
-        __status_speicherobjekt["rueckmeldung"] = __rueckmeldung_objekt_vorhanden
+        __status_speicherobjekt["__rueckmeldung"] = __rueckmeldung_objekt_vorhanden
 
         return __status_speicherobjekt
 
@@ -98,7 +98,7 @@ class CRUD_Rueckmeldung:
         __rueckmeldung_suchschluessel_vorhanden: str = "Suchschlüssel nicht vorhanden"
         # Hier die Prüfungsabfrage einfügen
         __status_suchschluessel["objekt_vorhanden"] = __suchschluessel_vorhanden
-        __status_suchschluessel["rueckmeldung"] = __rueckmeldung_suchschluessel_vorhanden
+        __status_suchschluessel["__rueckmeldung"] = __rueckmeldung_suchschluessel_vorhanden
 
         return "Funktion noch nicht im Einsatz"
 
@@ -173,7 +173,7 @@ class CRUD_Rueckmeldung:
         :return: Länge der Daten in bytes als Integer
         """
         __laenge_daten_bytes: int = 0
-        __speicherinhalt = json.dumps(self.rueckmeldung_speicherinhalt["speicherinhalt"])
+        __speicherinhalt = json.dumps(self.rueckmeldung_speicherinhalt["__speicherinhalt"])
         __laenge_daten_bytes = sys.getsizeof(__speicherinhalt)
 
         return __laenge_daten_bytes
@@ -214,7 +214,7 @@ class CRUD_Rueckmeldung:
         damit Entwicklern schnell Auskunft über die verwendeten Datentypen innerhalb eines Speicherobjektes geben.
         :return: Datentyp für jedes Schlüssel-Wert-Paar
         """
-        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["speicherinhalt"]
+        __daten_speicherobjekt = self.rueckmeldung_speicherinhalt["__speicherinhalt"]
         __datenstruktur_speicherobjekt: dict = {}
         for __schluessel, __werte in __daten_speicherobjekt.items():
             __datenstruktur_speicherobjekt[__schluessel] = str(type(__werte))
@@ -299,24 +299,25 @@ class CRUD_Rueckmeldung:
         __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
             startzeit = __startzeit_crud_rueckmeldung_get,
             url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
-        self.rueckmeldung_speicherinhalt["speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
-        self.rueckmeldung_entwickler["verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
+        self.rueckmeldung_speicherinhalt["__speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
+        self.rueckmeldung_entwickler["__verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
         if (isinstance(self.rueckmeldung_speicherinhalt["__speicherinhalt"], dict) and
-                self.rueckmeldung_speicherinhalt["speicherinhalt"] != {}):
-            self.rueckmeldung_nutzer["anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
-            self.rueckmeldung_nutzer["suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()
-            self.rueckmeldung_nutzer["anzahl_rueckgabeobjekte"] = \
+                self.rueckmeldung_speicherinhalt["__speicherinhalt"] != {}):
+            self.rueckmeldung_nutzer["__anzahl_speicherobjekte"] = self.ermittle_anzahl_speicherobjekte_nutzer_lese()
+            self.rueckmeldung_nutzer["__suchschluessel"] = self.ermittle_status_suchschluessel_nutzer_lese()
+            self.rueckmeldung_nutzer["__anzahl_rueckgabeobjekte"] = \
                 self.ermittle_laenge_liste_speicherobjekte_nutzer_lese()
-            self.rueckmeldung_nutzer["startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
-            self.rueckmeldung_nutzer["berechtigung"] = self.ermittle_zugriffsberechtigung_nutzer_lese(benutzer_id = "0")
-            self.rueckmeldung_nutzer["daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
-            self.rueckmeldung_entwickler["datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
-            self.rueckmeldung_entwickler["laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
-            self.rueckmeldung_entwickler["strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
-            self.rueckmeldung_entwickler["speicherart"] = self.ermittle_speicherart_entwickler_lese()
-            self.rueckmeldung_programm[
-                "datentyp_rueckgabeobjekt"] = self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
-        self.rueckmeldung_nutzer["status"] = self.ermittle_status_objekt_nutzer_lese()["objekt_vorhanden"]
+            self.rueckmeldung_nutzer["__startobjekt"] = self.ermittle_startobjekt_nutzer_lese()
+            self.rueckmeldung_nutzer["__berechtigung"] = \
+                self.ermittle_zugriffsberechtigung_nutzer_lese(benutzer_id = "0")
+            self.rueckmeldung_nutzer["__daten_veraendert"] = self.ermittle_status_daten_nutzer_lese()
+            self.rueckmeldung_entwickler["__datenstruktur"] = self.ermittle_datenstruktur_entwickler_lese()
+            self.rueckmeldung_entwickler["__laenge_bytes"] = self.ermittle_laenge_daten_bytes_entwickler_lese()
+            self.rueckmeldung_entwickler["__strukturtiefe"] = self.ermittle_strukturtiefe_baum_entwickler_lese()
+            self.rueckmeldung_entwickler["_speicherart"] = self.ermittle_speicherart_entwickler_lese()
+            self.rueckmeldung_programm["__datentyp_rueckgabeobjekt"] = \
+                self.ermittle_datentyp_rueckgabeobjekt_programm_lese()
+        self.rueckmeldung_nutzer["__status"] = self.ermittle_status_objekt_nutzer_lese()["objekt_vorhanden"]
         __payload_get_request = self.rueckmeldung_objekte_filtern_lese()
 
         return json.dumps(__payload_get_request)
