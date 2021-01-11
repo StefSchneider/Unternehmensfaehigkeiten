@@ -247,6 +247,18 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
+
+    def zeige_datenspeicher_json(self, uebergabedaten):
+        """
+        Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
+        erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
+        werden die Schluessel-Wert-Paare alphabetisch sortiert.
+        :return: None
+        """
+        __uebergabedaten_ein = uebergabedaten
+        __datenspeicher_json = json.dumps(__uebergabedaten_ein, sort_keys = True, indent = 4)
+        print(__datenspeicher_json)
+
     def lese_speicherobjekt(self, hierarchien: list) -> json:
         # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
