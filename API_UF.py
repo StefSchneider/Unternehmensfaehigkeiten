@@ -231,17 +231,17 @@ class API:
         :param patch_request_zulassen: steuert, ob per PATCH-Request auf den Microservice zugegriffen werden darf
         :param delete_request_zulassen: steuert, ob per DELETE-Request auf den Microservice zugegriffen werden darf
         """
-        self.get_request_erlaubt =  get_request_zulassen
+        self.get_request_erlaubt = get_request_zulassen
         self.post_request_erlaubt = post_request_zulassen
         self.put_request_erlaubt = put_request_zulassen
         self.patch_request_erlaubt = patch_request_zulassen
         self.delete_request_erlaubt = delete_request_zulassen
         self.__config: dict = {"server_port": 30010,
-                             "ressource_selbst": "/hello",
-                             "pfad": "/",
-                             "ressource_partner": "/print",
-                             "url_partner": "localhost:"
-                             }
+                               "ressource_selbst": "/hello",
+                               "pfad": "/",
+                               "ressource_partner": "/print",
+                               "url_partner": "localhost:"
+                               }
         self.server_port: int = self.__config["server_port"]
         self.ressource_selbst: str = self.__config["ressource_selbst"]
         self.pfad: str = self.__config["pfad"]
@@ -250,20 +250,19 @@ class API:
         self.url_partner = ""
         self.daten_typ_inhalt: str = "application/json; charset=utf-8"
 
-    def __encode_daten(self, encode_daten_ein: dict) -> bytes:
+    def __encode_daten(self, encode_daten: dict) -> bytes:
         """
         Die Methode wandelt die im dict-Format eingehenden Daten in das Format bytes um, damit diese direkt über die
         Schnittstelle als Request gesendet werden können. Zu einem späteren Zeitpunkt können die Daten auch in andere
         Formate umgewandelt werden. Das Format könnte entweder über die Config-Datei gesetzt werden oder über einen
         Parameter. Um mehrere Format zu behandeln, sollten diese über If-Bedingungen innerhalb der Methode gesteuert
         werden.
-        :param encode_daten_ein: Daten, die für den Request kodiert werden sollen
+        :param encode_daten: Daten, die für den Request kodiert werden sollen
         :return: codierte Daten
         """
-        __encode_daten: dict = encode_daten_ein
-        __encode_daten: json = json.dumps(__encode_daten) # Umwandlung in JSON-String
-        __encode_daten: bytes = __encode_daten.encode("utf-8") # Umwandlung in Bytes
-        __encode_daten_aus: bytes = __encode_daten
+        __encode_daten_ein: dict = encode_daten
+        __encode_daten_verarbeitung: json = json.dumps(__encode_daten_ein)  # Umwandlung in JSON-String
+        __encode_daten_aus: bytes = __encode_daten_verarbeitung.encode("utf-8")  # Umwandlung in Bytes
 
         return __encode_daten_aus
 
@@ -276,8 +275,8 @@ class API:
         :return: in ein Dictionary dekodierte Daten
         """
         __decode_daten: bytes = decode_daten_ein
-        __decode_daten: json = __decode_daten.decode() # Umwandlung in JSON-String
-        __decode_daten: dict = json.loads(decode_daten_ein) # Umwandlung in Dictionary
+        __decode_daten: json = __decode_daten.decode()  # Umwandlung in JSON-String
+        __decode_daten: dict = json.loads(decode_daten_ein)  # Umwandlung in Dictionary
         __decode_daten_aus: dict = __decode_daten
 
         return __decode_daten_aus
@@ -290,7 +289,7 @@ class API:
         :return:
         """
         __uebergabedaten_get: bytes = uebergabedaten_get_ein
-        #__uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
+#__uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
         __uebergabedaten_get_aus: bytes = __uebergabedaten_get
 
         return __uebergabedaten_get_aus
@@ -302,7 +301,6 @@ class API:
         :return:
         """
         __uebergabedaten_post: bytes = uebergabedaten_post_ein
-        print("Post", __uebergabedaten_post)
         __uebergabedaten_post: dict = self.__decode_daten(__uebergabedaten_post)
         __uebergabedaten_post_aus: dict = __uebergabedaten_post
 
@@ -332,14 +330,13 @@ class API:
 
         return __uebergabedaten_patch_aus
 
-    def delete(self, uebergabedaten_delete_ein: bytes) -> dict :
+    def delete(self, uebergabedaten_delete_ein: bytes) -> dict:
         """
 
         :param uebergabedaten_delete_ein:
         :return:
         """
         __uebergabedaten_delete: bytes = uebergabedaten_delete_ein
-        print("Übergabedaten Delete", __uebergabedaten_delete)
         __uebergabedaten_delete: dict = self.__decode_daten(__uebergabedaten_delete)
         __uebergabedaten_delete_aus: bytes = __uebergabedaten_delete
 
@@ -410,13 +407,12 @@ class API:
 
         return self.__uebergabedaten_aendere_aus
 
-    def loesche(self, uebergabedaten_loesche) ->str:
+    def loesche(self, uebergabedaten_loesche) -> str:
         """
 
         :return:
         """
         __uebergabedaten_loesche_ein = uebergabedaten_loesche
-        print("Übergabedaten ein lösche", __uebergabedaten_loesche_ein)
         __uebergabedaten_loesche_aus = self.__encode_daten(__uebergabedaten_loesche_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
         __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)

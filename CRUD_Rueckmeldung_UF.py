@@ -247,10 +247,10 @@ class CRUD_Rueckmeldung:
                     __aktuelle_ebene = __aktuelle_ebene[__elemente]
             __laenge_letzte_ebene = len(__aktuelles_element)
             __aktueller_schluessel = str(__aktuelles_element[-1])
-#            if type(__aktuelle_ebene[__aktueller_schluessel]) == dict:
-            print(type(__aktuelle_ebene[__aktueller_schluessel]))
+            print("Aktueller Schlüssel", __aktueller_schluessel)
             if (type(__aktuelle_ebene[__aktueller_schluessel]) == dict and
-                    type (__aktuelle_ebene[__aktueller_schluessel]) != PRS.Speicherinhalt):
+                    __aktueller_schluessel != "__speicherinhalt"):
+#                    type (__aktuelle_ebene[__aktueller_schluessel]) != PRS.Speicherinhalt):
                 __aktuelle_ebene = __aktuelle_ebene[__aktueller_schluessel]
                 if len(__aktuelles_element) > __strukturtiefe:
                     __strukturtiefe = len(__aktuelles_element)
@@ -291,15 +291,18 @@ class CRUD_Rueckmeldung:
         :return:
         """
         __ebenen: list = ebenen_ein
+        print("Ebenen", __ebenen)
         __payload_get_request: dict = {}
         __startzeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
             startzeit = "-1",
             url_zeitstempel = "http://localhost:31005/zeitstempel")["startzeit"]  # Beginn der Zeitmessung
         self.rueckmeldung_speicherinhalt_gesamt = self.ermittle_speicherinhalt_daten_lese(__ebenen)
+        print("Speicherinhalt gesamt", self.rueckmeldung_speicherinhalt_gesamt)
         __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
             startzeit = __startzeit_crud_rueckmeldung_get,
             url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
         self.rueckmeldung_speicherinhalt["__speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
+        print("Speicherinhalt", self.rueckmeldung_speicherinhalt)
         self.rueckmeldung_entwickler["__verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
         if (isinstance(self.rueckmeldung_speicherinhalt["__speicherinhalt"], dict) and
                 self.rueckmeldung_speicherinhalt["__speicherinhalt"] != {}):

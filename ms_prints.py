@@ -22,7 +22,6 @@ eigener_pfad_kurz = "/prints"
 
 server_port: int = 31002
 
-id = 0
 prints_PRS = PRS.Persistenz("prints", datenspeicher = True, speicherart = "Hauptspeicher")
 prints_CRUD_Rueckmeldung = CRUD_Rueckmeldung_UF.CRUD_Rueckmeldung(prints_PRS)
 
@@ -31,7 +30,6 @@ app = Flask(__name__)
 
 @app.route("/<path:pfad>", methods = ["GET", "POST", "PUT", "PATCH", "DELETE"])
 def drucke(pfad):
-    print("Pfad: ", pfad)
     prints_API = API_UF.API(get_request_zulassen = True, post_request_zulassen = True, put_request_zulassen = True,
                             patch_request_zulassen = True, delete_request_zulassen = True)
     prints_API.url_partner = "http://localhost:31001/hellos"
@@ -42,23 +40,23 @@ def drucke(pfad):
     text_zum_drucken: str = ""
     __hierarchien: list = prints_PRS.zerlege_pfad(pfad)
     if request.method == "GET":
-        __rueckmeldung_get_verarbeitung = json.loads(__rueckmeldung_request_verarbeitung.rueckmeldung_objekte_filtern_get())
+        __rueckmeldung_get_verarbeitung = \
+            json.loads(__rueckmeldung_request_verarbeitung.rueckmeldung_objekte_filtern_get())
         if prints_API.get_request_erlaubt:
-            __rueckmeldung_get_request_verarbeitung = json.loads(prints_CRUD_Rueckmeldung.get_request_in_crud(__hierarchien))
+            __rueckmeldung_get_request_verarbeitung = \
+                json.loads(prints_CRUD_Rueckmeldung.get_request_in_crud(__hierarchien))
             __rueckmeldung_get_request_verarbeitung_aus = prints_API.get(__rueckmeldung_get_request_verarbeitung)
-            return (__rueckmeldung_get_request_verarbeitung)
+            return __rueckmeldung_get_request_verarbeitung
         else:
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
             uebergabedaten_ein = request.data  # hier werden die Daten aus dem Post der Quelle abgerufen
-            print("ÜBERGABEDATEN EIN POST", uebergabedaten_ein)
             rueckmeldung = prints_API.post(uebergabedaten_ein)  # hier werden die Daten in ein dict umgewandelt
-            print("in rueckmeldung", rueckmeldung, type(rueckmeldung))
             __schluessel_neue_ressource = prints_PRS.erzeuge_schluessel_neueintrag(int(rueckmeldung["id"]))
             neuer_eintrag_in_datenspeicher: dict = {__schluessel_neue_ressource: rueckmeldung.copy()}
             text_zum_drucken = rueckmeldung["text"]
-            neuer_speicher = prints_CRUD_Rueckmeldung.post_request_in_crud(__hierarchien, neuer_eintrag_in_datenspeicher)
+            prints_CRUD_Rueckmeldung.post_request_in_crud(__hierarchien, neuer_eintrag_in_datenspeicher)
             if rueckmeldung["auftrag"] == "drucke_daten":
                 drucke_daten = True
         else:
@@ -69,7 +67,7 @@ def drucke(pfad):
             rueckmeldung = prints_API.put(uebergabedaten_ein)
             __schluessel_ressource = __hierarchien[-1]
             __eintrag_in_datenspeicher: dict = {__schluessel_ressource: rueckmeldung.copy()}
-            neuer_speicher = prints_CRUD_Rueckmeldung.put_request_in_crud(__hierarchien, __eintrag_in_datenspeicher)
+            prints_CRUD_Rueckmeldung.put_request_in_crud(__hierarchien, __eintrag_in_datenspeicher)
             text_zum_drucken = rueckmeldung["text"]
             if rueckmeldung["auftrag"] == "drucke_daten":
                 drucke_daten = True
@@ -81,7 +79,7 @@ def drucke(pfad):
         if prints_API.patch_request_erlaubt:
             uebergabedaten_ein = request.data
             rueckmeldung = prints_API.patch(uebergabedaten_ein)
-            __neuer_speicher  = prints_CRUD_Rueckmeldung.patch_request_in_crud(__hierarchien, rueckmeldung)
+            __neuer_speicher = prints_CRUD_Rueckmeldung.patch_request_in_crud(__hierarchien, rueckmeldung)
             try:
                 text_zum_drucken = rueckmeldung["text"]
             except KeyError:
@@ -98,13 +96,10 @@ def drucke(pfad):
     elif request.method == "DELETE":
         if prints_API.delete_request_erlaubt:
             uebergabedaten_ein = request.data
-            print("ÜBERGABEDATEN EIN", uebergabedaten_ein)
             prints_CRUD_Rueckmeldung.delete_request_in_crud(__hierarchien)
             rueckmeldung = prints_API.delete(uebergabedaten_ein)
-            print("RÜCKMELDUNG", rueckmeldung)
-
         else:
-            return ("DELETE-Request nicht erlaubt")
+            return "DELETE-Request nicht erlaubt"
     else:
         print("API-Fehler!!!")
     if drucke_daten:

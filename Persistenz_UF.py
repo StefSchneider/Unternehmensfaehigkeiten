@@ -57,7 +57,6 @@ class Baum:
         das die Speicherdaten enthält.
         :return: den umgewandelten Baum als dict
         """
-        print("IN WANDLE BAUM")
         __aktuelles_speicherobjekt_baum = self
         __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
         __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
@@ -84,7 +83,6 @@ class Baum:
             __speicherobjekte_in_queue.append(__kinder)
         while len(__speicherobjekte_in_queue) > 0:
             __aktuelles_speicherobjekt_queue = __speicherobjekte_in_queue.popleft()
-            print("Aktuelles Speicherobjekt Queue", __aktuelles_speicherobjekt_queue.speicherdaten.schluessel, __aktuelles_speicherobjekt_queue.elternpfad)
             if len(__aktuelles_speicherobjekt_queue.elternpfad) < __laenge_letzter_pfad_dict:
                 # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
                 # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue
@@ -96,7 +94,6 @@ class Baum:
                     __aktueller_teil_dictionary = __aktueller_teil_dictionary[__objekte]
             else:
                 __aktueller_schluessel_dict = str(__aktuelles_speicherobjekt_queue.elternpfad[-1])
-                print("Aktueller Schlüssel Dict", __aktueller_schluessel_dict)
                 # Abgreifen des letzten Teil des Elternpfades. Umwandlung in einen String nötig , da sonst nicht immer
                 # der Schlüssel richtig gelesen werden kann, z.B. bei Integer-Zahlen.
                 __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktueller_schluessel_dict]
@@ -192,6 +189,17 @@ class Persistenz:
 
         return __hierarchien
 
+    def zeige_datenspeicher_json(self, uebergabedaten):
+        """
+        Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
+        erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
+        werden die Schluessel-Wert-Paare alphabetisch sortiert.
+        :return: None
+        """
+        __uebergabedaten_ein = uebergabedaten
+        __datenspeicher_json = json.dumps(__uebergabedaten_ein, sort_keys = True, indent = 4)
+        print(__datenspeicher_json)
+
     def erzeuge_speicherobjekt(self, hierarchien: list, schluessel_neues_speicherobjekt: str):
         """
         Mit der Methode wird ein leeres Speicherdaten unter der richtigen Ressource angelegt, das später über die
@@ -200,9 +208,7 @@ class Persistenz:
         :return: neu angelegtes Speicherdaten als leeres Dictionary
         """
         __hierarchien_ein: list = hierarchien
-        print("Hierarchien ein", __hierarchien_ein)
         __schluessel_neues_speicherobjekt_ein = schluessel_neues_speicherobjekt
-        print("Schlüssel neues Speicherobjekt", __schluessel_neues_speicherobjekt_ein, type(__schluessel_neues_speicherobjekt_ein))
         __neues_speicherobjekt = Baum()
         __neues_speicherobjekt.speicherdaten = Speicherdaten()
         __neues_speicherobjekt.speicherdaten.schluessel = __schluessel_neues_speicherobjekt_ein
@@ -217,12 +223,10 @@ class Persistenz:
         __aktuelle_speicherobjekte: list = [__aktuelles_speicherobjekt]
         # Lädt die Wurzel in die Liste der Objekte, die in der nächsten Runde verarbeitet werden sollen
         for __schluessel in __hierarchien_ein:
-            print("Schlüssel", __schluessel)
             if len(__aktuelle_speicherobjekte) == 0:
                 __speicherobjekt_vorhanden = False
             else:
                 for __speicherobjekt in __aktuelle_speicherobjekte:
-                    print("Aktuelles Objekt", __speicherobjekt, __speicherobjekt.speicherdaten.schluessel)
                     if __schluessel == __speicherobjekt.speicherdaten.schluessel:
                         __aktuelles_speicherobjekt = __speicherobjekt
                         __aktuelle_speicherobjekte = __speicherobjekt.kinder
@@ -232,7 +236,6 @@ class Persistenz:
                         __speicherobjekt_vorhanden = False
         if __speicherobjekt_vorhanden:
             __aktuelles_speicherobjekt.kinder.append(__neues_speicherobjekt)
-            print("Kinder", __aktuelles_speicherobjekt.kinder)
             __rueckgaben_daten_aus["__speicherinhalt"] = {}
             __rueckgaben_daten_aus["__rueckmeldung"] = "Neues Speicherobjekt konnte angelegt werden"
             __rueckgaben_daten_aus["__erzeuge_speicherobjekt_erfolgreich"] = True
@@ -247,18 +250,6 @@ class Persistenz:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-
-    def zeige_datenspeicher_json(self, uebergabedaten):
-        """
-        Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
-        erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
-        werden die Schluessel-Wert-Paare alphabetisch sortiert.
-        :return: None
-        """
-        __uebergabedaten_ein = uebergabedaten
-        __datenspeicher_json = json.dumps(__uebergabedaten_ein, sort_keys = True, indent = 4)
-        print(__datenspeicher_json)
-
     def lese_speicherobjekt(self, hierarchien: list) -> json:
         # Ergänzung Parameter: Benutzer-ID, Passwort, Suchschlüssel)
         """
@@ -266,7 +257,7 @@ class Persistenz:
         Grundlage: CRUD - Read
         :return:
         """
-        __hierarchien_ein = hierarchien
+        __hierarchien_ein: list = hierarchien
         __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
                                         "__rueckmeldung": "",
                                         "__lese_ressource_erfolgreich": False,
@@ -277,12 +268,10 @@ class Persistenz:
         __aktuelle_speicherobjekte: list = [__aktuelles_speicherobjekt]
         # Lädt die Wurzel in die Liste der Objekte, die in der nächsten Runde verarbeitet werden sollen
         for __schluessel in __hierarchien_ein:
-            print("Schlüssel", __schluessel)
             if len(__aktuelle_speicherobjekte) == 0:
                 __speicherobjekt_vorhanden = False
             else:
                 for __speicherobjekt in __aktuelle_speicherobjekte:
-                    print("Aktuelles Objekt", __speicherobjekt, __speicherobjekt.speicherdaten.schluessel)
                     if __schluessel == __speicherobjekt.speicherdaten.schluessel:
                         __aktuelles_speicherobjekt = __speicherobjekt
                         __aktuelle_speicherobjekte = __speicherobjekt.kinder
@@ -303,7 +292,6 @@ class Persistenz:
             __rueckgaben_daten_aus["__rueckmeldung"] = "Speicherobjekt nicht vorhanden"
             __rueckgaben_daten_aus["__fehlercode"] = 404
         print("Rückgabe lese Speicherobjekt", json.dumps(__rueckgaben_daten_aus))
-        print(self.datenspeicher.wandle_baum_in_dict())
 
         return json.dumps(__rueckgaben_daten_aus)
 
@@ -313,11 +301,8 @@ class Persistenz:
         Grundlage: CRUD - Update
         :return:
         """
-        print("IN AENDERE_SPEICHEROBJEKT")
         __hierarchien_ein: list = hierarchien
-        __inhalt_ein = inhalt_ein
-        print("Hierarchien ein", __hierarchien_ein)
-        print("Inhalt ein", __inhalt_ein)
+        __inhalt_ein: dict = inhalt_ein
         __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
                                         "__rueckmeldung": "",
                                         "__aendere_speicherobjekt_erfolgreich": False,
@@ -329,17 +314,14 @@ class Persistenz:
         __aktuelle_speicherobjekte: list = [__aktuelles_speicherobjekt]
         # Lädt die Wurzel in die Liste der Objekte, die in der nächsten Runde verarbeitet werden sollen
         for __schluessel in __hierarchien_ein:
-            print("Schlüssel", __schluessel)
             if len(__aktuelle_speicherobjekte) == 0:
                 __speicherobjekt_vorhanden = False
             else:
                 for __speicherobjekt in __aktuelle_speicherobjekte:
-                    print("Aktuelles Objekt", __speicherobjekt, __speicherobjekt.speicherdaten.schluessel)
                     if __schluessel == __speicherobjekt.speicherdaten.schluessel:
                         __aktuelles_speicherobjekt = __speicherobjekt
                         __aktuelle_speicherobjekte = __speicherobjekt.kinder
                         __letzter_schluessel = __speicherobjekt.speicherdaten.schluessel
-                        print("Letzter Schlüssel", __letzter_schluessel, type(__schluessel))
                         __speicherobjekt_vorhanden = True
                         break
                     else:
@@ -349,7 +331,6 @@ class Persistenz:
             for __schluessel in __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement:
                 __speicherinhalt_als_dict[__schluessel] = \
                     __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement[__schluessel]
-            print("Speicherlement", __speicherinhalt_als_dict, type(__speicherinhalt_als_dict))
             # Umwandlung ist erforderlich, da JSON die Klasse Speicherinhalt nicht verarbeiten kann.
             # Kenzeichnung erfolgt durch Schlüssel "__speicherinhalt". Damit kann an anderer Stelle die Klasse
             # wiederhergestellt werden
@@ -371,8 +352,7 @@ class Persistenz:
         Grundlage: CRUD - Delete
         :return:
         """
-        print("IN LÖSCHE")
-        __hierarchien_ein = hierarchien
+        __hierarchien_ein: list = hierarchien
         __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
                                         "__rueckmeldung": "",
                                         "__loesche_ressource_erfolgreich": False,
@@ -384,22 +364,18 @@ class Persistenz:
         __aktuelle_speicherobjekte: list = [__aktuelles_speicherobjekt]
         # Lädt die Wurzel in die Liste der Objekte, die in der nächsten Runde verarbeitet werden sollen
         for __schluessel in __hierarchien_ein:
-            print("Schlüssel", __schluessel)
             if len(__aktuelle_speicherobjekte) == 0:
                 __speicherobjekt_vorhanden = False
             else:
                 for __speicherobjekt in __aktuelle_speicherobjekte:
-                    print("Aktuelles Objekt", __speicherobjekt, __speicherobjekt.speicherdaten.schluessel)
                     if __schluessel == __speicherobjekt.speicherdaten.schluessel:
                         if __schluessel != __letzter_schluessel:
                             __aktuelles_speicherobjekt = __speicherobjekt
                             __aktuelle_speicherobjekte = __speicherobjekt.kinder
                         else:
-                            print("Kinder vor", __aktuelles_speicherobjekt.kinder)
                             for __position, __kinder in enumerate(__aktuelles_speicherobjekt.kinder):
                                 if __kinder.speicherdaten.schluessel == __letzter_schluessel:
                                     __aktuelles_speicherobjekt.kinder.pop(__position)
-                            print("Kinder nach", __aktuelles_speicherobjekt.kinder)
                         __speicherobjekt_vorhanden = True
                         break
                     else:
