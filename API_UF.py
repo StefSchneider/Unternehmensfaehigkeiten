@@ -261,84 +261,88 @@ class API:
         :return: codierte Daten
         """
         __encode_daten_ein: dict = encode_daten
-        __encode_daten_verarbeitung: json = json.dumps(__encode_daten_ein)  # Umwandlung in JSON-String
-        __encode_daten_aus: bytes = __encode_daten_verarbeitung.encode("utf-8")  # Umwandlung in Bytes
+        __encode_daten_verarbeitung: json = ""
+        __encode_daten_aus: bytes = b''
+        __encode_daten_verarbeitung = json.dumps(__encode_daten_ein)  # Umwandlung in JSON-String
+        __encode_daten_aus = __encode_daten_verarbeitung.encode("utf-8")  # Umwandlung in Bytes
 
         return __encode_daten_aus
 
-    def __decode_daten(self, decode_daten_ein: bytes) -> dict:
+    def __decode_daten(self, decode_daten: bytes) -> dict:
         """
         Die Methode wandet eingehende Daten Format Bytes in ein Dictionary um. Sollte die Umwandlung in weitere
         Datenformate gewünscht werden, könnte dies über eine If-Bedingung gesteuert werden. Das im Einzelfall benötigte
         Datenformat könnte über die Config-Datei gesetzt werden oder als Parameter in die Methode gegeben werden.
-        :param decode_daten_ein: umzuwandelnde Daten
+        :param decode_daten: umzuwandelnde Daten
         :return: in ein Dictionary dekodierte Daten
         """
-        __decode_daten: bytes = decode_daten_ein
-        __decode_daten: json = __decode_daten.decode()  # Umwandlung in JSON-String
-        __decode_daten: dict = json.loads(decode_daten_ein)  # Umwandlung in Dictionary
-        __decode_daten_aus: dict = __decode_daten
+        __decode_daten_ein: bytes = decode_daten
+        __decode_daten_verarbeitung: json = ""
+        __decode_daten_aus: dict = {}
+        __decode_daten_verarbeitung = __decode_daten_ein.decode()  # Umwandlung in JSON-String
+        __decode_daten_aus = json.loads(__decode_daten_verarbeitung)  # Umwandlung in Dictionary
 
         return __decode_daten_aus
 
 # Methoden zum Empfang von Daten
-    def get(self, uebergabedaten_get_ein: bytes) -> dict:
+    def get(self, uebergabedaten_get: bytes) -> dict:
         """
-
-        :param uebergabedaten_get_ein:
+        Auf eine Decodierung kann verzichtet werden, da die Methode die Daten aus Typ Bytes erhält und auch als Typ
+        Bytes zurückliefert.
+        :param uebergabedaten_get:
         :return:
         """
-        __uebergabedaten_get: bytes = uebergabedaten_get_ein
-#__uebergabedaten_get: dict = self.__decode_daten(__uebergabedaten_get)
-        __uebergabedaten_get_aus: bytes = __uebergabedaten_get
+        __uebergabedaten_get_ein: bytes = uebergabedaten_get
+        __uebergabedaten_get_aus: bytes = b''
+        __uebergabedaten_get_aus = __uebergabedaten_get_ein
 
         return __uebergabedaten_get_aus
 
-    def post(self, uebergabedaten_post_ein: bytes) -> dict:
+    def post(self, uebergabedaten_post: bytes) -> dict:
         """
 
-        :param uebergabedaten_post_ein:
+        :param uebergabedaten_post:
         :return:
         """
-        __uebergabedaten_post: bytes = uebergabedaten_post_ein
-        __uebergabedaten_post: dict = self.__decode_daten(__uebergabedaten_post)
-        __uebergabedaten_post_aus: dict = __uebergabedaten_post
+        __uebergabedaten_post_ein: bytes = uebergabedaten_post
+        __uebergabedaten_post_aus: dict = {}
+        __uebergabedaten_post_aus: dict = self.__decode_daten(__uebergabedaten_post_ein)
 
         return __uebergabedaten_post_aus
 
-    def put(self, uebergabedaten_put_ein: bytes) -> dict:
+    def put(self, uebergabedaten_put: bytes) -> dict:
         """
 
-        :param uebergabedaten_put_ein:
+        :param uebergabedaten_put:
         :return:
         """
-        __uebergabedaten_put: bytes = uebergabedaten_put_ein
-        __uebergabedaten_put: dict = self.__decode_daten(__uebergabedaten_put)
-        __uebergabedaten_put_aus: dict = __uebergabedaten_put
+        __uebergabedaten_put_ein: bytes = uebergabedaten_put
+        __uebergabedaten_put_aus: dict = {}
+        __uebergabedaten_put_aus = self.__decode_daten(__uebergabedaten_put_ein)
 
         return __uebergabedaten_put_aus
 
-    def patch(self, uebergabedaten_patch_ein: bytes) -> dict:
+    def patch(self, uebergabedaten_patch: bytes) -> dict:
         """
 
-        :param uebergabedaten_patch_ein:
+        :param uebergabedaten_patch:
         :return:
         """
-        __uebergabedaten_patch: bytes = uebergabedaten_patch_ein
-        __uebergabedaten_patch: dict = self.__decode_daten(__uebergabedaten_patch)
-        __uebergabedaten_patch_aus: dict = __uebergabedaten_patch
+        __uebergabedaten_patch_ein: bytes = uebergabedaten_patch
+        __uebergabedaten_patch_aus: dict = {}
+        __uebergabedaten_patch_aus = self.__decode_daten(__uebergabedaten_patch_ein)
 
         return __uebergabedaten_patch_aus
 
-    def delete(self, uebergabedaten_delete_ein: bytes) -> dict:
+    def delete(self, uebergabedaten_delete: bytes) -> dict:
         """
 
-        :param uebergabedaten_delete_ein:
+        :param uebergabedaten_delete:
         :return:
         """
-        __uebergabedaten_delete: bytes = uebergabedaten_delete_ein
-        __uebergabedaten_delete: dict = self.__decode_daten(__uebergabedaten_delete)
-        __uebergabedaten_delete_aus: bytes = __uebergabedaten_delete
+        __uebergabedaten_delete_ein: bytes = uebergabedaten_delete
+        __uebergabedaten_delete_aus: dict = {}
+        __uebergabedaten_delete_aus = self.__decode_daten(__uebergabedaten_delete_ein)
 
         return __uebergabedaten_delete_aus
 
