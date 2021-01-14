@@ -371,7 +371,7 @@ class API:
         __uebergabedaten_schreibe_aus = self.__encode_daten(uebergabedaten_schreibe_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "POST")
         __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __anfrage_partner.add_header("Content-Length", len(__uebergabedaten_schreibe_aus))
+        __anfrage_partner.add_header("Content-Length", str(len(__uebergabedaten_schreibe_aus)))
         urllib.request.urlopen(__anfrage_partner, __uebergabedaten_schreibe_aus)
         print("POST abgeschlossen")
 
@@ -388,7 +388,7 @@ class API:
         self.__uebergabedaten_ueberschreibe_aus = self.__encode_daten(uebergabedaten_ueberschreibe_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "PUT")
         __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_ueberschreibe_aus))
+        __anfrage_partner.add_header("Content-Length", str(len(self.__uebergabedaten_ueberschreibe_aus)))
         urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_ueberschreibe_aus)
         print("PUT abgeschlossen")
 
@@ -405,7 +405,7 @@ class API:
         self.__uebergabedaten_aendere_aus = self.__encode_daten(uebergabedaten_aendere_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "PATCH")
         __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __anfrage_partner.add_header("Content-Length", len(self.__uebergabedaten_aendere_aus))
+        __anfrage_partner.add_header("Content-Length", str(len(self.__uebergabedaten_aendere_aus)))
         urllib.request.urlopen(__anfrage_partner, self.__uebergabedaten_aendere_aus)
         print("PATCH abgeschlossen")
 
@@ -420,7 +420,7 @@ class API:
         __uebergabedaten_loesche_aus = self.__encode_daten(__uebergabedaten_loesche_ein)
         __anfrage_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
         __anfrage_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __anfrage_partner.add_header("Content-Length", len(__uebergabedaten_loesche_aus))
+        __anfrage_partner.add_header("Content-Length", str(len(__uebergabedaten_loesche_aus)))
         urllib.request.urlopen(__anfrage_partner, __uebergabedaten_loesche_aus)
         print("DELETE abgeschlossen")
 
