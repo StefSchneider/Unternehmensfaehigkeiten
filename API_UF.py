@@ -116,7 +116,7 @@ class REST_Rueckmeldung:
         Endzeit und die daras resultierende Zeitspanne.
         Ermittlung startzeit und endzeit mit datetime.utcnow()
         :param startzeit: vorher ermittelte Startzeit oder "-1" als str
-        :param: url_zeitstempel: URL, über die der Zeitstempel abgeholt werden kann (Microservice) als str
+        :param url_zeitstempel: URL, über die der Zeitstempel abgeholt werden kann (Microservice) als str
         :return: Zeitdaten, d.h. Startzeit, Endzeit und Verarbeitungszeit als str
         """
         __startzeit: str = startzeit

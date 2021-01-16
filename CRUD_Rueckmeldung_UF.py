@@ -38,7 +38,7 @@ class CRUD_Rueckmeldung:
         self.rueckmeldung_programm: dict = {"__datentyp_rueckgabeobjekt": None
                                             }
 
-    def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list)-> dict:
+    def ermittle_speicherinhalt_daten_lese(self, ebenen_ein: list) -> dict:
         """
         Die Methode liefert den Inhalt des Speicherobjekts bei einem GET-Request zurück.
         :return: Inhalt der Ressource
@@ -274,7 +274,6 @@ class CRUD_Rueckmeldung:
     def rueckmeldung_objekte_fuellen_lese(self):
         pass
 
-
     def rueckmeldung_objekte_filtern_lese(self):
         __rueckmeldung_lese: dict = {}
         __rueckmeldung_lese.update(self.rueckmeldung_speicherinhalt)
@@ -301,7 +300,8 @@ class CRUD_Rueckmeldung:
         __verarbeitungszeit_crud_rueckmeldung_get = self.ermittle_verarbeitungszeit_entwickler_lese(
             startzeit = __startzeit_crud_rueckmeldung_get,
             url_zeitstempel = "http://localhost:31005/zeitstempel")["verarbeitungszeit"]  # Ende der Zeitmessung
-        self.rueckmeldung_speicherinhalt["__speicherinhalt"] = self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
+        self.rueckmeldung_speicherinhalt["__speicherinhalt"] = \
+            self.rueckmeldung_speicherinhalt_gesamt["__speicherinhalt"]
         print("Speicherinhalt", self.rueckmeldung_speicherinhalt)
         self.rueckmeldung_entwickler["__verarbeitungszeit"] = __verarbeitungszeit_crud_rueckmeldung_get
         if (isinstance(self.rueckmeldung_speicherinhalt["__speicherinhalt"], dict) and
@@ -342,10 +342,12 @@ class CRUD_Rueckmeldung:
                                         "__rueckmeldung": "",
                                         "__fehlercode": 0}
         __aktuelle_ebene = self.persistenz.datenspeicher
-        __neues_speicherelement = json.loads(self.persistenz.erzeuge_speicherobjekt(__hierarchien_ein, __schluessel_neue_ressource))
+        __neues_speicherelement = \
+            json.loads(self.persistenz.erzeuge_speicherobjekt(__hierarchien_ein, __schluessel_neue_ressource))
         print("self.Datenspeicher", self.persistenz.datenspeicher)
         if __neues_speicherelement["__erzeuge_speicherobjekt_erfolgreich"]:
-            __neues_speicherelement = json.loads(self.persistenz.aendere_speicherobjekt(__hierarchien_erweitert, __inhalt_ein))
+            __neues_speicherelement = \
+                json.loads(self.persistenz.aendere_speicherobjekt(__hierarchien_erweitert, __inhalt_ein))
         else:
             print(__neues_speicherelement["__rueckmeldung"])
 
