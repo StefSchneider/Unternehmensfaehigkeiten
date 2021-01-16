@@ -258,7 +258,8 @@ class Persistenz:
         :return:
         """
         __hierarchien_ein: list = hierarchien
-        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+        __rueckgaben_daten_aus: dict = {"__speicherobjekt": None,
+                                        "__speicherinhalt": None,
                                         "__rueckmeldung": "",
                                         "__lese_ressource_erfolgreich": False,
                                         "__fehlercode": 0}
@@ -284,6 +285,7 @@ class Persistenz:
             for __schluessel in __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement:
                 __speicherinhalt_als_dict[__schluessel] = \
                     __aktuelles_speicherobjekt.speicherdaten.speicherinhalt.speicherelement[__schluessel]
+            __rueckgaben_daten_aus["__speicherobjekt"] = __aktuelles_speicherobjekt.wandle_baum_in_dict()
             __rueckgaben_daten_aus["__speicherinhalt"] = __speicherinhalt_als_dict
             __rueckgaben_daten_aus["__rueckmeldung"] = f"Ressource {'/'.join(__hierarchien_ein)} erfolgreich abgerufen"
             __rueckgaben_daten_aus["__lese_ressource_erfolgreich"] = True
