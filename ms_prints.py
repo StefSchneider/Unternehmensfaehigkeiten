@@ -51,8 +51,8 @@ def drucke(pfad):
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
-            uebergabedaten_ein = request.data  # hier werden die Daten aus dem Post der Quelle abgerufen
-            rueckmeldung = prints_API.post(uebergabedaten_ein)  # hier werden die Daten in ein dict umgewandelt
+#            uebergabedaten_ein = request.data  # hier werden die Daten aus dem Post der Quelle abgerufen
+            rueckmeldung = prints_API.post()  # hier werden die Daten in ein dict umgewandelt
             __schluessel_neue_ressource = prints_PRS.erzeuge_schluessel_neueintrag(int(rueckmeldung["id"]))
             neuer_eintrag_in_datenspeicher: dict = {__schluessel_neue_ressource: rueckmeldung.copy()}
             text_zum_drucken = rueckmeldung["text"]

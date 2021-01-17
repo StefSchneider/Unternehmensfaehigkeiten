@@ -5,6 +5,7 @@ Das ist die Bibliothek für die Klasse API.
 import json
 import urllib
 import urllib.request
+from flask import Flask, request, jsonify
 
 
 ENTWICKLER_INFORMATIONEN: bool = True
@@ -298,15 +299,19 @@ class API:
 
         return __uebergabedaten_get_aus
 
-    def post(self, uebergabedaten_post: bytes) -> dict:
+#    def post(self, uebergabedaten_post: bytes) -> dict:
+    def post(self) -> dict:
+
         """
 
         :param uebergabedaten_post:
         :return:
         """
-        __uebergabedaten_post_ein: bytes = uebergabedaten_post
+        __daten = request.data
+#       __uebergabedaten_post_ein: bytes = uebergabedaten_post
         __uebergabedaten_post_aus: dict = {}
-        __uebergabedaten_post_aus: dict = self.__decode_daten(__uebergabedaten_post_ein)
+#        __uebergabedaten_post_aus: dict = self.__decode_daten(__uebergabedaten_post_ein)
+        __uebergabedaten_post_aus = self.__decode_daten(__daten)
 
         return __uebergabedaten_post_aus
 
