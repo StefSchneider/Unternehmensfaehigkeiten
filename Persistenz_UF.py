@@ -58,6 +58,7 @@ class Baum:
         :return: den umgewandelten Baum als dict
         """
         __aktuelles_speicherobjekt_baum = self
+        print("Baum:", self)
         __dictionary_aus_baum: dict = {}  # Gesamt-Dictionary, das ausgefüllt zurückgegeben wird
         __aktueller_teil_dictionary: dict = {}  # der Teil des Dictionaries, der aktualisiert werden muss
         # Damit beim Update des Dictionaries die Ergänzung um das aktuelle Speicherdaten nur auf der entsprechenden
@@ -83,7 +84,7 @@ class Baum:
             __speicherobjekte_in_queue.append(__kinder)
         while len(__speicherobjekte_in_queue) > 0:
             __aktuelles_speicherobjekt_queue = __speicherobjekte_in_queue.popleft()
-            if len(__aktuelles_speicherobjekt_queue.elternpfad) < __laenge_letzter_pfad_dict:
+            if len(__aktuelles_speicherobjekt_queue.elternpfad) <= __laenge_letzter_pfad_dict:
                 # Die Überprüfung ist nötig, um am Ende eines Pfades im Dictionary wieder in die richtige Hierarchie zu
                 # springen. Dazu werden die Längen der entsprechenden Elternpfade verglichen. Besteht der neue
                 # Elternpfad aus weniger Elementen als der letzte Elternpfad, wird das Dictionary von oben bis auf die
@@ -93,11 +94,15 @@ class Baum:
                 for __objekte in __aktuelles_speicherobjekt_queue.elternpfad:
                     __aktueller_teil_dictionary = __aktueller_teil_dictionary[__objekte]
             else:
+                print("Aktueller Teil Dict", __aktueller_teil_dictionary)
                 __aktueller_schluessel_dict = str(__aktuelles_speicherobjekt_queue.elternpfad[-1])
+                print("Aktueller Schlüssel Dict", __aktueller_schluessel_dict)
                 # Abgreifen des letzten Teil des Elternpfades. Umwandlung in einen String nötig , da sonst nicht immer
                 # der Schlüssel richtig gelesen werden kann, z.B. bei Integer-Zahlen.
                 __aktueller_teil_dictionary = __aktueller_teil_dictionary[__aktueller_schluessel_dict]
+                print("Aktueller Teil Dict neu", __aktueller_teil_dictionary)
             __laenge_letzter_pfad_dict = len(__aktuelles_speicherobjekt_queue.elternpfad)
+            print("Länge letzter Pfad", __laenge_letzter_pfad_dict)
             __aktuelles_speicherobjekt_dict = {}
             # Speicherdaten muss wieder auf leer gesetzt werden, da es sonst um das neue Schlüssel-Wert-Paar ergänzt
             # wird, nicht das alte Schlüssel-Wert-Paar ersetzt wird.

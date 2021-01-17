@@ -391,6 +391,7 @@ class CRUD_Rueckmeldung:
                                         "rueckmeldung": "",
                                         "fehlercode": 0}
 
+        __alte_daten = self.ermittle_speicherobjekt_daten_lese(__ebenen)
         speicherelement = json.loads(self.persistenz.loesche_speicherobjekt(__ebenen))
         __ebenen = ebenen[:len(ebenen) - 1]
         speicherelement = json.loads(self.post_request_in_crud(__ebenen, __inhalt_ein))
