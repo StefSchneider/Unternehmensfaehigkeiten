@@ -377,7 +377,7 @@ class CRUD_Rueckmeldung:
 
         return json.dumps(__rueckgaben_daten_aus)
 
-    def put_request_in_crud(self, ebenen: list, inhalt_ein: dict) -> json:
+    def put_request_in_crud(self, hierarchien: list, inhalt: dict) -> json:
         """
         1. Delete
         2. Create
@@ -385,16 +385,25 @@ class CRUD_Rueckmeldung:
         2. + 3. = POST
         :return:
         """
-        __ebenen = ebenen
-        __inhalt_ein = inhalt_ein
-        __rueckgaben_daten_aus: dict = {"speicherinhalt": None,
-                                        "rueckmeldung": "",
-                                        "fehlercode": 0}
+        __hierarchien_ein = hierarchien
+        __inhalt_ein = inhalt
+        __rueckgaben_daten_aus: dict = {"__speicherinhalt": None,
+                                        "__rueckmeldung": "",
+                                        "__fehlercode": 0}
 
-        __alte_daten = self.ermittle_speicherobjekt_daten_lese(__ebenen)
-        speicherelement = json.loads(self.persistenz.loesche_speicherobjekt(__ebenen))
-        __ebenen = ebenen[:len(ebenen) - 1]
-        speicherelement = json.loads(self.post_request_in_crud(__ebenen, __inhalt_ein))
+        __bisheriger_speicherinhalt: dict = {}
+        __neuer_speicherinhalt: dict = {}
+        __letzte_hierarchie: str = ""
+        __letzte_hierarchie = __hierarchien_ein[-1]
+        __hierarchien_verkuerzt: list = []
+        __bisheriger_speicherinhalt = self.ermittle_speicherobjekt_daten_lese(__hierarchien_ein)
+        __neuer_speicherinhalt = __bisheriger_speicherinhalt.copy()
+        __neuer_speicherinhalt[__letzte_hierarchie]["__speicherinhalt"].update(__inhalt_ein[__letzte_hierarchie])
+        json.loads(self.persistenz.loesche_speicherobjekt(__hierarchien_ein))
+        __hierarchien_verkuerzt = __hierarchien_ein[:len(__hierarchien_ein) - 1]
+        # Die Liste der Hierarchien muss um den letzten Eintrag gekürzt werden, da der Schlüssel bereits in
+        # __neuer_speicherinhalt erfasst ist.
+        json.loads(self.post_request_in_crud(__hierarchien_verkuerzt, __neuer_speicherinhalt))
 
         return json.dumps(__rueckgaben_daten_aus)
 
