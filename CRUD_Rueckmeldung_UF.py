@@ -81,7 +81,6 @@ class CRUD_Rueckmeldung:
         __speicherobjekte: list = []
         for __schluessel in self.rueckmeldung_speicherobjekt["__speicherobjekt"].keys():
             __speicherobjekte.append(__schluessel)
-        print("Speicherobjekte in Liste", __speicherobjekte, type(__speicherobjekte))
         __speicherobjekte.remove("__speicherinhalt")
         __anzahl_speicherobjekte = len(__speicherobjekte)
         __speicherinhalte: list = self.rueckmeldung_speicherinhalt["__speicherinhalt"].values()
