@@ -285,7 +285,8 @@ class API:
 
         return __decode_daten_aus
 
-# Methoden zum Empfang von Daten
+# Methoden zum Empfang von Daten:
+
     def get(self, uebergabedaten_get: bytes) -> bytes:
         """
         Auf eine Decodierung kann verzichtet werden, da die Methode die Daten aus Typ Bytes erhält und auch als Typ
@@ -351,7 +352,8 @@ class API:
 
         return __uebergabedaten_delete_aus
 
-# Methoden zum Senden von Daten
+# Methoden zum Senden von Daten:
+
     def hole(self) -> dict:
         """
 

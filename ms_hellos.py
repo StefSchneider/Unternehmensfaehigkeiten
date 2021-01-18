@@ -34,7 +34,6 @@ if __name__ == "__main__":
             uebergabedaten_aus["auftraggeber"] = sys.argv[0]
             uebergabedaten_aus["server_port_auftraggeber"] = eigener_server_port
             print(uebergabedaten_aus)
-            print(hellos_API.url_partner)
             hellos_API.url_partner += str(nummer_ressource)
             hellos_API.schreibe(uebergabedaten_aus)
         elif auswahl == "3":
