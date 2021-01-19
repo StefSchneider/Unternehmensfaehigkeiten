@@ -51,7 +51,7 @@ if __name__ == "__main__":
             hellos_API.ueberschreibe(uebergabedaten_aus)
         elif auswahl == "4":
             hellos_API.url_partner += str(nummer_ressource)
-            hellos_API.loesche(uebergabedaten_loesche = {})
+            hellos_API.loesche()
             """
             loesche_alle_elemente: bool = False
             loesche_letztes_element: bool = False
