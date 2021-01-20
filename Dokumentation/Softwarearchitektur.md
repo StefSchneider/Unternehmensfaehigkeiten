@@ -23,3 +23,30 @@ Schnittstelle ist JSON.
  ## Library Persistenz_UF
  Diese Library enthät alle Klassen und Methoden, um Daten in verschiedenen Speichern abzulegen bzw. daraus abzurufen.
  
+
+# Datenströme/Datentypen
+
+## Datenströme in Richtung Persistenz
+
+Der auslösende Microservice (im Beispiel *hellos*) nimmt die Daten vom Nutzer entgegen. Für diese Daten werden in der
+Regel die Grund-Datentypen – zum Beispiel **String, Integer oder Dictionary** – verwendet. Für die Erzeugung des 
+Requests werden Methoden aus der Bibliothek *API_UF* zum Senden genutzt. Innerhalb dieser Methoden erfolgt ein encoding 
+der aufgenommenen Nutzerdaten: in einem ersten Schritt von der Daten-Grundtypen in einen **JSON-String**, in einem 
+zweiten Schritt in Daten vom Typ **Bytes**, damit diese an den empfangenen Microservice (im Beispiel *prints*) geschickt
+werden können.
+
+Der empfangene Microservice nimmt die Daten vom Typ **Bytes** auf und decodiert sie. Zunächst vom Typ **Bytes** in einen
+**JSON-String**, im zweiten Schritt wieder zurück in die Grund-Datentypen. Um den Request innerhalb der Persistenz 
+umzusetzen, werden Methoden aus der Bibliothek *CRUD_UF* genutzt. Diese übersetzen den jeweiligen Request in 
+CRUD-Methoden (Create, Read, Update, Delete), um auf die Persistenz zuzugreifen. Dabei werden die Daten in Form der 
+Grund-Datentypen übergeben. Die Persistenz wird in Form des Datentpys **Baum** verwaltet. Um die Speicherobjekte zu 
+verändern, werden Methoden der Bibliothek *Persistenz_UF* verwendet. Diese schreiben oder lesen die Daten in oder aus
+den Speicherobjekten. Auch dabei werden die Daten in Form der Grund-Datentypen übergeben. 
+
+![Grafische Darstellung Programmarchitektur](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_Programmarchitektur.png)
+
+## Datenströme aus Richtung Persistenz
+
+
+
+JSON wird nur im Aueßnverhältnis zwischen hellos und prints genutzt
