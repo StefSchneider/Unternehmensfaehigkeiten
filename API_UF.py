@@ -367,9 +367,8 @@ class API:
         __rueckgabedaten_requestpartner: bytes = b""
         __rueckgabedaten_hole: dict = {}
         __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "GET")
-        __request_an_partner = urllib.request.urlopen(__request_an_partner)
-        __rueckgabedaten_request_partner: bytes = __request_an_partner.read()
-        # liest die vom Partner zurückgelieferten Daten ein
+        with urllib.request.urlopen(__request_an_partner) as __antwort:
+            __rueckgabedaten_requestpartner = __antwort.read()  # liest die vom Partner zurückgelieferten Daten ein
         __rueckgabedaten_hole: dict = self.__decode_daten(__rueckgabedaten_requestpartner)
         print("GET abgeschlossen")
 
