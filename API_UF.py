@@ -5,6 +5,8 @@ Das ist die Bibliothek für die Klasse API.
 import json
 import urllib
 import urllib.request
+from urllib.request import Request
+
 from flask import request
 
 
@@ -364,7 +366,7 @@ class API:
         """
         __rueckgabedaten_requestpartner: bytes = b""
         __rueckgabedaten_hole: dict = {}
-        __request_an_partner = urllib.request.Request(url = self.url_partner, method = "GET")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "GET")
         __request_an_partner = urllib.request.urlopen(__request_an_partner)
         __rueckgabedaten_request_partner: bytes = __request_an_partner.read()
         # liest die vom Partner zurückgelieferten Daten ein
@@ -387,7 +389,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_schreibe: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner = urllib.request.Request(url = self.url_partner, method = "POST")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "POST")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -411,7 +413,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_ueberschreibe: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner = urllib.request.Request(url = self.url_partner, method = "PUT")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PUT")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -435,7 +437,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_aendere: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner = urllib.request.Request(url = self.url_partner, method = "PATCH")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PATCH")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -459,7 +461,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_loesche: str = ""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_leer)
-        __request_an_partner = urllib.request.Request(url = self.url_partner, method = "DELETE")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "DELETE")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
