@@ -2,62 +2,6 @@ Die Bibliothek API_UF enthält alle Klassen und Methoden zur Steuerung der REST-
 
 # Klassen
 
-## Rest_Rueckmeldung
-Die Klasse ermittelt die Daten, die an den GET-Request zurückgeliefert werden. Dabei unterscheidet sie,für wen die 
-Rückgabedaten bestimmt sind: Daten (reine Daten des Speicherobjektes), Nutzer, Entwickler oder Programm. Die Daten für 
-den Entwickler sollen zu- und abschaltbar sein. Datenformat der Rückgabe ist JSON.
-
-Die Methoden werden für jedes REST-Verb programmiert, in ihrem Namen werden der jeweilige Empfänger und das jeweilige 
-REST-Verb festgehalten, um einen schnelle Zuordnung zu gewährleisten. 
-
-### Methoden
-
-#### --init--
-
-
-#### ermittle_speicherinhalt_daten_get
-
-
-#### ermittle_anzahl_speicherobjekte_nutzer_get
-
-
-#### ermittle_status_objekt_nutzer_get
-Gibt zurück, ob das Datenobjekt vorhanden ist oder nicht.
-
-
-#### ermittle_laenge_liste_speicherobjekte_nutzer_get
-
-
-#### ermittle_startobjekt_nutzer_get
-
-
-#### ermittle_laenge_daten_bytes_entwickler_get
-
-
-#### ermittle_verarbeitungszeit_entwickler_get
-
-
-#### ermittle_datenstruktur_entwickler_get
-
-
-#### ermittle_strukturtiefe_baum_entwickler_get
-
-
-#### ermittle_server_datenquelle_entwickler_get
-
-
-#### ermittle_datentyp_rueckgabeobjekt_programm_get
-
-
-#### rueckmeldung_objekte_fuellen_get
-
-
-#### rueckmeldung_objekte_filtern
-
-
-
-
-
 ## API
 Die Klasse umfasst alle Methoden, die für den Aufruf der Schnittstelle benötigt werden. Die Methoden teilen sich auf in:
 - grundsätzliche Methoden, Hilfsmethoden zur Verarbeitung der Daten,
@@ -66,6 +10,24 @@ Die Klasse umfasst alle Methoden, die für den Aufruf der Schnittstelle benötig
 
 Die Namen der Methoden zum Empfang von Daten entsprechen denen der REST-Verben, die Namen der Methoden zum Senden von 
 Daten haben adäquate deutsche Namen.
+
+![Einsatz von Methoden](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_API_1.png)
+
+Bei der Ausführung eines Requests wird die Bibliothek API sowohl vom Request-Sender als auch vom Request-Empänger 
+aufgerufen. Der Request-Sender ruft die entsprechende Methode zum senden eines Requests auf: **hole()**, **schreibe()**, 
+**überschreibe()**, **aendere()** oder **loesche()**. Der Request-Empfänger ruft die entsprechende Gegenmethode auf: 
+**get()**, **post()**, **put**, **patch** oder **delete**.
+
+Request: GET -> Methode Sender: hole() -> Methode Empänger: get()
+
+Request: POST -> Methode Sender: schreibe() -> Methode Empänger: post()
+
+Request: PUT -> Methode Sender: ueberschreibe() -> Methode Empänger: put()
+
+Request: PATCH -> Methode Sender: aendere() -> Methode Empänger: patch()
+
+Request: DELETE -> Methode Sender: loesche() -> Methode Empänger: delete()
+
 
 ### Methoden
 
@@ -85,26 +47,41 @@ erfolgt durch das setzen der Parameter für jedes REST-Verb. Die Standardeinstel
 Verben aktiv zugeschaltet, d.h. auf 'True' gesetzt werden müssen.
 
 #### __encode_daten
-Die Methode wandelt ein Dictionary in Daten vom Typ JSON um.
+Die Methode wandelt ein Dictionary in Daten vom Typ Bytes um.
 ##### Parameter
-***encode_daten_ein***: eingehendes Dictionary, das in das JSON-Format umgewandelt werden soll
+***uebergabedaten***: eingehendes Dictionary, das in das Bytes-Format umgewandelt werden soll
 ##### Rückgabewerte
-***__encode_daten_aus***: in JSON umgewandelte Daten
+***__uebergabedaten_encode***: in Bytes umgewandelte Daten
 ##### Beschreibung
-Zur Umwandung des Datentyps wird ein JSONEncoder()-Objekt erzeugt. Zu einem späteren Zeitpunkt könnten die Daten auch in
-andere Datenformate encodiert werden. Auf eine Sortierung der Daten nach Schlüsselnamen wird an dieser Stelle bewusst
-verzichtet, da die API-Methoden ausschließlch dem Transport der Daten dienen.
+Die uebergabedaten werden in einem ersten Schritt von einem Dictionary in einen JSON-String umgewandelt. In einem 
+zweiten Schritt erfolgt die Umwandlung von einem JSON-String zum Datenformat Bytes. Auf eine Sortierung der Daten nach 
+Schlüsselnamen wird an dieser Stelle bewusst verzichtet, da die API-Methoden ausschließlch dem Transport der Daten 
+dienen.
 
 #### __decode_daten
-Die Methode wandelt die Daten vom Typ JSON in ein Dictionary um.
+Die Methode wandelt die Daten vom Typ Bytes in eine Tabelle um.
 ##### Parameter
-***decode_daten_ein***: eingehende Daten, die zunächst von den Request-Methoden entgegengenommen wurden und decodiert
+***uebergabedaten***: übertragene Daten, die zunächst von den Request-Methoden entgegengenommen wurden und decodiert
 werden sollen.
 ##### Rückgabewerte
-***__decode_daten_aus***: in ein Dictionary umgewandelte Daten
+***__uebergabedaten_decode***: in eine Tabelle umgewandelte Daten
 ##### Beschreibung
-Zur Umwandung des Datentyps wird ein JSONDecoder()-Objekt erzeugt. Zu einem späteren Zeitpunkt könnten auch andere 
-Datenformate entgegengenommen werden und decodiert werden.
+Die uebergabedaten werden in einem ersten Schritt vom Datentyp Bytes in einen JSON-String umgewandelt. In einem 
+zweiten erfolgt die Umwandlung in einen Tabelle. Dazu wird die Methode __json_in_tabelle() aufgrufen. Zu einem späteren 
+Zeitpunkt könnten auch andere Datenformate, z.B. XML, entgegengenommen werden und decodiert werden. Auch dazu ruft 
+__decode_daten entsprechende Umwandlungsmethoden auf. Diese hängt vom transportierten Datenformat ab.
+
+#### __json_in_tabelle
+Die Methode wandelt dien Daten vom Typ JSON-String in eine Tabelle um.
+##### Parameter
+***uebergabedaten***: übertragene Daten, die zunächst von Bytes in einen JSON-String umgewandelt wurden.
+##### Rückgabewerte
+***__ubergabedaten_tabelle***: in eine Tabelle umgewandelte Daten
+##### Beschreibung
+Die Methode liest die JSON-String aus und sortiert die dort enthaltenen Daten nach den Schlüsseln in eine leere Tabelle.
+
+```zu klären: Mit welcher Routine erfolgt das Auslesen des JSON-String, d.h. wie müssen die Daten angeordnet sein?```
+
 
 ### Methoden zum Empfangen von Daten
 Die Methoden werden eingesetzt, um eingehende Daten durch die verschiedenen Requests zu verarbeiten. Wird beispielsweise

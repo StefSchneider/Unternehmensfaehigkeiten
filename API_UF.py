@@ -4,7 +4,7 @@ Das ist die Bibliothek für die Klasse API.
 
 import json
 import urllib
-import urllib.request
+#import urllib.request
 from urllib.request import Request
 
 from flask import request
