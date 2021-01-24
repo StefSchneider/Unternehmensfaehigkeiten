@@ -4,9 +4,7 @@ Das ist die Bibliothek für die Klasse API.
 
 import json
 import urllib
-#import urllib.request
 from urllib.request import Request
-
 from flask import request
 
 
@@ -16,7 +14,9 @@ ENTWICKLER_INFORMATIONEN: bool = True
 # Config-Datein erfolgen.
 
 
-class REST_Rueckmeldung:
+class REST_Rueckmeldung:# Methoden zum Senden von Daten:
+
+
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         """
@@ -287,7 +287,120 @@ class API:
 
         return __decode_daten_aus
 
-# Methoden zum Empfang von Daten:
+    def hole(self) -> dict:
+        """
+        Die Methode startet einen GET-Request beim Microservice der den Inhalt der Ressource bereithält. Bei der Methode
+        müssen keine Daten als Parameter mitgeliefert werden. Die Methode verändert die Ressource/das Speicherobjekt
+        nicht. Auf welche Ressource der GET-Request angewendet werden soll, ergibt sich aus dem angesprochenen Pfad im
+        jeweiligen Microservice.
+        :return: Die Daten, die von den angeforderten Ressource zurückgeliefert wurden als Dict
+        """
+        __rueckgabedaten_requestpartner: bytes = b""
+        __rueckgabedaten_hole: dict = {}
+        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="GET")
+        with urllib.request.urlopen(__request_an_partner) as __antwort:
+            __rueckgabedaten_requestpartner = __antwort.read()  # liest die vom Partner zurückgelieferten Daten ein
+        __rueckgabedaten_hole: dict = self.__decode_daten(__rueckgabedaten_requestpartner)
+        print("GET abgeschlossen")
+
+        return __rueckgabedaten_hole
+
+    def schreibe(self, uebergabedaten_schreibe: dict) -> bytes:
+        """
+        Die Methode startet einen POST-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
+        werden die Daten übergeben, die die neue Ressource/das neue Speicherobjekt aufnehmen soll. Die Umwandlung der
+        Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode
+        schnell angepasst werden, ohne in allen Methoden erneuert werden zu müssen.
+        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
+        :param uebergabedaten_schreibe: Daten, die die neue Ressource aufnehmen soll
+        :return: die über den POST-Request mitgeschickten Daten für die Ressource
+        """
+        __uebergabedaten_ein: dict = uebergabedaten_schreibe
+        __uebergabedaten_request: bytes = b""
+        __rueckgabedaten_schreibe: bytes = b""
+        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
+        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="POST")
+        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
+        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
+        __rueckgabedaten_schreibe = __uebergabedaten_request
+        print("POST abgeschlossen")
+
+        return __rueckgabedaten_schreibe
+
+    def ueberschreibe(self, uebergabedaten_ueberschreibe: dict) -> bytes:
+        """
+        Die Methode startet einen PUT-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
+        werden die Daten übergeben, mit der die angesprochene Ressource/das Speicherobjekt überschrieben werden soll.
+        Dabei wird der komplette Inhalt überschrieben. Die Umwandlung der Daten erfolgt über die Methode __encode, damit
+        kann das zu verarbeitende Datenformat jederzeit über die Methode schnell angepasst werden, ohne in allen
+        Methoden erneuert werden zu müssen.
+        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
+        :param uebergabedaten_ueberschreibe: Daten, mit der die Ressource überschrieben werden soll
+        :return: die über den PUT-Request mitgeschickten Daten für die Ressource
+        """
+        __uebergabedaten_ein: dict = uebergabedaten_ueberschreibe
+        __uebergabedaten_request: bytes = b""
+        __rueckgabedaten_ueberschreibe: bytes = b""
+        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
+        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="PUT")
+        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
+        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
+        __rueckgabedaten_ueberschreibe = __uebergabedaten_request
+        print("PUT abgeschlossen")
+
+        return __rueckgabedaten_ueberschreibe
+
+    def aendere(self, uebergabedaten_aendere: dict) -> bytes:
+        """
+        Die Methode startet einen PATCH-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
+        werden die Daten übergeben, die bei der angesprochenen Ressource/dem Speicherobjekt überschrieben werden sollen.
+        Dabei werden nur die Teile des Inhalt geändert, die überschrieben werden sollen. Die Umwandlung der Daten
+        erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode
+        schnell angepasst werden, ohne in allen Methoden erneuert werden zu müssen.
+        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
+        :param uebergabedaten_aendere: Daten, die bei der Ressource geändert werden sollen
+        :return: die über den PATCH-Request mitgeschickten Daten für die Ressource
+        """
+        __uebergabedaten_ein: dict = uebergabedaten_aendere
+        __uebergabedaten_request: bytes = b""
+        __rueckgabedaten_aendere: bytes = b""
+        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
+        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="PATCH")
+        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
+        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
+        __rueckgabedaten_aendere = __uebergabedaten_request
+        print("PATCH abgeschlossen")
+
+        return __rueckgabedaten_aendere
+
+    def loesche(self) -> str:
+        """
+        Die Methode startet einen DELETE-Request beim Microservice der den Inhalt der Ressource bereithält. Damit wird
+        die gesamte Resource/das Speicherobjekt gelöscht. Die Umwandlung der (Leer-)Daten erfolgt über die Methode
+        __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode schnell angepasst werden, ohne
+        in allen Methoden erneuert werden zu müssen.
+        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
+        :return: "OK"
+        """
+        __uebergabedaten_leer: dict = {}
+        # Der Request benötigt im Header mitzuliefernde Daten. Da die Methode nicht den Inhalt des Speicherobjekts
+        # ändert, wird ein leeres Dictionary eingesetzt
+        __uebergabedaten_request: bytes = b""
+        __rueckgabedaten_loesche: str = ""
+        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_leer)
+        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="DELETE")
+        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
+        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
+        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
+        __rueckgabedaten_loesche = "OK"
+        print("DELETE abgeschlossen")
+
+        return __rueckgabedaten_loesche
+
+# Methoden zum Empfangen von Daten:
 
     def get(self, uebergabedaten_get: bytes) -> bytes:
         """
@@ -353,118 +466,3 @@ class API:
         __uebergabedaten_delete_aus = self.__decode_daten(__uebergabedaten_delete_ein)
 
         return __uebergabedaten_delete_aus
-
-# Methoden zum Senden von Daten:
-
-    def hole(self) -> dict:
-        """
-        Die Methode startet einen GET-Request beim Microservice der den Inhalt der Ressource bereithält. Bei der Methode
-        müssen keine Daten als Parameter mitgeliefert werden. Die Methode verändert die Ressource/das Speicherobjekt
-        nicht. Auf welche Ressource der GET-Request angewendet werden soll, ergibt sich aus dem angesprochenen Pfad im
-        jeweiligen Microservice.
-        :return: Die Daten, die von den angeforderten Ressource zurückgeliefert wurden als Dict
-        """
-        __rueckgabedaten_requestpartner: bytes = b""
-        __rueckgabedaten_hole: dict = {}
-        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "GET")
-        with urllib.request.urlopen(__request_an_partner) as __antwort:
-            __rueckgabedaten_requestpartner = __antwort.read()  # liest die vom Partner zurückgelieferten Daten ein
-        __rueckgabedaten_hole: dict = self.__decode_daten(__rueckgabedaten_requestpartner)
-        print("GET abgeschlossen")
-
-        return __rueckgabedaten_hole
-
-    def schreibe(self, uebergabedaten_schreibe: dict) -> bytes:
-        """
-        Die Methode startet einen POST-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
-        werden die Daten übergeben, die die neue Ressource/das neue Speicherobjekt aufnehmen soll. Die Umwandlung der
-        Daten erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode
-        schnell angepasst werden, ohne in allen Methoden erneuert werden zu müssen.
-        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
-        :param uebergabedaten_schreibe: Daten, die die neue Ressource aufnehmen soll
-        :return: die über den POST-Request mitgeschickten Daten für die Ressource
-        """
-        __uebergabedaten_ein: dict = uebergabedaten_schreibe
-        __uebergabedaten_request: bytes = b""
-        __rueckgabedaten_schreibe: bytes = b""
-        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "POST")
-        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
-        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
-        __rueckgabedaten_schreibe = __uebergabedaten_request
-        print("POST abgeschlossen")
-
-        return __rueckgabedaten_schreibe
-
-    def ueberschreibe(self, uebergabedaten_ueberschreibe: dict) -> bytes:
-        """
-        Die Methode startet einen PUT-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
-        werden die Daten übergeben, mit der die angesprochene Ressource/das Speicherobjekt überschrieben werden soll.
-        Dabei wird der komplette Inhalt überschrieben. Die Umwandlung der Daten erfolgt über die Methode __encode, damit
-        kann das zu verarbeitende Datenformat jederzeit über die Methode schnell angepasst werden, ohne in allen
-        Methoden erneuert werden zu müssen.
-        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
-        :param uebergabedaten_ueberschreibe: Daten, mit der die Ressource überschrieben werden soll
-        :return: die über den PUT-Request mitgeschickten Daten für die Ressource
-        """
-        __uebergabedaten_ein: dict = uebergabedaten_ueberschreibe
-        __uebergabedaten_request: bytes = b""
-        __rueckgabedaten_ueberschreibe: bytes = b""
-        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PUT")
-        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
-        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
-        __rueckgabedaten_ueberschreibe = __uebergabedaten_request
-        print("PUT abgeschlossen")
-
-        return __rueckgabedaten_ueberschreibe
-
-    def aendere(self, uebergabedaten_aendere: dict) -> bytes:
-        """
-        Die Methode startet einen PATCH-Request beim Microservice der den Inhalt der Ressource bereithält. Als Parameter
-        werden die Daten übergeben, die bei der angesprochenen Ressource/dem Speicherobjekt überschrieben werden sollen.
-        Dabei werden nur die Teile des Inhalt geändert, die überschrieben werden sollen. Die Umwandlung der Daten
-        erfolgt über die Methode __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode
-        schnell angepasst werden, ohne in allen Methoden erneuert werden zu müssen.
-        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
-        :param uebergabedaten_aendere: Daten, die bei der Ressource geändert werden sollen
-        :return: die über den PATCH-Request mitgeschickten Daten für die Ressource
-        """
-        __uebergabedaten_ein: dict = uebergabedaten_aendere
-        __uebergabedaten_request: bytes = b""
-        __rueckgabedaten_aendere: bytes = b""
-        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PATCH")
-        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
-        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
-        __rueckgabedaten_aendere = __uebergabedaten_request
-        print("PATCH abgeschlossen")
-
-        return __rueckgabedaten_aendere
-
-    def loesche(self) -> str:
-        """
-        Die Methode startet einen DELETE-Request beim Microservice der den Inhalt der Ressource bereithält. Damit wird
-        die gesamte Resource/das Speicherobjekt gelöscht. Die Umwandlung der (Leer-)Daten erfolgt über die Methode
-        __encode, damit kann das zu verarbeitende Datenformat jederzeit über die Methode schnell angepasst werden, ohne
-        in allen Methoden erneuert werden zu müssen.
-        ACHTUNG: Das Datenformat über daten_typ_inhalt muss zum Format in der Methode __encode passen
-        :return: "OK"
-        """
-        __uebergabedaten_leer: dict = {}
-        # Der Request benötigt im Header mitzuliefernde Daten. Da die Methode nicht den Inhalt des Speicherobjekts
-        # ändert, wird ein leeres Dictionary eingesetzt
-        __uebergabedaten_request: bytes = b""
-        __rueckgabedaten_loesche: str = ""
-        __uebergabedaten_request = self.__encode_daten(__uebergabedaten_leer)
-        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "DELETE")
-        __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
-        __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
-        urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
-        __rueckgabedaten_loesche = "OK"
-        print("DELETE abgeschlossen")
-
-        return __rueckgabedaten_loesche

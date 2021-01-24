@@ -50,15 +50,6 @@ Anzahl ihrer Knoten; die Breite des Baums ergibt sich aus der maximalen Breite d
 
 # Klassen
 
-## Baum
-
-
-## Knoten
-
-
-## Speicherinhalt
-
-
 
 
 ## Persistenz
@@ -85,6 +76,13 @@ Anzahl ihrer Knoten; die Breite des Baums ergibt sich aus der maximalen Breite d
 #### lese_speicherinhalt
 
 #### aendere_speicherinhalt
+
+Welche Daten müssen bei einem PATCH ausgetauscht werden?
+- zu beachten: Das Speicherobjekt ist bereits vorhanden 
+- zu klären: alle nicht zu ändernden Speicherelemente behalten ihre UDID oder bekommen auch sie eine neue UDID?  
+- alle zu ändernden Speicherelemente werden mit einem neuen UDID, ihrem Schlüssel und ihrem Speicherinhalt neu eingefügt
+- alle zu ändernden Speicherinhalte erhalten als Eltern die UDID des Speicherobjekts
+- alle neuen Speicherinhalte 
 
 #### loesche_speicherinhalt
 

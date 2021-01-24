@@ -54,3 +54,5 @@ Zur Ermittlung von *startzeit* und *endzeit* wird der Microservice **ms_zeitstem
 #### ermittle_datentyp_rueckgabeobjekt_programm_lese
 
 Transformation REST in CRUD: ![Uebertragung REST zu CRUD](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_Uebertragung_REST_ZU_CRUD.png)
+
+

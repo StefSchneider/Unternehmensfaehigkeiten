@@ -1,4 +1,13 @@
-Die Bibliothek API_UF enthält alle Klassen und Methoden zur Steuerung der REST-API.
+Die Bibliothek API_UF enthält alle Klassen und Methoden zur Steuerung der REST-API. Dies betrifft Methoden zum Senden
+oder Empfangen von Daten sowie Methoden, um das Senden und Empfangen vorzubereiten.
+
+# Änderungen und Ergänzungen im Vergleich zum bisherigen Stand:
+- Hinzufügen Methode zur Übersetzung JSON-String in Tabellen - zu klären: Mit welcher Routine erfolgt das Auslesen des JSON-String, d.h. wie müssen die Daten angeordnet sein?`
+- Ergänzung Docstrings bei Methoden zum Empfangen der Daten
+- Bereich REST-Rueckmeldung evtl. auslagern
+
+
+
 
 # Klassen
 
@@ -80,7 +89,54 @@ Die Methode wandelt dien Daten vom Typ JSON-String in eine Tabelle um.
 ##### Beschreibung
 Die Methode liest die JSON-String aus und sortiert die dort enthaltenen Daten nach den Schlüsseln in eine leere Tabelle.
 
-```zu klären: Mit welcher Routine erfolgt das Auslesen des JSON-String, d.h. wie müssen die Daten angeordnet sein?```
+
+### Methoden zum Senden von Daten
+Die Methoden werden eingesetzt, um Daten an den anfragenden Microservice zu übermitteln. So schickt die Methode 
+**schreibe** Daten per POST-Request an die entsprechende Ressource. Die Namen der Methoden wurden adäquat zu den Namen
+für den Empfang von Daten gewählt. Beispielsweise ist **aendere** das Pendant zu **patch**.
+Alle Daten werden im JSON-Format gesendet.
+
+#### hole
+Die Methode greift per GET-Request auf eine Ressource zu und erhält das entsprechende Datenobjekt.
+##### Parameter
+***uebergabedaten_hole_ein***: Daten, die beim GET-Request mitgeschickt werden sollen; derzeit ohne Nutzung/Verarbeitung
+##### Rückgabewerte
+***__uebergabedaten_hole_aus***: Daten, die über den GET-Request auf die Ressource geliefert werden
+##### Beschreibung
+Die Methode startet einen GET-Request auf eine Ressource. Die erhaltenen Daten werden von der Methode im JSON-Format 
+zurückgegeben.
+
+#### schreibe
+Die Methode schreibt über einen POST-Request Daten in eine Ressource.
+##### Parameter
+***uebergabedaten_schreibe_ein***: 
+##### Rückgabewerte
+***__uebergabedaten_schreibe_aus***:
+##### Beschreibung
+
+#### ueberschreibe
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+
+#### aendere
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+
+#### loesche
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
 
 
 ### Methoden zum Empfangen von Daten
@@ -132,51 +188,3 @@ Die Methode dient der Verarbeitung eingehender Daten eines DELETE-Requests.
 ***__uebergabedaten_delete_aus***: bearbeitete Daten des DELETE-Requests
 ##### Beschreibung
 Die eingehenden Daten werden mithilfe der Methode **decode** in ein Dictionary umgewandelt.
-
-### Methoden zum Senden von Daten
-Die Methoden werden eingesetzt, um Daten an den anfragenden Microservice zu übermitteln. So schickt die Methode 
-**schreibe** Daten per POST-Request an die entsprechende Ressource. Die Namen der Methoden wurden adäquat zu den Namen
-für den Empfang von Daten gewählt. Beispielsweise ist **aendere** das Pendant zu **patch**.
-Alle Daten werden im JSON-Format gesendet.
-
-#### hole
-Die Methode greift per GET-Request auf eine Ressource zu und erhält das entsprechende Datenobjekt.
-##### Parameter
-***uebergabedaten_hole_ein***: Daten, die beim GET-Request mitgeschickt werden sollen; derzeit ohne Nutzung/Verarbeitung
-##### Rückgabewerte
-***__uebergabedaten_hole_aus***: Daten, die über den GET-Request auf die Ressource geliefert werden
-##### Beschreibung
-Die Methode startet einen GET-Request auf eine Ressource. Die erhaltenen Daten werden von der Methode im JSON-Format 
-zurückgegeben.
-
-#### schreibe
-Die Methode schreibt über einen POST-Request Daten in eine Ressource.
-##### Parameter
-***uebergabedaten_schreibe_ein***: 
-##### Rückgabewerte
-***__uebergabedaten_schreibe_aus***:
-##### Beschreibung
-
-#### ueberschreibe
-
-##### Parameter
-
-##### Rückgabewerte
-
-##### Beschreibung
-
-#### aendere
-
-##### Parameter
-
-##### Rückgabewerte
-
-##### Beschreibung
-
-#### loesche
-
-##### Parameter
-
-##### Rückgabewerte
-
-##### Beschreibung
