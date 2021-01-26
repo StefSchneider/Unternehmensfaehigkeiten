@@ -56,3 +56,49 @@ Zur Ermittlung von *startzeit* und *endzeit* wird der Microservice **ms_zeitstem
 Transformation REST in CRUD: ![Uebertragung REST zu CRUD](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_Uebertragung_REST_ZU_CRUD.png)
 
 
+#### get_request_in_crud
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+
+
+#### post_request_in_crud
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+
+
+#### put_request_in_crud
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+
+
+#### patch_request_in_crud
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung
+In dem wie wir jetzt die Tabellen gestaltet haben wäre jedoch die Variante, dass nur die geänderten Element neu angelegt 
+werden zu weniger "Datenmüll" führt. In jedem Fall sind sowohl beim Elternelement das/die UUID(s) der neuen Kind(er) zu 
+referenzieren als auch bei dem/den neuen Kind(ern) der jeweilige UUI des Elternelements.
+
+
+#### delete_request_in_crud
+
+##### Parameter
+
+##### Rückgabewerte
+
+##### Beschreibung

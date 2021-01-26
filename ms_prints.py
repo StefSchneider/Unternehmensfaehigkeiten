@@ -45,13 +45,13 @@ def drucke(pfad):
         if prints_API.get_request_erlaubt:
             __rueckmeldung_get_request_verarbeitung = \
                 json.loads(prints_CRUD_Rueckmeldung.get_request_in_crud(__hierarchien))
-            __rueckmeldung_get_request_verarbeitung_aus = prints_API.get(__rueckmeldung_get_request_verarbeitung)
+            __rueckmeldung_get_request_verarbeitung_aus = __rueckmeldung_get_request_verarbeitung
+#            __rueckmeldung_get_request_verarbeitung_aus = prints_API.get(__rueckmeldung_get_request_verarbeitung)
             return __rueckmeldung_get_request_verarbeitung
         else:
             return "GET-Request nicht erlaubt"
     elif request.method == "POST":
         if prints_API.post_request_erlaubt:
-#            uebergabedaten_ein = request.data  # hier werden die Daten aus dem Post der Quelle abgerufen
             rueckmeldung = prints_API.post()  # hier werden die Daten in ein dict umgewandelt
             __schluessel_neue_ressource = prints_PRS.erzeuge_schluessel_neueintrag(int(rueckmeldung["id"]))
             neuer_eintrag_in_datenspeicher: dict = {__schluessel_neue_ressource: rueckmeldung.copy()}
@@ -63,8 +63,7 @@ def drucke(pfad):
             return "POST-Request nicht erlaubt"
     elif request.method == "PUT":
         if prints_API.put_request_erlaubt:
-            uebergabedaten_ein = request.data
-            rueckmeldung = prints_API.put(uebergabedaten_ein)
+            rueckmeldung = prints_API.put()
             __schluessel_ressource = __hierarchien[-1]
             __eintrag_in_datenspeicher: dict = {__schluessel_ressource: rueckmeldung.copy()}
             prints_CRUD_Rueckmeldung.put_request_in_crud(__hierarchien, __eintrag_in_datenspeicher)
@@ -77,8 +76,7 @@ def drucke(pfad):
             return "PUT-Request nicht erlaubt."
     elif request.method == "PATCH":
         if prints_API.patch_request_erlaubt:
-            uebergabedaten_ein = request.data
-            rueckmeldung = prints_API.patch(uebergabedaten_ein)
+            rueckmeldung = prints_API.patch()
             __neuer_speicher = prints_CRUD_Rueckmeldung.patch_request_in_crud(__hierarchien, rueckmeldung)
             try:
                 text_zum_drucken = rueckmeldung["text"]
@@ -95,9 +93,8 @@ def drucke(pfad):
             return "PATCH-Request nicht erlaubt"
     elif request.method == "DELETE":
         if prints_API.delete_request_erlaubt:
-            uebergabedaten_ein = request.data
             prints_CRUD_Rueckmeldung.delete_request_in_crud(__hierarchien)
-            rueckmeldung = prints_API.delete(uebergabedaten_ein)
+            rueckmeldung = prints_API.delete()
         else:
             return "DELETE-Request nicht erlaubt"
     else:

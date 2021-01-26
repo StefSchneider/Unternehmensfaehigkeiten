@@ -2,8 +2,8 @@ Die Bibliothek API_UF enthält alle Klassen und Methoden zur Steuerung der REST-
 oder Empfangen von Daten sowie Methoden, um das Senden und Empfangen vorzubereiten.
 
 # Änderungen und Ergänzungen im Vergleich zum bisherigen Stand:
-- Hinzufügen Methode zur Übersetzung JSON-String in Tabellen - zu klären: Mit welcher Routine erfolgt das Auslesen des JSON-String, d.h. wie müssen die Daten angeordnet sein?`
-- Ergänzung Docstrings bei Methoden zum Empfangen der Daten
+- Hinzufügen Methode zur Übersetzung JSON-String in Tabellen - zu klären: Mit welcher Routine erfolgt das Auslesen des 
+  JSON-String, d.h. wie müssen die Daten angeordnet sein?`
 - Bereich REST-Rueckmeldung evtl. auslagern
 
 

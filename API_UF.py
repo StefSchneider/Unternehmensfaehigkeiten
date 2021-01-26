@@ -14,9 +14,7 @@ ENTWICKLER_INFORMATIONEN: bool = True
 # Config-Datein erfolgen.
 
 
-class REST_Rueckmeldung:# Methoden zum Senden von Daten:
-
-
+class REST_Rueckmeldung:
 
     def __init__(self, entwickler_informationen_anzeigen: bool = ENTWICKLER_INFORMATIONEN):
         """
@@ -297,7 +295,7 @@ class API:
         """
         __rueckgabedaten_requestpartner: bytes = b""
         __rueckgabedaten_hole: dict = {}
-        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="GET")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "GET")
         with urllib.request.urlopen(__request_an_partner) as __antwort:
             __rueckgabedaten_requestpartner = __antwort.read()  # liest die vom Partner zurückgelieferten Daten ein
         __rueckgabedaten_hole: dict = self.__decode_daten(__rueckgabedaten_requestpartner)
@@ -319,7 +317,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_schreibe: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="POST")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "POST")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -343,7 +341,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_ueberschreibe: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="PUT")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PUT")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -367,7 +365,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_aendere: bytes = b""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_ein)
-        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="PATCH")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "PATCH")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -391,7 +389,7 @@ class API:
         __uebergabedaten_request: bytes = b""
         __rueckgabedaten_loesche: str = ""
         __uebergabedaten_request = self.__encode_daten(__uebergabedaten_leer)
-        __request_an_partner: Request = urllib.request.Request(url=self.url_partner, method="DELETE")
+        __request_an_partner: Request = urllib.request.Request(url = self.url_partner, method = "DELETE")
         __request_an_partner.add_header("Content-Type", self.daten_typ_inhalt)
         __request_an_partner.add_header("Content-Length", str(len(__uebergabedaten_request)))
         urllib.request.urlopen(__request_an_partner, __uebergabedaten_request)
@@ -402,67 +400,68 @@ class API:
 
 # Methoden zum Empfangen von Daten:
 
-    def get(self, uebergabedaten_get: bytes) -> bytes:
+    def get(self) -> bytes:
         """
-        Auf eine Decodierung kann verzichtet werden, da die Methode die Daten aus Typ Bytes erhält und auch als Typ
-        Bytes zurückliefert.
-        :param uebergabedaten_get:
-        :return:
+        Die Methode nimmt den GET-Request des Empfängers auf und übersetzt die mitgelieferten Daten in das passende
+        Format zur weiteren Verarbeitung.
+        ACHTUNG: Derzeit erfolgt bei einem GET-Request keine zusätzliche Datenübermittlung
+        :return: Die vom GET-Request übergebenen Daten als Tabelle
         """
-        __uebergabedaten_get_ein: bytes = uebergabedaten_get
-        __uebergabedaten_get_aus: bytes = b''
-        __uebergabedaten_get_aus = __uebergabedaten_get_ein
+        __eingangsdaten_request: bytes = b""
+        __rueckgabedaten_get: dict = {}
+        __eingangsdaten_request = request.data
+        __rueckgabedaten_get = self.__decode_daten(__eingangsdaten_request)
 
-        return __uebergabedaten_get_aus
+        return __rueckgabedaten_get
 
-#    def post(self, uebergabedaten_post: bytes) -> dict:
     def post(self) -> dict:
-
         """
-
-        :param uebergabedaten_post:
-        :return:
+        Die Methode nimmt den POST-Request des Empfängers auf und übersetzt die mitgelieferten Daten in das passende
+        Format zur weiteren Verarbeitung.
+        :return: Die vom POST-Request übergebenen Daten als Tabelle
         """
-        __daten = request.data
-#       __uebergabedaten_post_ein: bytes = uebergabedaten_post
-        __uebergabedaten_post_aus: dict = {}
-#        __uebergabedaten_post_aus: dict = self.__decode_daten(__uebergabedaten_post_ein)
-        __uebergabedaten_post_aus = self.__decode_daten(__daten)
+        __eingangsdaten_request: bytes = b""
+        __rueckgabedaten_post: dict = {}
+        __eingangsdaten_request = request.data
+        __rueckgabedaten_post = self.__decode_daten(__eingangsdaten_request)
 
-        return __uebergabedaten_post_aus
+        return __rueckgabedaten_post
 
-    def put(self, uebergabedaten_put: bytes) -> dict:
+    def put(self) -> dict:
         """
-
-        :param uebergabedaten_put:
-        :return:
+        Die Methode nimmt den PUT-Request des Empfängers auf und übersetzt die mitgelieferten Daten in das passende
+        Format zur weiteren Verarbeitung.
+        :return: Die vom PUT-Request übergebenen Daten als Tabelle
         """
-        __uebergabedaten_put_ein: bytes = uebergabedaten_put
-        __uebergabedaten_put_aus: dict = {}
-        __uebergabedaten_put_aus = self.__decode_daten(__uebergabedaten_put_ein)
+        __eingangsdaten_request: bytes = b""
+        __rueckgabedaten_put: dict = {}
+        __eingangsdaten_request = request.data
+        __rueckgabedaten_put = self.__decode_daten(__eingangsdaten_request)
 
-        return __uebergabedaten_put_aus
+        return __rueckgabedaten_put
 
-    def patch(self, uebergabedaten_patch: bytes) -> dict:
+    def patch(self) -> dict:
         """
-
-        :param uebergabedaten_patch:
-        :return:
+        Die Methode nimmt den PATCH-Request des Empfängers auf und übersetzt die mitgelieferten Daten in das passende
+        Format zur weiteren Verarbeitung.
+        :return: Die vom PATCH-Request übergebenen Daten als Tabelle
         """
-        __uebergabedaten_patch_ein: bytes = uebergabedaten_patch
-        __uebergabedaten_patch_aus: dict = {}
-        __uebergabedaten_patch_aus = self.__decode_daten(__uebergabedaten_patch_ein)
+        __eingangsdaten_request: bytes = b""
+        __rueckgabedaten_patch: dict = {}
+        __eingangsdaten_request = request.data
+        __rueckgabedaten_patch = self.__decode_daten(__eingangsdaten_request)
 
-        return __uebergabedaten_patch_aus
+        return __rueckgabedaten_patch
 
-    def delete(self, uebergabedaten_delete: bytes) -> dict:
+    def delete(self) -> dict:
         """
-
-        :param uebergabedaten_delete:
-        :return:
+        Die Methode nimmt den DELETE-Request des Empfängers auf und übersetzt die mitgelieferten Daten in das passende
+        Format zur weiteren Verarbeitung.
+        :return: Die vom DELETE-Request übergebenen Daten als Tabelle
         """
-        __uebergabedaten_delete_ein: bytes = uebergabedaten_delete
-        __uebergabedaten_delete_aus: dict = {}
-        __uebergabedaten_delete_aus = self.__decode_daten(__uebergabedaten_delete_ein)
+        __eingangsdaten_request: bytes = b""
+        __rueckgabedaten_delete: dict = {}
+        __eingangsdaten_request = request.data
+        __rueckgabedaten_delete = self.__decode_daten(__eingangsdaten_request)
 
-        return __uebergabedaten_delete_aus
+        return __rueckgabedaten_delete
