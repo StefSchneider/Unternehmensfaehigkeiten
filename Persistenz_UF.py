@@ -138,9 +138,18 @@ class Persistenz:
         self.datenspeicher.speicherdaten.schluessel = self.__wurzel
         self.speicherart: str = speicherart
 
-    def zerlege_pfad(self, pfad: str) -> list:
+    @staticmethod
+    def zerlege_pfad(pfad: str) -> list:
+        """
+        Die Methode zerlegt den Pfad in die einzelnen Hierachien, die später in der Persistenz als Schlüssel verwendet
+        werden. Damit lassen sich Speicherobjekte und Hierachien gezielt ansteuern. Der Pfad wird vom Request-Empfänger
+        geliefert.
+        :param pfad: Pfad zur Ressource, auf die der Request angewendet wird
+        :return: In Hierarchien aufgeteilter Pfad als list
+        """
         __pfad_ein: str = pfad
         __hierarchien: list = [""]
+        # Liste muss mit leerem Element gefüllt werden, um .extend-Funktion verwenden zu können.
         if __pfad_ein[-1] == "/":
             __pfad = __pfad_ein.rstrip("/")
             # Um ein leeres Listenelement zu vermeiden, wird ein mögliches "/" auf der letzten Position gelöscht
@@ -151,11 +160,14 @@ class Persistenz:
 
         return __hierarchien
 
-    def erzeuge_schluessel_neueintrag(self, nummer: int) -> str:
+    @staticmethod
+    def erzeuge_schluessel_neueintrag(nummer: int) -> str:
         """
-
-        :param nummer:
-        :return:
+        Die Methode ermittelt bei einem POST-Request den Schlüssel für die neue Ressource. Er setzt sich derzeit aus
+        zwei Zufallszahlen zusammen. Um ihn später eindeutig zu machen, soll der Zeitstempel in die Ermittlung ein-
+        fließen. Als Nummer wird aktuell die vom Request-Sender übermittelte ID verwendet.
+        :param nummer: mitgelieferte, vom Nutzer eingegebene ID
+        :return: Schlüssel für das neue Speicherobjekt als str
         """
         __nummer_ein: int = nummer
         __schluessel: str = ""
@@ -163,7 +175,16 @@ class Persistenz:
 
         return __schluessel
 
-    def ermittele_letzten_eintrag_hierarchie(self, hierarchien: list) -> int:
+    @staticmethod
+    def ermittele_letzten_eintrag_hierarchie(hierarchien: list) -> int:
+        """
+        Um die Speicherobjekte aufrufbar zu machen, erhält jedes Speicherobjekt auf einer Hierarchie eine fortlaufende
+        Nummer. Um die nächste Nummer vergeben zu können, wird mit dieser Methode die letzte verwendete Nummer
+        ermittelt. Bei der Analyse müssen Hierarchie ausgeschlossen werden.
+        DIESE METHODE IST AUFRUND DER ÄNERUNGEN BEI DER DATENSTRUKTUR NICHT MEHR IN BENUTZUNG
+        :param hierarchien: Liste mit dem in einzelne Hierarchien unterteilten Pfad
+        :return: Die letzte vergebene Nummer auf einer Hierarchie als int
+        """
         __hierarchien_ein: list = hierarchien
         __ressourcen: list = [0]
         for __eintrag in __hierarchien_ein:
@@ -172,7 +193,8 @@ class Persistenz:
 
         return max(__ressourcen)
 
-    def ersetze_letzen_schluessel(self, hierarchien: list) -> list:
+    @staticmethod
+    def ersetze_letzen_schluessel(hierarchien: list) -> list:
         """
         Hierarchien sind in dem Dictionary mit dem Prefix "h_" gekennzeichnet. Der tatsächliche Speicher innerhalb der
         Hierarchie enthält kein solches Prexif. Um auf den Wert des angeforderten Speichers zugreifen zu können, muss
@@ -189,7 +211,8 @@ class Persistenz:
 
         return __hierarchien
 
-    def zeige_datenspeicher_json(self, uebergabedaten):
+    @staticmethod
+    def zeige_datenspeicher_json(uebergabedaten):
         """
         Da der Inhalt eines Dictionaries in einer Zeile angezeigt wird, sind die einzelnen Hierarchien schwer zu
         erkennen. Mit der Methode erfolgt die Anzeige in Form eines JSON-Formats. Zur besseren Übersichtlichkeit
@@ -197,6 +220,7 @@ class Persistenz:
         :return: None
         """
         __uebergabedaten_ein = uebergabedaten
+        __datenspeicher_json: str = ""
         __datenspeicher_json = json.dumps(__uebergabedaten_ein, sort_keys = True, indent = 4)
         print(__datenspeicher_json)
 
