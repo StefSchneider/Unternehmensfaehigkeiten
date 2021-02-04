@@ -1,6 +1,21 @@
 Die Bibliothek Persistenz_UF enthält alle Klassen und Methoden zur Steuerung des Speicherzugriffs.
 
 
+# "Backlog"
+
+Ein "hash"-Wert eignet sich gut als UUID. Es gibt sogar eine Bibliothek für Python, "Python UUID Module to Generate 
+Universally Unique Identifiers [Guide] (pynative.com)". Der Vorteil ist, dass wir mit einer echten UUID über 
+Computergrenzen hinweg eindeutige Schlüssel nutzen können. Die einfache Variante mit der Sequenznummer würde hierbei 
+nicht mehr funktionieren, oder zumindest nicht, wenn es schnell gehen soll.
+Link: https://pynative.com/python-uuid-module-to-generate-universally-unique-identifiers/
+
+Die UUID wird in der Persistenz erzeugt.
+Es wird erst einmal nicht überprüft, ob die neue UUID schon anderweitig vergeben wurde, da die Wahrscheinlichkeit recht
+gering ist. Falls zu einem späteren Zeitpunkt eine solche Überprüfung nötig wird, sollten alle UUIDs in einer separaten
+Liste verwaltet (Neuaufnahme und Löschung) werden. Dann kann schnell ermittelt werden, ob eine Doppelung vorliegt. 
+
+
+
 # Architektur
 
 Die Persistenz *Hauptspeicher* wird in Form eines **Baums** aufgebaut. Dabei bildet der Microservice, zum Beispiel 
