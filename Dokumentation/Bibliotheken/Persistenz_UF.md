@@ -12,8 +12,24 @@ Link: https://pynative.com/python-uuid-module-to-generate-universally-unique-ide
 Die UUID wird in der Persistenz erzeugt.
 Es wird erst einmal nicht überprüft, ob die neue UUID schon anderweitig vergeben wurde, da die Wahrscheinlichkeit recht
 gering ist. Falls zu einem späteren Zeitpunkt eine solche Überprüfung nötig wird, sollten alle UUIDs in einer separaten
-Liste verwaltet (Neuaufnahme und Löschung) werden. Dann kann schnell ermittelt werden, ob eine Doppelung vorliegt. 
+Liste verwaltet (Neuaufnahme und Löschung) werden. Um die Suche zu beschleunigen können die UUIDs auch in einem AVL-Baum
+verwaltet werden. Dann kann schnell ermittelt werden, ob eine Doppelung vorliegt. 
 
+**UUID1**: Besteht aus der MAC-Adresse, einer Sequenz-Nummer und der Zeit
+- Hilft uns die MAC-Adresse an anderer Stelle weiter, z.B. wenn wir wissen wollen, welcher Computer die Persistenz 
+angesteuert hat?
+  Wollen/dürfen wir aus Datenschutzgründen die MAC-Adresse in der UUID festgehlaten haben?
+  Welche MAC-Adresse wird bei der Speicherung in der Cloud genommen?
+  
+**UUID4**: Vollkommen zufällig erzeugte UUID ohne Basisdaten aus dem Umfeld
+
+**UUID3/UUID5**: Aus Basis von Basisdaten ermittelte UUID
+- UUID lässt sich immer reproduzieren
+- wenn wir in den Parametern den NS-Namespace aktivieren, können wir beispielsweise den Namen der Persistenz verwenden
+- wenn wir in den Parametern die NS-URL aktivieren, können wir beispielsweise die URL des Request-Senders oder die URL
+  der Persistenz verwenden
+  
+*UUIDs lassen sich auch miteinander kombinieren, z.B. uuid.uuid4(uuid.uuid1())*
 
 
 # Architektur
