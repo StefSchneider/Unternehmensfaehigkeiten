@@ -31,6 +31,8 @@ angesteuert hat?
   
 *UUIDs lassen sich auch miteinander kombinieren, z.B. uuid.uuid4(uuid.uuid1())*
 
+Sollen aus den UUIDs die "-" entfernt werden bzw. sie als Integer verarbeitet werden, um die Verarbeitungsgeschwindig-
+keit zu erhöhen?
 
 # Architektur
 
