@@ -139,7 +139,7 @@ class Persistenz:
         self.speicherart: str = speicherart
 
     @staticmethod
-    def zerlege_pfad(pfad: str) -> list:
+    def _zerlege_pfad(pfad: str) -> list:
         """
         Die Methode zerlegt den Pfad in die einzelnen Hierachien, die später in der Persistenz als Schlüssel verwendet
         werden. Damit lassen sich Speicherobjekte und Hierachien gezielt ansteuern. Der Pfad wird vom Request-Empfänger
@@ -161,7 +161,7 @@ class Persistenz:
         return __hierarchien
 
     @staticmethod
-    def erzeuge_schluessel_neueintrag(nummer: int) -> str:
+    def _erzeuge_schluessel_neueintrag(nummer: int) -> str:
         """
         Die Methode ermittelt bei einem POST-Request den Schlüssel für die neue Ressource. Er setzt sich derzeit aus
         zwei Zufallszahlen zusammen. Um ihn später eindeutig zu machen, soll der Zeitstempel in die Ermittlung ein-
@@ -176,7 +176,7 @@ class Persistenz:
         return __schluessel
 
     @staticmethod
-    def ermittele_letzten_eintrag_hierarchie(hierarchien: list) -> int:
+    def _ermittele_letzten_eintrag_hierarchie(hierarchien: list) -> int:
         """
         Um die Speicherobjekte aufrufbar zu machen, erhält jedes Speicherobjekt auf einer Hierarchie eine fortlaufende
         Nummer. Um die nächste Nummer vergeben zu können, wird mit dieser Methode die letzte verwendete Nummer
@@ -194,7 +194,7 @@ class Persistenz:
         return max(__ressourcen)
 
     @staticmethod
-    def ersetze_letzen_schluessel(hierarchien: list) -> list:
+    def _ersetze_letzen_schluessel(hierarchien: list) -> list:
         """
         Hierarchien sind in dem Dictionary mit dem Prefix "h_" gekennzeichnet. Der tatsächliche Speicher innerhalb der
         Hierarchie enthält kein solches Prexif. Um auf den Wert des angeforderten Speichers zugreifen zu können, muss
