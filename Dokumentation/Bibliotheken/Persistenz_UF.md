@@ -21,6 +21,9 @@ angesteuert hat?
   Wollen/dürfen wir aus Datenschutzgründen die MAC-Adresse in der UUID festgehlaten haben?
   Welche MAC-Adresse wird bei der Speicherung in der Cloud genommen?
   
+Wir nehmen UUID1, Erzeugung kann später von der SQL-Datenbank übernommen werden
+Integer-Variante, muss evtl. bei der Ausgabe formatiert werden
+  
 **UUID4**: Vollkommen zufällig erzeugte UUID ohne Basisdaten aus dem Umfeld
 
 **UUID3/UUID5**: Aus Basis von Basisdaten ermittelte UUID
@@ -28,6 +31,8 @@ angesteuert hat?
 - wenn wir in den Parametern den NS-Namespace aktivieren, können wir beispielsweise den Namen der Persistenz verwenden
 - wenn wir in den Parametern die NS-URL aktivieren, können wir beispielsweise die URL des Request-Senders oder die URL
   der Persistenz verwenden
+  
+Problem beim Umhängen
   
 *UUIDs lassen sich auch miteinander kombinieren, z.B. uuid.uuid4(uuid.uuid1())*
 
