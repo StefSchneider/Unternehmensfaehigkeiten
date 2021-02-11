@@ -37,6 +37,13 @@ Request: PATCH -> Methode Sender: aendere() -> Methode Empänger: patch()
 
 Request: DELETE -> Methode Sender: loesche() -> Methode Empänger: delete()
 
+Für jeden Sender und Empänger wird eine Queue angelegt, in der die gesendeten und empfangenen Request abgelegt und
+nach dem FiFo-Prinzip verarbeitet werden. Diese einzelnen Queues ermöglichen ein asynchrones Verarbeiten der Requests
+ohne auf die Rückmeldungen anderer Empfänger warten zu müssen.
+
+Falls ein Request vom Empfänger nicht entgegen genommen werden kann, wird dieser Request an den Anfang der Sender-Queue
+gestellt und sofort wieder an den Empfänger gesendet - solange bis der Empfänger dieser entgegen nimmt.
+
 
 ### Methoden
 

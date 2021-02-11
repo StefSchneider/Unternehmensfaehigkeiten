@@ -1,43 +1,60 @@
 Die Bibliothek Persistenz_UF enthält alle Klassen und Methoden zur Steuerung des Speicherzugriffs.
 
 
-# "Backlog"
+## Verwendung von UUID für Speicherobjekte
 
-Ein "hash"-Wert eignet sich gut als UUID. Es gibt sogar eine Bibliothek für Python, "Python UUID Module to Generate 
-Universally Unique Identifiers [Guide] (pynative.com)". Der Vorteil ist, dass wir mit einer echten UUID über 
-Computergrenzen hinweg eindeutige Schlüssel nutzen können. Die einfache Variante mit der Sequenznummer würde hierbei 
-nicht mehr funktionieren, oder zumindest nicht, wenn es schnell gehen soll.
-Link: https://pynative.com/python-uuid-module-to-generate-universally-unique-identifiers/
+Jedes Speicherobjekt erhält zur genauen Identifizierung eine UUID (Universally Unique Identifier). Die UUID ist ein
+32-stelliger Zahlen-/Buchstabencode, der mit verschiedenen Mechanismen erzeugt werden kann. Die UUID wird in der 
+Persistenz erzeugt, damit ist die Methode Bestandteil der Bibliothek Persistenz_UF. Zur Erzeugung der UUID werden 
+Built-in-Methoden aus der Python Bibliothek uuid verwendet. 
 
-Die UUID wird in der Persistenz erzeugt.
-Es wird erst einmal nicht überprüft, ob die neue UUID schon anderweitig vergeben wurde, da die Wahrscheinlichkeit recht
-gering ist. Falls zu einem späteren Zeitpunkt eine solche Überprüfung nötig wird, sollten alle UUIDs in einer separaten
+Bei der Erzeugung der UUID wird nicht geprüft, ob genau diese UUID schon vergeben wurde, da aufgrund des Erzeugungs-
+mechanismus nur eine äußerst geringe Wahrscheinlicheit besteht, dass eine bestimmte UUID mehr als einmal generiert wird
+bzw. verwendet wird. 
+
+Sollte zu einem späteren Zeitpunkt eine solche Überprüfung nötig werden, sollten alle UUIDs in einer separaten
 Liste verwaltet (Neuaufnahme und Löschung) werden. Um die Suche zu beschleunigen können die UUIDs auch in einem AVL-Baum
 verwaltet werden. Dann kann schnell ermittelt werden, ob eine Doppelung vorliegt. 
 
-**UUID1**: Besteht aus der MAC-Adresse, einer Sequenz-Nummer und der Zeit
-- Hilft uns die MAC-Adresse an anderer Stelle weiter, z.B. wenn wir wissen wollen, welcher Computer die Persistenz 
-angesteuert hat?
-  Wollen/dürfen wir aus Datenschutzgründen die MAC-Adresse in der UUID festgehlaten haben?
-  Welche MAC-Adresse wird bei der Speicherung in der Cloud genommen?
-  
-Wir nehmen UUID1, Erzeugung kann später von der SQL-Datenbank übernommen werden
-Integer-Variante, muss evtl. bei der Ausgabe formatiert werden
-  
-**UUID4**: Vollkommen zufällig erzeugte UUID ohne Basisdaten aus dem Umfeld
+#### UUID-Versionen:
 
-**UUID3/UUID5**: Aus Basis von Basisdaten ermittelte UUID
-- UUID lässt sich immer reproduzieren
-- wenn wir in den Parametern den NS-Namespace aktivieren, können wir beispielsweise den Namen der Persistenz verwenden
-- wenn wir in den Parametern die NS-URL aktivieren, können wir beispielsweise die URL des Request-Senders oder die URL
-  der Persistenz verwenden
-  
-Problem beim Umhängen
-  
-*UUIDs lassen sich auch miteinander kombinieren, z.B. uuid.uuid4(uuid.uuid1())*
+**UUID1**: 
+- Wird aus der MAC-Adresse, einer Sequenz-Nummer und einem Zeitstempel generiert.
+- Die UUID ist nicht reproduzierbar.
+- Es wird immer die MAC-Adresse des Computers verwendet, auf dem sie abgespeichert wird.
+- Da die MAC-Adresse Bestandteil der UUID ist, sehen Datenschützer die UUID teilweise kritisch.
+- Wird häufig von SQL-Datenbanken genutzt.
 
-Sollen aus den UUIDs die "-" entfernt werden bzw. sie als Integer verarbeitet werden, um die Verarbeitungsgeschwindig-
-keit zu erhöhen?
+**UUID3** und **UUID5**
+- Wird teilweise auf Basis von vorzugebenden Parametern ermittelt, z.B. Namespace_DNS oder Namespace_URL
+- Erzeugung erfolgt mit cryptografischen Methoden
+_ Die UUID ist reproduzierbar.
+  
+**UUID4**
+- Vollkommen zufällig erzeugte UUID ohne Basisdaten aus dem Umfeld
+- Die UUID ist nicht reproduzierbar.
+- Wird häufig von Non-SQL-Datenbanken verwendet.
+
+**Für unsere Anwendung nutzen wir die Version UUID1.**
+
+#### Gründe für die Entscheidung:
+
+Mit hoher Wahrscheinlichkeit verwenden wir eine SQL-Datenbank. Dann kann die Erzeugung der UUID1 auch von der Datenbank
+übernommen werden. Die Datenschutzbedenken sind nicht gerechtfertigt, da sich von der MAC-Adresse nicht unbedingt auf
+den Besitzer des Computers schließen lässt. Zudem werden durch die Speicherung der Daten in der Cloud eine Vielzahl von
+MAC-Adressen verwendet, was auch das Risiko eine doppelten Erzeugung einer bestimmten UUID deutlich verringert.
+
+UUIDs der Versionen 3 und 5 kommen nicht infrage, da wir - wenn wir zum Beispiel die URL der Persistenz als Parameter
+vorgeben würden -, beim Umhängen von Speicherobjekten in eine andere Persistenz neue UUIDs für die jedes umgehangene
+Speicherobjekt generieren müssen.
+
+#### Zu beachten:
+
+Die UUID sollte nicht als String mit Hex-Zahlen dargestellt werden, sondern mit einer Integer-Zahl, da sich diese 
+schneller verarbeiten lassen als Strings. Da diese Integer-Zahlen aber unterschiedlich lang sein können, müssen sie
+bei einer Ausgabe eventuell formatiert werden.
+
+Mehr Informationen zu UUIDs: https://pynative.com/python-uuid-module-to-generate-universally-unique-identifiers/
 
 # Architektur
 
