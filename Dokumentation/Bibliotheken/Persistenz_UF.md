@@ -1,5 +1,26 @@
 Die Bibliothek Persistenz_UF enthält alle Klassen und Methoden zur Steuerung des Speicherzugriffs.
 
+## Aufbau der Persistenz
+
+Die Speicherobjekte für die jeweilige Ressource werden entweder in Form einer Datei oder einer Datenbank gespeichert.
+
+Es werden zwei Tabellen aufgebaut - eine Tabelle für die Struktur und eine Tabelle für den Inhalt der Speicherobjekte.
+
+#### Tabelle Inhalt
+Die Inhalte-Tabelle erfasst zu jedem Speicherobjekt den Inhalt. Sie besteht aus den Spalten 
+- UUID
+- Schlüssel
+- Speicherinhalt
+
+#### Tabelle Struktur
+Anhand der Struktur-Tabelle können die Eltern-Kind-Verbindungen innerhalb der Resource nachvollzogen werden. Sie besteht 
+aus den Spalten
+- UUID
+- Schlüssel
+- Eltern
+- Kind
+
+Die UUID bildet die Verknpüfung der Struktur-Tabelle zur Inhalte-Tabelle
 
 ## Verwendung von UUID für Speicherobjekte
 
@@ -54,7 +75,47 @@ Die UUID sollte nicht als String mit Hex-Zahlen dargestellt werden, sondern mit 
 schneller verarbeiten lassen als Strings. Da diese Integer-Zahlen aber unterschiedlich lang sein können, müssen sie
 bei einer Ausgabe eventuell formatiert werden.
 
-Mehr Informationen zu UUIDs: https://pynative.com/python-uuid-module-to-generate-universally-unique-identifiers/
+Mehr Informationen zu UUIDs: 
+https://pynative.com/python-uuid-module-to-generate-universally-unique-identifiers/
+
+## Index
+
+Neben den Tabellen, die in der Persistenz abgelegt werden, erfolgt eine Indizierung der Speicherobjekte mithilfe eines
+AVL-Baums. Bei einem AVL-Baum handelt es sich um einen ausgerichteten binären Suchbaum.
+
+Der Index wird auf Basis der Speicherinhalte aufgebaut und soll eine Suche nach Speicherinhalten beschleunigen. 
+
+Ein Knoten des AVL-Baums besteht aus dem Inhalt zwei Zeigern - ein Zeiger auf das linke Kind und ein Zeiger auf das 
+rechte Kind. Beide Kinder sind ebenfalls Knoten. Ausnahme: Sie haben keine Kinder; dann handelt es sich bei dem Knoten
+um ein sogenanntes Blatt. Die Kinder sind nicht zu verwechseln mit den Kindern in der Strutur-Tabelle der Persistenz.
+Der Knoteninhalt besteht aus einem Zeiger auf die Position des Speicherobjekts in der Persistenz.
+
+### Einbindung eines neues Speicherobjekts in den Index
+Wird ein neues Speicherobjekt in die Persistenz aufgenommen, wird ein entsprechender Knoten dazu auch in den AVL-Baum
+gehangen. Dabei wird der Speicherinhalt des neuen Speicherobjekts mit dem Speicherinhalt der bestehenden Knoten des 
+AVL-Baums verglichen, beginnend beim obersten Knoten, der sogennanten Wurzel.
+
+Ist der Inhalt des neuen Speicherobjekts kleiner als der Inhalt des Speicherobjekts, auf den der Zeiger im Knoten 
+verweist, wird im Baum nach links gegangen, das heißt das nächste Vergleichsobjekt liegt hinter dem Knoten, der das 
+linke Kind ist. Ist der Inhalt des neuen Speicherobjekts hingegen größer als der Inhalt des Speicherobjekts, auf den
+der Zeiger im Knoten verweist, geht der Schritt auf das rechte Kind. Diese Verglich erfolgen solange bis die richtige
+Position für das neuen Knoten erreicht ist. Dort wird er als Kind eines Elternknotens in den Baum gehangen.
+
+### Ausrichtung des Baums
+AVL-Bäume kennzeichnen sicch dadurch, dass sich an jedem Knoten die Höhe der beiden Teilbäume um höchstens eins 
+unterscheidet. Mit (fast) jeder Veränderung des Baums durch die Aufnahme oder Löschung eines Knotens ändern sich die
+Höhenverhältnisse, sodass der Baum neu ausgerichtet werden muss. In unserem Programm wird nicht nach jeder Veränderung
+gerüft, ob eine solche Rotation erfolgen muss, sondern erst nach einer bestimmten Anzahl an Veränderungen. Diese Zahl
+wird für jede Persistenz festgelegt und ist veränderbar.
+
+### Bibliothek
+Zur Erzeugung und Verwaltung der AVL-Baum wird eine eigene Bibliothek AVL-Baum mit den entsprechenden Klassen und 
+Methoden angelegt.
+
+
+Mehr Informationen zu AVL-Bäumen:
+https://de.wikipedia.org/wiki/AVL-Baum
+https://www.youtube.com/watch?v=EyrMyI3HG1g
 
 # Architektur
 
