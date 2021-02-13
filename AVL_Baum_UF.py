@@ -5,7 +5,7 @@ Diese Bibliothek enthält alle Klassen und Methoden zu AVL-Bäumen
 from collections import deque
 
 
-class AVLKnoten():
+class AVLKnoten:
 
     def __init__(self, inhalt: object):
         """
@@ -25,7 +25,7 @@ class AVLKnoten():
         return str(self.inhalt)
 
 
-class AVLBaum():
+class AVLBaum:
 
     def __init__(self):
         """
@@ -41,7 +41,7 @@ class AVLBaum():
         Diese Methode fügt einen neuen Knoten an der richtigen Stelle im Baum ein.
         :param inhalt: Inhalt, der in dem Knoten hinterlegt werden soll. Der Datentyp soll flexibel sein.
         """
-        self.__inhalt_ein: object = inhalt
+        __inhalt_ein: object = inhalt
         neuer_knoten = AVLKnoten(self.__inhalt_ein)
         if not self.knoten:
             self.knoten = neuer_knoten
