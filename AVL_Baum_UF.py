@@ -5,82 +5,53 @@ Diese Bibliothek enthält alle Klassen und Methoden zu AVL-Bäumen
 from collections import deque
 
 
-class AVLNode(object):
-    '''
-    A Node in an AVL Tree.
-    '''
+class AVLKnoten():
 
-    def __init__(self, key):
-        '''
-        Constructor for an AVL Node, including content and pointers to left and right side.
-        :param Key: Content for the node
-        '''
-
-        # The Node's Key
-        self.key = key
-        # The Node's Left child
-        self.left = None
-        # The Node's Right child
-        self.right = None
+    def __init__(self, inhalt: object):
+        """
+        Mit der Methode wird ein Knoten aus Inhalt und den Zeigern nach links und rechts erzeugt.
+        :param inhalt: Inhalt, der in dem Knoten hinterlegt werden soll. Der Datentyp soll flexibel sein.
+        """
+        self.inhalt: object = inhalt
+        self.linkes_kind = None
+        self.rechtes_kind = None
 
     def __str__(self):
-        '''
-        String representation.
-        :return: Content of the node
-        '''
 
-        return str(self.key)
+        return str(self.inhalt)
 
     def __repr__(self):
-        '''
-        String representation.
-        :return: Content of the node
-        '''
 
-        return str(self.key)
+        return str(self.inhalt)
 
 
-class AVLTree(object):
-    '''
-    An AVL Tree.
-    '''
+class AVLBaum():
 
     def __init__(self):
-        '''
-        Constructor for an AVL Tree.
-        '''
+        """
+        Mit dieser Methode wird ein AVL-Baum/AVL-Teilbaum erzeugt.
+        """
 
-        # Root Node of the Tree.
-        self.node = None
-        # Height of the Tree.
-        self.height = -1
-        # Balance factor of the Tree.
+        self.knoten = None
+        self.hoehe = -1
         self.balance = 0
 
-    def insert(self, key):
-        '''
-        Inserts a new key in the node.
-        :param key: Content of node.
-        :return: None
-        '''
-
-        # Create new Node
-        new_node = AVLNode(key)
-
-        # Initial Tree
-        if not self.node:
-            self.node = new_node
-            self.node.left = AVLTree()
-            self.node.right = AVLTree()
-        # Insert Key to the Left subtree
-        elif key < self.node.key:
-            self.node.left.insert(key)
-        # Insert Key to the Right subtree
-        elif key > self.node.key:
-            self.node.right.insert(key)
-
-        # Rebalance the AVL Tree if needed
-        self.rebalance()
+    def fuege_knoten_ein(self, inhalt: object):
+        """
+        Diese Methode fügt einen neuen Knoten an der richtigen Stelle im Baum ein.
+        :param inhalt: Inhalt, der in dem Knoten hinterlegt werden soll. Der Datentyp soll flexibel sein.
+        """
+        self.__inhalt_ein: object = inhalt
+        neuer_knoten = AVLKnoten(self.__inhalt_ein)
+        if not self.knoten:
+            self.knoten = neuer_knoten
+            self.knoten.linkes_kind = AVLBaum()
+            self.knoten.rechtes_kind = AVLBaum()
+        elif self.__inhalt_ein < self.knoten.inhalt:
+            self.knoten.linkes_kind.fuege_knoten_ein(self.__inhalt_ein)
+        elif self.__inhalt_ein > self.knoten.inhalt:
+            self.knoten.rechtes_kind.fuege_knoten_ein(self.__inhalt_ein)
+        self.neu_balacieren()  # prüft, ob nach dem Einfügen ein Rebalancing nötig ist und führt dies durch
 
     def rebalance(self):
         '''
@@ -370,8 +341,8 @@ if __name__ == '__main__':
     for key in data_starwars:
         tree.insert(key)
 
-    #   for key in [4,3]:
-    #        tree.delete(key)
+    #   for schluessel in [4,3]:
+    #        tree.delete(schluessel)
 
     print(tree.inorder_traverse())
     print(tree.preorder_traverse())
