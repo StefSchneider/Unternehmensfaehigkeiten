@@ -42,60 +42,34 @@ class AVLBaum:
         :param inhalt: Inhalt, der in dem Knoten hinterlegt werden soll. Der Datentyp soll flexibel sein.
         """
         __inhalt_ein: object = inhalt
-        neuer_knoten = AVLKnoten(self.__inhalt_ein)
+        neuer_knoten = AVLKnoten(__inhalt_ein)
         if not self.knoten:
             self.knoten = neuer_knoten
             self.knoten.linkes_kind = AVLBaum()
             self.knoten.rechtes_kind = AVLBaum()
-        elif self.__inhalt_ein < self.knoten.inhalt:
-            self.knoten.linkes_kind.fuege_knoten_ein(self.__inhalt_ein)
-        elif self.__inhalt_ein > self.knoten.inhalt:
-            self.knoten.rechtes_kind.fuege_knoten_ein(self.__inhalt_ein)
+        elif __inhalt_ein < self.knoten.inhalt:
+            self.knoten.linkes_kind.fuege_knoten_ein(__inhalt_ein)
+        elif __inhalt_ein > self.knoten.inhalt:
+            self.knoten.rechtes_kind.fuege_knoten_ein(__inhalt_ein)
         self.neu_balacieren()  # prüft, ob nach dem Einfügen ein Rebalancing nötig ist und führt dies durch
 
-    def rebalance(self):
-        '''
-        Rebalances an AVL-Tree. After inserting or deleting a Node,
-        it is necessary to check each of the Node's ancestors for consistency with the rules of AVL
-        :return: None
-        '''
+    def neu_balancieren(self):
+        """
+        Diese Methode balanciert den Baum nach Veränderungen durch Einfügen oder löschen neuer Knoten neu aus.
+        """
+        self.berechne_hoehe_neu(rekursive = False)
+        self.berechne_balance_neu(False)
 
-        # Check if we need to rebalance the Tree
-        #   update Height
-        #   Balance Tree
-        self.update_heights(recursive=False)
-        self.update_balances(False)
-
-        # For each Node checked,
-        #   if the Balance factor remains −1, 0, or +1 then no rotations are necessary.
+        # Wenn der Balance-Faktor bei −1, 0, oder +1 ist keine Rotation nötig.
         while self.balance < -1 or self.balance > 1:
-            # Left subtree is larger than Right subtree
-            if self.balance > 1:
-
-                # Left Right Case -> rotate y,z to the Left
-                if self.node.left.balance < 0:
-                    #     x               x
-                    #    / \             / \
-                    #   y   D           z   D
-                    #  / \        ->   / \
-                    # A   z           y   C
-                    #    / \         / \
-                    #   B   C       A   B
-                    self.node.left.rotate_left()
-                    self.update_heights()
-                    self.update_balances()
-
-                # Left Left Case -> rotate z,x to the Right
-                #       x                 z
-                #      / \              /   \
-                #     z   D            y     x
-                #    / \         ->   / \   / \
-                #   y   C            A   B C   D
-                #  / \
-                # A   B
-                self.rotate_right()
-                self.update_heights()
-                self.update_balances()
+            if self.balance > 1:  # Der linke Teilbaum ist größer als der rechte Teilbaum
+                if self.node.linkes_kind.balance < 0:
+                    self.node.linkes_kind.rotiere_nach_links()
+                    self.berechne_hoehe_neu()
+                    self.berechne_balance_neu()
+                self.rotiere_nach_rechts()
+                self.berechne_hoehe_neu()
+                self.berechne_balance_neu()
 
             # Right subtree is larger than Left subtree
             if self.balance < -1:
@@ -334,7 +308,7 @@ ToDo:
 
 # Demo
 if __name__ == '__main__':
-    tree = AVLTree()
+    tree = AVLBaum()
     data_starwars = ['Luke', 'Leia', 'Han', 'Obi Wan', 'Chewbacca', 'Darth Vader', 'Yoda', 'Rey', 'Finn', 'Boba Fett']
     #    data_numbers = [6, 3, 9, 2, 5, 8, 10, 1, 4, 7, 11]
 
