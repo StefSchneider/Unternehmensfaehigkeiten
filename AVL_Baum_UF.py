@@ -51,7 +51,7 @@ class AVLBaum:
             self.knoten.linkes_kind.fuege_knoten_ein(__inhalt_ein)
         elif __inhalt_ein > self.knoten.inhalt:
             self.knoten.rechtes_kind.fuege_knoten_ein(__inhalt_ein)
-        self.neu_balacieren()  # prüft, ob nach dem Einfügen ein Rebalancing nötig ist und führt dies durch
+        self.neu_balancieren()  # prüft, ob nach dem Einfügen ein Rebalancing nötig ist und führt dies durch
 
     def neu_balancieren(self):
         """
