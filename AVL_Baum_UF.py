@@ -57,80 +57,60 @@ class AVLBaum:
         """
         Diese Methode balanciert den Baum nach Veränderungen durch Einfügen oder löschen neuer Knoten neu aus.
         """
-        self.berechne_hoehe_neu(rekursive = False)
+        self.berechne_hoehe_neu(rekursiv = False)
         self.berechne_balance_neu(False)
 
         # Wenn der Balance-Faktor bei −1, 0, oder +1 ist keine Rotation nötig.
         while self.balance < -1 or self.balance > 1:
             if self.balance > 1:  # Der linke Teilbaum ist größer als der rechte Teilbaum
-                if self.node.linkes_kind.balance < 0:
-                    self.node.linkes_kind.rotiere_nach_links()
+                if self.knoten.linkes_kind.balance < 0:
+                    self.knoten.linkes_kind.rotiere_nach_links()
                     self.berechne_hoehe_neu()
                     self.berechne_balance_neu()
                 self.rotiere_nach_rechts()
                 self.berechne_hoehe_neu()
                 self.berechne_balance_neu()
 
-            # Right subtree is larger than Left subtree
-            if self.balance < -1:
+            if self.balance < -1:  # Der rechte Teilbaum ist größer als der linke Teilbaum
+                if self.knoten.rechtes_kind.balance > 0:
+                    self.knoten.rechtes_kind.rotiere_nach_rechts()  # we're in case III
+                    self.berechne_hoehe_neu()
+                    self.berechne_balance_neu()
+                self.rotiere_nach_links()
+                self.berechne_hoehe_neu()
+                self.berechne_balance_neu()
 
-                # Right Left Case -> rotate x,z to the Right
-                if self.node.right.balance > 0:
-                    #     y               y
-                    #    / \             / \
-                    #   A   x           A   z
-                    #      / \    ->       / \
-                    #     z   D           B   x
-                    #    / \                 / \
-                    #   B   C               C   D
-                    self.node.right.rotate_right()  # we're in case III
-                    self.update_heights()
-                    self.update_balances()
-
-                # Right Right Case -> rotate y,x to the Left
-                #       y                 z
-                #      / \              /   \
-                #     A   z            y     x
-                #        / \     ->   / \   / \
-                #       B   x        A   B C   D
-                #          / \
-                #         C   D
-                self.rotate_left()
-                self.update_heights()
-                self.update_balances()
-
-    def update_heights(self, recursive=True):
-        '''
-        Update Tree Height
-
-        Tree Height is max Height of either Left or Right subtrees +1 for root of the Tree
-        '''
-        if self.node:
-            if recursive:
-                if self.node.left:
-                    self.node.left.update_heights()
-                if self.node.right:
-                    self.node.right.update_heights()
-
-            self.height = 1 + max(self.node.left.height, self.node.right.height)
+    def berechne_hoehe_neu(self, rekursiv = True):
+        """
+        Diese Methode berechnet die aktuelle Höhe des Teil(Baumes). Diese Höhe ergibt sich aus dem Maximum des linken
+        und rechten Teilbaums +1 für die Wurzel.
+        :param rekursiv:
+        """
+        __rekursiv_ein = rekursiv
+        if self.knoten:
+            if __rekursiv_ein:
+                if self.knoten.linkes_kind:
+                    self.knoten.linkes_kind.berechne_hoehe_neu()
+                if self.knoten.rechtes_kind:
+                    self.knoten.rechtes_kind.berechne_hoehe_neu()
+            self.hoehe = 1 + max(self.knoten.linkes_kind.hoehe, self.knoten.rechtes_kind.hoehe)
         else:
-            self.height = -1
+            self.hoehe = -1
 
-    def update_balances(self, Recursive=True):
-        '''
-        Calculate Tree Balance factor
-
-        The Balance factor is calculated as follows:
-            Balance = Height(Left subtree) - Height(Right subtree).
-        '''
-        if self.node:
-            if Recursive:
-                if self.node.left:
-                    self.node.left.update_balances()
-                if self.node.right:
-                    self.node.right.update_balances()
-
-            self.balance = self.node.left.height - self.node.right.height
+    def berechne_balance_neu(self, rekursiv = True):
+        """
+        Diese Methode berechnet den aktuellen Balance-Faktor des (Teil)Baums. Die Formel für den Balance-Faktor lautet:
+        Balance = Höhe des linken Teilbaums - Höhe des rechten Teilbaums
+        :param rekursiv:
+        """
+        __rekursiv_ein = rekursiv
+        if self.knoten:
+            if __rekursiv_ein:
+                if self.knoten.linkes_kind:
+                    self.knoten.linkes_kind.berechne_balance_neu()
+                if self.knoten.rechtes_kind:
+                    self.knoten.rechtes_kind.berechne_balance_neu()
+            self.balance = self.knoten.linkes_kind.hoehe - self.knoten.rechtes_kind.hoehe
         else:
             self.balance = 0
 
@@ -182,7 +162,7 @@ class AVLBaum:
             * Retrace the path back up the Tree (starting with Node Z's parent) to the root,
                 adjusting the Balance factors as needed.
         '''
-        if self.node != None:
+        if self.node is not None:
             if self.node.key == key:
                 # Key found in leaf Node, just erase it
                 if not self.node.left.node and not self.node.right.node:
@@ -289,12 +269,12 @@ class AVLBaum:
 
         if node.right.node:
             self.display(node.right.node, level + 1)
-            print(('\t' * level), ('    /'))
+            print(('\t' * level), '    /')
 
         print(('\t' * level), node)
 
         if node.left.node:
-            print(('\t' * level), ('    \\'))
+            print(('\t' * level), '    \\')
             self.display(node.left.node, level + 1)
 
 
@@ -308,18 +288,18 @@ ToDo:
 
 # Demo
 if __name__ == '__main__':
-    tree = AVLBaum()
+    baum = AVLBaum()
     data_starwars = ['Luke', 'Leia', 'Han', 'Obi Wan', 'Chewbacca', 'Darth Vader', 'Yoda', 'Rey', 'Finn', 'Boba Fett']
     #    data_numbers = [6, 3, 9, 2, 5, 8, 10, 1, 4, 7, 11]
 
-    for key in data_starwars:
-        tree.insert(key)
+    for inhalt in data_starwars:
+        baum.insert(inhalt)
 
     #   for schluessel in [4,3]:
     #        tree.delete(schluessel)
 
-    print(tree.inorder_traverse())
-    print(tree.preorder_traverse())
-    print(tree.postorder_traverse())
+    print(baum.inorder_traverse())
+    print(baum.preorder_traverse())
+    print(baum.postorder_traverse())
     #    print(Tree.search(1))
-    tree.display()
+    baum.display()
