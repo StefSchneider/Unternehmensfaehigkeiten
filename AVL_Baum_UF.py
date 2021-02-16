@@ -2,7 +2,7 @@
 Diese Bibliothek enthält alle Klassen und Methoden zu AVL-Bäumen
 """
 
-from collections import deque
+# from collections import deque
 
 
 class AVLKnoten:
@@ -26,6 +26,13 @@ class AVLKnoten:
 
 
 class AVLBaum:
+    """
+    Es sollten noch folgende Methoden ergänzt werden:
+    - einfügen_ohne_dublette
+    - levelorder_traversierung
+    - umgekehrte_inorder_traversierung
+    - Suchfunktion
+    """
 
     def __init__(self):
         """
@@ -114,33 +121,33 @@ class AVLBaum:
         else:
             self.balance = 0
 
-    def rotate_right(self):
-        '''
-        Right rotation
-            set self as the Right subtree of Left subree
-        '''
-        new_root = self.node.left.node
-        new_left_sub = new_root.right.node
-        old_root = self.node
+    def rotiere_nach_rechts(self):
+        """
+        Diese Methode führt eine Rotation des (Teil)Baums nach rechts aus.
+        """
+        __neue_wurzel = self.knoten.linkes_kind.knoten
+        __neues_linkes_kind = __neue_wurzel.rechtes_kind.knoten
+        __alte_wurzel = self.knoten
+        self.knoten = __neue_wurzel
+        __alte_wurzel.linkes_kind.knoten = __neues_linkes_kind
+        __neue_wurzel.rechtes_kind.knoten = __alte_wurzel
 
-        self.node = new_root
-        old_root.left.node = new_left_sub
-        new_root.right.node = old_root
+    def rotiere_nach_links(self):
+        """
+        Diese Methode führt eine Rotation des (Teil)Baums nach links aus.
+        """
+        __neue_wurzel = self.knoten.rechtes_kind.knoten
+        __neues_linkes_kind = __neue_wurzel.linkes_kind.knoten
+        __alte_wurzel = self.knoten
+        self.knoten = __neue_wurzel
+        __alte_wurzel.rechtes_kind.knoten = __neues_linkes_kind
+        __neue_wurzel.linkes_kind.knoten = __alte_wurzel
 
-    def rotate_left(self):
-        '''
-        Left rotation
-            set self as the Left subtree of Right subree
-        '''
-        new_root = self.node.right.node
-        new_left_sub = new_root.left.node
-        old_root = self.node
+    def loesche_knoten(self, inhalt: object):
+        """
 
-        self.node = new_root
-        old_root.right.node = new_left_sub
-        new_root.left.node = old_root
-
-    def delete(self, key):
+        :param inhalt:
+        """
         '''
         Delete Key from the Tree
 
@@ -162,8 +169,9 @@ class AVLBaum:
             * Retrace the path back up the Tree (starting with Node Z's parent) to the root,
                 adjusting the Balance factors as needed.
         '''
+        __inhalt_ein: object = inhalt
         if self.node is not None:
-            if self.node.key == key:
+            if self.node.key == __inhalt_ein:
                 # Key found in leaf Node, just erase it
                 if not self.node.left.node and not self.node.right.node:
                     self.node = None
@@ -186,14 +194,14 @@ class AVLBaum:
                         # Delete Successor from the replaced Node Right subree
                         self.node.right.delete(successor.key)
 
-            elif key < self.node.key:
-                self.node.left.delete(key)
+            elif __inhalt_ein < self.node.key:
+                self.node.left.loesche_knoten(__inhalt_ein)
 
-            elif key > self.node.key:
-                self.node.right.delete(key)
+            elif __inhalt_ein > self.node.key:
+                self.node.right.loesche_knoten(__inhalt_ein)
 
             # ReBalance Tree
-            self.rebalance()
+            self.neu_balancieren()
 
     def inorder_traverse(self):
         '''
@@ -243,26 +251,6 @@ class AVLBaum:
 
         return result
 
-    #
-    #    def search(self, Searchkey):
-    #        '''
-    #        Search for Searchkey in tree
-    #       '''
-    #
-    #       if type (Searchkey) == str:
-    #           Searchkey = Searchkey.lower()
-    #           Temp = self.Node.Key.lower()
-    #       if self.Node:
-    #           if Temp == Searchkey:
-    #               return True
-    #           elif Searchkey < Temp:
-    #               return self.Node.Left.search(Searchkey)
-    #           elif Searchkey > Temp:
-    #               return self.Node.Right.search(Searchkey)
-    #           else:
-    #               return False
-    # '''
-
     def display(self, node=None, level=0):
         if not node:
             node = self.node
@@ -278,14 +266,6 @@ class AVLBaum:
             self.display(node.left.node, level + 1)
 
 
-'''
-ToDo:
-- insert_without_double
-- levelorder_traverse
-- reverse_inorder_traverse
-- search
-'''
-
 # Demo
 if __name__ == '__main__':
     baum = AVLBaum()
@@ -293,7 +273,7 @@ if __name__ == '__main__':
     #    data_numbers = [6, 3, 9, 2, 5, 8, 10, 1, 4, 7, 11]
 
     for inhalt in data_starwars:
-        baum.insert(inhalt)
+        baum.fuege_knoten_ein(inhalt)
 
     #   for schluessel in [4,3]:
     #        tree.delete(schluessel)
