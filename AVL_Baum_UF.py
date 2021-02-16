@@ -145,125 +145,105 @@ class AVLBaum:
 
     def loesche_knoten(self, inhalt: object):
         """
-
+        Diese Methode löscht einen Knoten aus einem (Teil)Baum.
         :param inhalt:
         """
-        '''
-        Delete Key from the Tree
-
-        Let Node X be the Node with the value we need to delete,
-        and let Node Y be a Node in the Tree we need to find to take Node X's place,
-        and let Node Z be the actual Node we take out of the Tree.
-
-        Steps to consider when deleting a Node in an AVL Tree are the following:
-
-            * If Node X is a leaf or has only one child, skip to step 5. (Node Z will be Node X)
-                * Otherwise, determine Node Y by finding the largest Node in Node X's Left sub Tree
-                    (in-order predecessor) or the smallest in its Right sub Tree (in-order Successor).
-                * Replace Node X with Node Y (remember, Tree structure doesn't change here, only the values).
-                    In this step, Node X is essentially deleted when its internal values were overwritten with Node Y's.
-                * Choose Node Z to be the old Node Y.
-            * Attach Node Z's subtree to its parent (if it has a subtree). If Node Z's parent is null,
-                update root. (Node Z is currently root)
-            * Delete Node Z.
-            * Retrace the path back up the Tree (starting with Node Z's parent) to the root,
-                adjusting the Balance factors as needed.
-        '''
         __inhalt_ein: object = inhalt
-        if self.node is not None:
-            if self.node.key == __inhalt_ein:
-                # Key found in leaf Node, just erase it
-                if not self.node.left.node and not self.node.right.node:
-                    self.node = None
-                # Node has only one subtree (Right), replace root with that one
-                elif not self.node.left.node:
-                    self.node = self.node.right.node
-                # Node has only one subtree (Left), replace root with that one
-                elif not self.node.right.node:
-                    self.node = self.node.left.node
+        if self.knoten is not None:
+            if self.knoten.inhalt == __inhalt_ein:
+                if not self.knoten.linkes_kind.knoten and not self.knoten.rechtes_kind.knoten:
+                    self.knoten = None
+                    # Der Knoten wird nur direkt gelöscht, wenn keine Kinder vorhanden sind
+                elif not self.knoten.linkes_kind.knoten:
+                    self.knoten = self.knoten.rechtes_kind.knoten
+                    # Falls der Knoten nur ein rechtes Kind hat, ersetzt dieses die Wurzel
+                elif not self.knoten.rechtes_kind.knoten:
+                    self.knoten = self.knoten.linkes_kind.knoten
+                    # Falls der Knoten nur ein linkes Kind hat, ersetzt dieses die Wurzel
                 else:
-                    # Find  Successor as smallest Node in Right subtree or
-                    #       predecessor as largest Node in Left subtree
-                    successor = self.node.right.node
-                    while successor and successor.left.node:
-                        successor = successor.left.node
+                    __nachfolger = self.knoten.rechtes_kind.knoten
+                    # Suche den kleinten Knoten im rechten Teilbaum als Nachfolger oder
+                    # den größten Knoten im linken Teilbaum als Vorgängen
+                    while __nachfolger and __nachfolger.linkes_kind.knoten:
+                        __nachfolger = __nachfolger.linkes_kind.knoten
+                    if __nachfolger:
+                        self.knoten.inhalt = __nachfolger.inhalt
+                        self.knoten.rechtes_kind.loesche_knoten(__nachfolger.inhalt)
+                        # Lösche den Nachfolger vom rechten Teilbaum
+            elif __inhalt_ein < self.knoten.inhalt:
+                self.knoten.linkes_kind.loesche_knoten(__inhalt_ein)
+            elif __inhalt_ein > self.knoten.inhalt:
+                self.knoten.rechtes_kind.loesche_knoten(__inhalt_ein)
+            self.neu_balancieren()  # Balanciere den (Teil)Baum neu aus.
 
-                    if successor:
-                        self.node.key = successor.key
+    def inorder_traversieren(self):
+        """
+        Diese Methode durchläuft den (Teil)Baum in der Reihenfolge
+        1. linker Teilbaum
+        2. Wurzel
+        3. rechter Teilbaum
+        :return __ergebnis: Liste aller Inhalte in der aufgenommenen Reihenfolge
+        """
+        __ergebnis: list = []
+        if not self.knoten:
+            return __ergebnis
+        __ergebnis.extend(self.knoten.linkes_kind.inorder_traversieren())
+        __ergebnis.append(self.knoten.inhalt)
+        __ergebnis.extend(self.knoten.rechtes_kind.inorder_traversieren())
 
-                        # Delete Successor from the replaced Node Right subree
-                        self.node.right.delete(successor.key)
+        return __ergebnis
 
-            elif __inhalt_ein < self.node.key:
-                self.node.left.loesche_knoten(__inhalt_ein)
+    def preorder_traversieren(self):
+        """
+        Diese Methode durchläuft den (Teil)Baum in der Reihenfolge
+        1. Wurzel
+        2. linker Teilbaum
+        3. rechter Teilbaum
+        :return __ergebnis: Liste aller Inhalte in der aufgenommenen Reihenfolge
+        """
+        __ergebnis: list = []
+        if not self.knoten:
+            return __ergebnis
+        __ergebnis.append(self.knoten.inhalt)
+        __ergebnis.extend(self.knoten.linkes_kind.inorder_traversieren())
+        __ergebnis.extend(self.knoten.rechtes_kind.inorder_traversieren())
 
-            elif __inhalt_ein > self.node.key:
-                self.node.right.loesche_knoten(__inhalt_ein)
+        return __ergebnis
 
-            # ReBalance Tree
-            self.neu_balancieren()
+    def postorder_traversieren(self):
+        """
+        Diese Methode durchläuft den (Teil)Baum in der Reihenfolge
+        1. linker Teilbaum
+        2. rechter Teilbaum
+        3. Wurzel
+        :return __ergebnis: Liste aller Inhalte in der aufgenommenen Reihenfolge
+        """
+        __ergebnis: list = []
+        if not self.knoten:
+            return __ergebnis
+        __ergebnis.extend(self.knoten.linkes_kind.inorder_traversieren())
+        __ergebnis.extend(self.knoten.rechtes_kind.inorder_traversieren())
+        __ergebnis.append(self.knoten.inhalt)
 
-    def inorder_traverse(self):
-        '''
-        Inorder traversal of the Tree
-            Left subree + root + Right subtree
-        '''
-        result = []
+        return __ergebnis
 
-        if not self.node:
-            return result
-
-        result.extend(self.node.left.inorder_traverse())
-        result.append(self.node.key)
-        result.extend(self.node.right.inorder_traverse())
-
-        return result
-
-    def preorder_traverse(self):
-        '''
-        Inorder traversal of the Tree
-            root + Left subree + Right subtree
-        '''
-        result = []
-
-        if not self.node:
-            return result
-
-        result.append(self.node.key)
-        result.extend(self.node.left.inorder_traverse())
-        result.extend(self.node.right.inorder_traverse())
-
-        return result
-
-    def postorder_traverse(self):
-        '''
-        Inorder traversal of the Tree
-            Left subree + Right subtree + root
-        '''
-        result = []
-
-        if not self.node:
-            return result
-
-        result.extend(self.node.left.inorder_traverse())
-        result.extend(self.node.right.inorder_traverse())
-        result.append(self.node.key)
-
-        return result
-
-    def display(self, node=None, level=0):
-        if not node:
-            node = self.node
-
-        if node.right.node:
-            self.display(node.right.node, level + 1)
-            print(('\t' * level), '    /')
-
-        print(('\t' * level), node)
-
-        if node.left.node:
-            print(('\t' * level), '    \\')
-            self.display(node.left.node, level + 1)
+    def anzeigen(self, knoten = None, level = 0):
+        """
+        Diese Methode zeigt den (Teil)Baum an.
+        :param knoten:
+        :param level:
+        """
+        __knoten_ein = knoten
+        __level_ein = level
+        if not __knoten_ein:
+            __knoten_ein = self.knoten
+        if __knoten_ein.rechtes_kind.knoten:
+            self.anzeigen(__knoten_ein.rechtes_kind.knoten, __level_ein + 1)
+            print(('\t' * __level_ein), '    /')
+        print(('\t' * level), __knoten_ein)
+        if __knoten_ein.linkes_kind.knoten:
+            print(('\t' * __level_ein), '    \\')
+            self.anzeigen(__knoten_ein.linkes_kind.knoten, __level_ein + 1)
 
 
 # Demo
@@ -272,14 +252,14 @@ if __name__ == '__main__':
     data_starwars = ['Luke', 'Leia', 'Han', 'Obi Wan', 'Chewbacca', 'Darth Vader', 'Yoda', 'Rey', 'Finn', 'Boba Fett']
     #    data_numbers = [6, 3, 9, 2, 5, 8, 10, 1, 4, 7, 11]
 
-    for inhalt in data_starwars:
-        baum.fuege_knoten_ein(inhalt)
+    for elemente in data_starwars:
+        baum.fuege_knoten_ein(elemente)
 
     #   for schluessel in [4,3]:
     #        tree.delete(schluessel)
 
-    print(baum.inorder_traverse())
-    print(baum.preorder_traverse())
-    print(baum.postorder_traverse())
+    print(baum.inorder_traversieren())
+    print(baum.preorder_traversieren())
+    print(baum.postorder_traversieren())
     #    print(Tree.search(1))
-    baum.display()
+    baum.anzeigen()
