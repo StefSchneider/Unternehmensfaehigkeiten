@@ -29,8 +29,19 @@
 
 ###Nachrichtenkanal abmelden:
 
+###Filter anlegen:
+
+###Filter verändern:
+
+###Filter löschen
 
 ## Subscriber
 ###Nachrichtenkanal beitreten:
 
 ###Nachrichtenkanal abmelden:
+
+###Filter anlegen
+
+###Filter verändern
+
+###Filter löschen
