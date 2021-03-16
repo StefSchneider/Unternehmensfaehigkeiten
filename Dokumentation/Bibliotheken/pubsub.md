@@ -90,6 +90,7 @@ im gleichen Moment wird der Kanal vom Broker zum Subscriber abgebaut, Voraussetz
 ### Methoden
 
 ## Filter
+Filters: Filters are Boolean expressions that are executed against the messages for a specific topic or topic group.
 
 ### Methoden
 
