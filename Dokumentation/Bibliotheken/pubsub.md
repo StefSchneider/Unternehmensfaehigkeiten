@@ -5,7 +5,11 @@ schicken, sondern über Broker zur Verfügung stellen. Dazu bedienen sie sich so
 Kanälen. Die Publisher sorgen dafür, dass die Nachrichten des Sendern zu einen bestimmten Thema (Topic) über einen Kanal
 an einen Broker gesendet werden; bei diesem Broker melden sich dann die Subscriber für bestimmte Nachrichten an. Der 
 Broker übermittelt dann die Nachrichten über einen Kanal an die Subscriber, die die Nachrichten an die Empfänger 
-weitergeben. Bei Pub/Sub können dadurch beliebig viele Subscriber auf einen Nachrichtenkanal zugreifen, ebenso können 
+weitergeben. 
+
+![Pub/Sub Grundmuster](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Grundmuster.png)
+
+Bei Pub/Sub können dadurch beliebig viele Subscriber auf einen Nachrichtenkanal zugreifen, ebenso können 
 beliebig viele Publisher in einen Nachrichtenkanal schreiben. Zusätzliche Filter können nur bestimmten Nachrichten, die 
 über die Kanäle geschickt werden, durchlassen. Sowohl Sender als Empfänger sollen unabhängig voneinander arbeiten 
 können. Der Broker sorgt dafür, dass der Sendern den oder die Empfänger nicht kennen muss, ebenso ist dem Empfänger
@@ -51,6 +55,15 @@ Das Modell ist gekennzeichnet durch: **1 Sender - 2 Topics - jeweils 1 Empfänge
 
 Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
 
+
+
+
+
+![Pub/Sub Filtereinsatz](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_5.png)
+
+
+
+![Pub/Sub Schnittstellen](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_5.png)
 
 
 
