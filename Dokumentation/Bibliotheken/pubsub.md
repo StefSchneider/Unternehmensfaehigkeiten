@@ -15,7 +15,7 @@ beliebig viele Publisher in einen Nachrichtenkanal schreiben. Zusätzliche Filte
 können. Der Broker sorgt dafür, dass der Sender den oder die Empfänger nicht kennen muss, ebenso ist dem Empfänger
 unbekannt, wer die Nachrichten verschickt. Für jeden Topic wird ein eigener Pub/Sub-Service aufgebaut. 
 
-Diese asynchrone Verarbeitung der Nachrichten sorgt dafür, dass das Gesamtkontrukt nicht durch Probleme einzelner 
+Diese asynchrone Verarbeitung der Nachrichten sorgt dafür, dass das Gesamtkonstrukt nicht durch Probleme einzelner 
 Bereiche blockiert wird.
 
 ## Modelle
@@ -30,12 +30,12 @@ weiteren Kanal (Eingangskanal) an den **Subscriber**, der sich für den jeweilig
 Subscriber geben die Nachrichten an die jeweiligen **Empfänger** weiter, wo sie verarbeitet werden. 
 
 Damit der Sender unabhängig von Empfängern bzw. dem Broker arbeiten kann und nicht darauf warten muss, ob es einen 
-Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **Post-Sender** eingesetzt. Der Publisher 
-gibt die Nachrichten über den Kanal an den Post-Sender, der diese an einen **Post-Empfänger** weiterleitet und auf 
-entsprechende Rückmeldungen wartet – der Post-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
-Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst wenn es gar keinen 
+Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **POST-Sender** eingesetzt. Der Publisher 
+gibt die Nachrichten über den Kanal an den POST-Sender, der diese an einen **POST-Empfänger** weiterleitet und auf 
+entsprechende Rückmeldungen wartet – der POST-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
+POST-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst wenn es gar keinen 
 Empfänger gibt, kann er weiterarbeiten. Die gleiche Struktur mit Post-Sender und Post-Empfänger wird auch auf dem Weg 
-vom Broker zum Subscriber angewendet.
+vom Broker zum Subscriber angewendet. Damit dient das Konstrukt POST-Sender/POST-Empfänger quasi als Puffer,
 
 ![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_2.png)
 
@@ -82,7 +82,22 @@ Erhält der Filter auf diesem Weg Nachrichten, steuert er sie entsprechende der 
 nutzt er ebenfalls einen eigenen Broker und einen eigenen Ausgangskanal. Der Broker leitet die Nachrichten über den
 Eingangskanal an den Subscriber weiter, der diese an den eigentlichen Empfänger übergibt.
 
-Mit diieser Konstruktion können beliebig viele Filter hintereinander oder auch parallel eingesetzt werden.
+Auch für den Einsatz der Filter wird der Puffer üder das Konstrukt POST-Sender/POST-Empfänger verwendet. Dabei werden 
+ein POST-Empfänger und ein Kanal vor den Filter gesetzt. Den Schluss des Filtereinsatzes bildet ein Kanal und ein
+POST-Sender, der wiederum die Nachricht an einen anderen POST-Empfänger übergibt.
+
+Mit dieser Konstruktion können beliebig viele Filter hintereinander oder auch parallel eingesetzt werden.
+
+Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
+Nachricht1, Nachricht2, ...                                Nachricht1, Nachtricht2, ...
+ 
+Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
+Nachricht1, Nachricht2, Nachricht3, ...                    Alle Nachrichten wegfiltern,                               Nachricht1, Nachricht3, ...
+                                                           deren Nummer durch 2 teilbar ist. 
+
+Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
+Nachricht1, Nachricht2, Nachricht3, ...                    Alle Nachrichten wegfiltern,                               Nur Nachrichten durchlassen,                               Nachricht3, Nachtricht9, ...
+                                                           deren Nummer durch 2 teilbar ist.                          deren Nummer durch 3 teilbar ist.
 
 ## Schnittstellen
 
@@ -110,7 +125,7 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 
 ### Sender
 
-
+#### 
 
 
 
@@ -124,14 +139,7 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 
 
 
-Sender->publisher->kanal->broker->kanal->subscriber->empfänger
-nachricht1, nachricht2, ...                          nachricht1, nachtricht2
- 
-Sender->publisher->kanal->broker->kanal->subscriber->filter->publisher->kanal->broker->kanal->subscriber->empfänger
-nachricht1, nachricht2, nachricht3, ...              alle geraden Nachrichten wegfiltern      nachricht1, nachricht3, ...
 
-Sender->publisher->kanal->broker->kanal->subscriber->filter->publisher->kanal->broker->kanal->subscriber->filter->publisher->kanal->broker->kanal->subscriber->empfänger
-nachricht1, nachricht2, nachricht3, ...              alle geraden Nachrichten wegfiltern                  durch 3 teilbar                          nachricht3, nachtricht9, ...
 
 sender->publisher->kanal
 
@@ -162,7 +170,7 @@ Bedingungen:
 - Der Input-Kanal vom Publisher zum Broker ist abgebaut UND der Output-Kanal zum Subscriber ist leer
 - Es existiert kein Subscriber mehr zu dem Output-Kanal
 - Der Subscriber hat sich abgemeldet UND der Output-Kanal zu Subscriber ist leer
-Folge: es dürfen keine Nachrichten mehr in diesen Output-Kanal gehen, d.h. kopiert werden
+Folge: Es dürfen keine Nachrichten mehr in diesen Output-Kanal gehen, d.h. kopiert werden
 
 #### Subscriber anmelden
 Gegenstück zu "beim Broker anmelden" des Subscribers
@@ -235,3 +243,71 @@ Filters: Filters are Boolean expressions that are executed against the messages 
 ### Publisher
 
 ### Filter
+
+## Umsetzung
+
+### Programme
+
+Der Prozess wird im Grundmodell in drei Programme zerlegt:
+- Programm 1: Sender bis einschließlich POST-Sender
+- Programm 2: POST-Empfänger bis einschließlich POST-Sender
+- Programm 3: POST-Empfänger bis einschließlich Empfänger
+
+### Objekte
+
+Für folgende Beteiligte werden Objekte instanziert:
+- Sender
+- Publisher
+- Kanal
+- POST-Empfänger
+- Broker
+- Subscriber
+- Empfänger
+- Filter
+
+### Klassen
+
+#### Sender
+
+##### Methoden
+
+
+#### Publisher
+
+##### Methoden
+
+
+#### Kanal
+
+##### Methoden
+
+
+#### POST_Sender
+
+##### Methoden
+
+
+#### POST_Empfaenger
+
+##### Methoden
+
+
+#### Broker
+
+##### Methoden
+
+
+#### Subscriber
+
+##### Methoden
+
+
+#### Empfaenger
+
+##### Methoden
+
+
+#### Filter
+
+##### Methoden
+
