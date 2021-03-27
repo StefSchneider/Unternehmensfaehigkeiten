@@ -13,32 +13,50 @@ unbekannt, wer die Nachrichten verschickt. Für den Topic werden eigene Kanäle 
 
 ## Modelle
 
-![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Pub_Sub_Modell_1.png)
+![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_1.png)
 
 Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 1 Empfänger**
 
-Bei dieserm Grundmodell übergibt der **Sender** seine Nachricht an einen **Publisher**, der diese über einen **Kanal** 
-an einen **Broker** weiterleitet. Dieser Broker übermittelt die Nachrichten an den oder die **Subscriber**, die sich für 
-den jeweiligen **Topic** angemeldet haben. Diese Subscriber geben die Nachrichten an die jeweiligen **Empfänger** 
-weiter, wo sie verarbeitet werden. Damit der Sender unabhängig von Empfängern arbeiten kann und nicht darauf warten 
-muss, ob es einen Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **Post-Sender** 
-eingesetzt. Der Publisher gibt die Nachrichten über den Kanal an den Post-Sender, der diese an einen **Post-Empfänger** 
-weiterleitet und auf entsprechende Rückmeldungen wartet - der Post-Sender kann auch Nachrichten bei einer erfolglosen 
-Zustellung an den Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst 
-wenn es gar keinen Empänger gibt kann er weiterarbeiten
+Bei dieserm **Grundmodell* übergibt der **Sender** seine Nachricht an einen **Publisher**, der diese über einen 
+**Kanal** an einen **Broker** weiterleitet. Dieser Broker übermittelt die Nachrichten an den oder die **Subscriber**, 
+die sich für den jeweiligen **Topic** angemeldet haben. Diese Subscriber geben die Nachrichten an die jeweiligen 
+**Empfänger** weiter, wo sie verarbeitet werden. Damit der Sender unabhängig von Empfängern arbeiten kann und nicht 
+darauf warten muss, ob es einen Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein 
+**Post-Sender** eingesetzt. Der Publisher gibt die Nachrichten über den Kanal an den Post-Sender, der diese an einen 
+**Post-Empfänger** weiterleitet und auf entsprechende Rückmeldungen wartet - der Post-Sender kann auch Nachrichten bei 
+einer erfolglosen Zustellung an den Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit 
+beeinflusst wird. Selbst wenn es gar keinen Empänger gibt kann er weiterarbeiten
 
-![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Pub_Sub_Modell_2.png)
+![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_2.png)
 
 Das Modell ist gekennzeichnet durch: **2 Sender - 2 Topics - 2 Empfänger**
 
+Im Vergleich zu **Modell 1** gibt es hierbei unterschiedliche Topics, unter denen Sender Nachrichten senden, ebenso 
+gibt es mehrere Empfänger, für diese Nachrichten interessanr sind. Da zwei Topics von unterschiedlichen Sendern und 
+Empfängern gesetzt werden, können beide Systeme vollkommen unabhängig voneinander agieren.
+
+![Pub/Sub Modell 3](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_3.png)
+
+Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 2 Empfänger**
 
 
 
+![Pub/Sub Modell 4](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_4.png)
+
+Das Modell ist gekennzeichnet durch: **1 Sender - 2 Topics - jeweils 1 Empfänger**
+
+
+
+![Pub/Sub Modell 5](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_5.png)
+
+Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
 
 
 
 
 ## Beteiligte
+
+### Sender
 
 
 
