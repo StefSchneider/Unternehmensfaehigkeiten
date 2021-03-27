@@ -1,11 +1,11 @@
 # Pub/Sub-Pattern
 
-Pub/Sub (publish-subscribe) ist ein Nachrichten-System, in dem Sender ihre Nachrichten nicht direkt an Empfänger 
-schicken, sondern über Broker zur Verfügung stellen. Dazu bedienen sie sich sogenannten Publishern und Subscribern sowie
-Kanälen. Die Publisher sorgen dafür, dass die Nachrichten des Sendern zu einen bestimmten Thema (Topic) über einen Kanal
-an einen Broker gesendet werden; bei diesem Broker melden sich dann die Subscriber für bestimmte Nachrichten an. Der 
-Broker übermittelt dann die Nachrichten über einen Kanal an die Subscriber, die die Nachrichten an die Empfänger 
-weitergeben. 
+Pub/Sub (publish-subscribe) ist ein Nachrichten-System, in dem **Sender** ihre Nachrichten nicht direkt an **Empfänger** 
+schicken, sondern über einen **Broker** zur Verfügung stellen. Dazu bedienen sie sich sogenannten **Publishern** und 
+**Subscribern** sowie **Kanälen**. Die Publisher sorgen dafür, dass die Nachrichten des Senders zu einem bestimmten 
+**Topic** (Thema) über einen Kanal (Ausgangskanal) an einen Broker gesendet werden; bei diesem Broker melden sich dann 
+die Subscriber für bestimmte Topics an. Der Broker übermittelt dann die Nachrichten zu dem Topic über jeweils einen 
+Kanal (Eingangskanal) an die Subscriber, die die Nachrichten an die **Empfänger** weitergeben. 
 
 ![Pub/Sub Grundmuster](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Grundmuster.png)
 
@@ -32,10 +32,10 @@ Subscriber geben die Nachrichten an die jeweiligen **Empfänger** weiter, wo sie
 Damit der Sender unabhängig von Empfängern bzw. dem Broker arbeiten kann und nicht darauf warten muss, ob es einen 
 Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **Post-Sender** eingesetzt. Der Publisher 
 gibt die Nachrichten über den Kanal an den Post-Sender, der diese an einen **Post-Empfänger** weiterleitet und auf 
-entsprechende Rückmeldungen wartet - der Post-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
+entsprechende Rückmeldungen wartet – der Post-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
 Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst wenn es gar keinen 
-Empfänger gibt kann er weiterarbeiten. Die gleiche Struktur mit Post-Sender und Post-Empfänger wird auch auf dem Weg vom 
-Broker zum Subscriber angewendet.
+Empfänger gibt, kann er weiterarbeiten. Die gleiche Struktur mit Post-Sender und Post-Empfänger wird auch auf dem Weg 
+vom Broker zum Subscriber angewendet.
 
 ![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_2.png)
 
@@ -51,11 +51,11 @@ Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 2 Empfänger**
 
 Meldet sich mehr als ein Subscriber für einen Topic an, baut der Broker zu jedem Subscriber einen eigenen Kanal auf. 
 Damit vermeidezt er, dass die anderen Empfänger die Nachrichten zu dem Topic nicht erhalten, wenn ein Empfänger 
-ausfällt oder die Zustellung verzögert wird..
+ausfällt oder die Zustellung verzögert wird.
 
 ![Pub/Sub Modell 4](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_4.png)
 
-Das Modell ist gekennzeichnet durch: **1 Sender - 2 Topics - jeweils 1 Empfänger**
+Das Modell ist gekennzeichnet durch: **1 Sender - 2 Topics – jeweils 1 Empfänger**
 
 Bei diesem Modell verschickt der Sender Nachrichten zu unterschiedlichen Topics. Für jeden Topic nutzt er einen eigenen 
 Pub/Sub-Service mit eigenem Publisher, Kanal und Broker. In diesem Modell hat zudem jeder Topic auch zwei Empfänger.
@@ -67,13 +67,42 @@ Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
 
 Hierbei verschicken mehrere Sender Nachrichten zum gleichen Topic. Um sich nicht gegenseitig zu behinder, baut jeder 
 Sender über einen Publisher einen Kanal zu dem Broker auf, der Nachrichten zu diesem Topic steuert. Ebenso baut der 
-Broker einen eigenen Kanal zu jedem Subscriber auf (siehe Modell 2 und Modell 3)
+Broker einen eigenen Kanal zu jedem Subscriber auf (siehe Modell 2 und Modell 3).
+
+## Filter
+
+**Filter** dienen dazu, nur bestimmte Nachrichten an die Subscriber und damit an die Empfänger durchzulassen. Jeder 
+Filter hat einen Eingangsteil und einen Ausgangsteil. Zwischen diesen beiden Teilen werden Nachrichten ausgesteuert. 
 
 ![Pub/Sub Filtereinsatz](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Filtereinsatz.png)
 
+Um einen Filter in ein Pub/Sub-System einzusetzen, wird die Fuktionsweise des Grundmodells benutzt. So agiert der Filter
+als Empfänger, der sich über einen Subscriber bei einem Broker für Nachrichten zu dem entsprechenden Topic anmeldet. 
+Erhält der Filter auf diesem Weg Nachrichten, steuert er sie entsprechende der Regeln aus oder leitet sie weiter. Dazu
+nutzt er ebenfalls einen eigenen Broker und einen eigenen Ausgangskanal. Der Broker leitet die Nachrichten über den
+Eingangskanal an den Subscriber weiter, der diese an den eigentlichen Empfänger übergibt.
 
+Mit diieser Konstruktion können beliebig viele Filter hintereinander oder auch parallel eingesetzt werden.
+
+## Schittstellen
 
 ![Pub/Sub Schnittstellen](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Schnittstellen.png)
+
+Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnittstellen genutzt:
+- Sender → Subscriber: definierte API
+- Subscriber → Ausgangskanal: REST
+- Ausgangskanal → POST-Sender: REST
+- POST-Sender → POST-Empfänger: REST
+- POST-Empfänger → Ausgangskanal: REST
+- Ausgangskanal → Broker: REST
+- Broker → Eingangskanal: REST
+- Eingangskanal → POST-Sender: REST
+- POST-Sender → POST-Empfänger: REST
+- POST-Empfänger → Eingangskanal: REST
+- Eingangskanal → Subscriber: REST
+- Subscriber → Empfänger: definierte API
+
+
 
 
 
