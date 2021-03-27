@@ -84,7 +84,7 @@ Eingangskanal an den Subscriber weiter, der diese an den eigentlichen Empfänger
 
 Mit diieser Konstruktion können beliebig viele Filter hintereinander oder auch parallel eingesetzt werden.
 
-## Schittstellen
+## Schnittstellen
 
 ![Pub/Sub Schnittstellen](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Schnittstellen.png)
 
