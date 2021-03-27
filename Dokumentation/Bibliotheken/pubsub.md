@@ -1,4 +1,56 @@
+# Pub/Sub-Pattern
+
+Pub/Sub (publish-subscribe) ist ein Nachrichten-System, in dem Sender ihre Nachrichten nicht direkt an Empfänger 
+schicken, sondern über Broker zur Verfügung stellen. Dazu bedienen sie sich sogenannten Publishern und Subscribern sowie
+Kanälen. Die Publisher sorgen dafür, dass die Nachrichten des Sendern zu einen bestimmten Thema (Topic) über einen Kanal
+an einen Broker gesendet werden; bei diesem Broker melden sich dann die Subscriber für bestimmte Nachrichten an. Der 
+Broker übermittelt dann die Nachrichten über einen Kanal an die Subscriber, die die Nachrichten an die Empfänger 
+weitergeben. Bei Pub/Sub können dadurch beliebig viele Subscriber auf einen Nachrichtenkanal zugreifen, ebenso können 
+beliebig viele Publisher in einen Nachrichtenkanal schreiben. Zusätzliche Filter können nur bestimmten Nachrichten, die 
+über die Kanäle geschickt werden, durchlassen. Sowohl Sender als Empfänger sollen unabhängig voneinander arbeiten 
+können. Der Broker sorgt dafür, dass der Sendern den oder die Empfänger nicht kennen muss, ebenso ist dem Empfänger
+unbekannt, wer die Nachrichten verschickt. Für den Topic werden eigene Kanäle aufgebaut
+
+## Modelle
+
+![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_API_1.png)
+
+Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 1 Empfänger**
+
+Bei dieserm Grundmodell übergibt der **Sender** seine Nachricht an einen **Publisher**, der diese über einen **Kanal** 
+an einen **Broker** weiterleitet. Dieser Broker übermittelt die Nachrichten an den oder die **Subscriber**, die sich für 
+den jeweiligen **Topic** angemeldet haben. Diese Subscriber geben die Nachrichten an die jeweiligen **Empfänger** 
+weiter, wo sie verarbeitet werden. Damit der Sender unabhängig von Empfängern arbeiten kann und nicht darauf warten 
+muss, ob es einen Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **Post-Sender** 
+eingesetzt. Der Publisher gibt die Nachrichten über den Kanal an den Post-Sender, der diese an einen **Post-Empfänger** 
+weiterleitet und auf entsprechende Rückmeldungen wartet - der Post-Sender kann auch Nachrichten bei einer erfolglosen 
+Zustellung an den Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst 
+wenn es gar keinen Empänger gibt kann er weiterarbeiten
+
+
+
+
+
+
+
+
+
+
+## Beteiligte
+
+
+
+
+
+
+
+
 # Struktur
+
+
+
+
+
 
 Sender->publisher->kanal->broker->kanal->subscriber->empfänger
 nachricht1, nachricht2, ...                          nachricht1, nachtricht2
