@@ -13,7 +13,7 @@ unbekannt, wer die Nachrichten verschickt. Für den Topic werden eigene Kanäle 
 
 ## Modelle
 
-![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafik_API_1.png)
+![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Pub_Sub_Modell_1.png)
 
 Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 1 Empfänger**
 
@@ -27,7 +27,9 @@ weiterleitet und auf entsprechende Rückmeldungen wartet - der Post-Sender kann 
 Zustellung an den Post-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst 
 wenn es gar keinen Empänger gibt kann er weiterarbeiten
 
+![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Pub_Sub_Modell_2.png)
 
+Das Modell ist gekennzeichnet durch: **2 Sender - 2 Topics - 2 Empfänger**
 
 
 
