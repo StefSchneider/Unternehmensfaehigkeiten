@@ -88,16 +88,90 @@ POST-Sender, der wiederum die Nachricht an einen anderen POST-Empfänger übergi
 
 Mit dieser Konstruktion können beliebig viele Filter hintereinander oder auch parallel eingesetzt werden.
 
-Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
-Nachricht1, Nachricht2, ...                                Nachricht1, Nachtricht2, ...
- 
-Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
-Nachricht1, Nachricht2, Nachricht3, ...                    Alle Nachrichten wegfiltern,                               Nachricht1, Nachricht3, ...
-                                                           deren Nummer durch 2 teilbar ist. 
+### Modell ohne Filter
+```
+Sender  Nachricht1, Nachricht2, Nachricht3...
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Empfänger   Nachricht1, Nachricht2, Nachricht3...
+```
 
-Sender → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Filter → Publisher → Kanal → Broker → Kanal → Subscriber → Empfänger
-Nachricht1, Nachricht2, Nachricht3, ...                    Alle Nachrichten wegfiltern,                               Nur Nachrichten durchlassen,                               Nachricht3, Nachtricht9, ...
-                                                           deren Nummer durch 2 teilbar ist.                          deren Nummer durch 3 teilbar ist.
+### Modell mit einem Filter
+```
+Sender      Nachricht1, Nachricht2, Nachricht3...
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Subscriber
+   ↓
+Filter      (Alle Nachrichten wegfiltern, deren Nummer durch 2 teilbar ist.)
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Subscriber
+   ↓
+Empfänger   Nachricht1, Nachricht3...
+```
+
+### Modell mit zwei Filtern nacheinander
+```
+Sender      Nachricht1, Nachricht2, Nachricht3...
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Subscriber
+   ↓
+Filter      (Alle Nachrichten wegfiltern, deren Nummer durch 2 teilbar ist.)
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Subscriber
+   ↓
+Filter      (Nur Nachrichten durchlassen, deren Nummer durch 3 teilbar ist.)
+   ↓
+Publisher
+   ↓
+Kanal
+   ↓
+Broker
+   ↓
+Kanal
+   ↓
+Subscriber
+   ↓
+Empfänger   Nachricht3, Nachricht9...
+```
 
 ## Schnittstellen
 
