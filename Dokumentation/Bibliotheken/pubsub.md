@@ -194,7 +194,7 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 - Subscriber → Empfänger: definierte API
 
 
-## Beteiligte
+## Beteiligte/Klassen
 
 ### Sender
 Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welchem Topic an welche Empfänger verschickt. 
@@ -207,14 +207,17 @@ Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publishe
 
 #### Methoden
 
-**beim Broker anmelden:**
-im gleichen Moment wird der Kanal vom Publisher zum Broker aufgebaut und liefert dem Broker den Kanal mit
+**beim Broker anmelden**:
+Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic an. Im selben Moment wird der Kanal vom
+Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
 
-**Nachricht in den Kanal senden:**
-Voraussetzung: Es konnte ein Kanal vom Publisher zum Broker aufgebaut werden
+**Nachricht in den Kanal senden**:
+Der Publisher schickt die vom Sender erhaltene Nachricht zu dem Topic in den Kanal. Voraussetzung: Es konnte ein Kanal 
+vom Publisher zum Broker aufgebaut werden.
 
-**beim Broker abmelden:**
-im gleichen Moment wird der Kanal vom Publisher zum Broker abgebaut
+**beim Broker abmelden**:
+Der Publisher meldet sich auf Anweisung des Senders vom Kanal zu dem Topic ab. Mm gleichen Moment wird der Kanal vom 
+Publisher zum Broker abgebaut. Voraussetzung: Der Kanal enthält keine Nachrichten mehr.
 
 ### Kanal
 Bei einem Kanal handelt es sich eine Queue, in die am Ende neue Nachrichten vom Publisher eingespielt werden und diese
@@ -222,17 +225,17 @@ vorne an den Subscriber oder den Filter weitergeleitet wird.
 
 #### Methoden
 
-**nehme Nachricht auf:**
+**nehme Nachricht auf**:
 Der Kanal hängt die aktuell vom Publisher übermittelte Nachricht ans Ende der Queue an.
 
-**gebe Nachricht weiter:**
+**gebe Nachricht weiter**:
 Der Kanal gibt die zu vorderst stehende Nachricht in der Queue an einen Abnehmer weiter.
 
-**lösche Nachricht:**
+**lösche Nachricht**:
 Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue: Voraussetzung: Er erhält eine positve Rückmeldung des
 jeweiligen Abnehmers über den Erhalt der Nachricht.
 
-**ermittle Anzahl Nachrichten:**
+**ermittle Anzahl Nachrichten**:
 Der Kanal liefert die Anzahl der sich noch in der Queue befindlichen Nachrichten zurück. Diese Methode wird benötigt, um
 einen Kanal unter der Voraussetzung zu löschen, dass er keine Nachrichten enthält, die noch nicht zugestellt wurden.
 
@@ -244,58 +247,18 @@ einen Kanal unter der Voraussetzung zu löschen, dass er keine Nachrichten enth�
 
 #### Methoden
 
-
-### Subscriber
-Der Subscriber übernimmt die An- und die Abmeldung zu einem Topic beim Broker für seinen Empfänger. Zudem leitet er 
-Nachrichten, die er zu dem Topic vom Broker erhält, an den Empfänger weiter. Eine weitere Business-Logik wird 
-beim Subscriber nicht hinterlegt.
+### Broker
 
 #### Methoden
 
-**beim Broker anmelden:**
-Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker für einen bestimmten Topic an, um die 
-Nachrichten zu dem Topic zu erhalten. Sobald er sich für den Topic anmeldet wird vom Broker der Kanal zum Subscriber 
-aufgebaut.
-
-**beim Broker abmelden:**
-Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker von einen bestimmten Topic ab, um keine 
-Nachrichten zu dem Topic mehr zu erhalten. Sobald er sich für den Topic abmeldet wird vom Broker der Kanal zum 
-Subscriber abgebaut. Voraussetzung: Der Kanal ist leer. Sollte das noch nicht der Fall sein, wird erst der Kanal
-geleert, bevor er abgebaut wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal
-eingespielt.
-
-# Struktur
-
-
-
-
-
-
-
-
-sender->publisher->kanal
-
-kanal->subscriber->empfänger
-
-->filter->subscriber
-
-filter besteht aus publisher und kanal
-
-filter ist auf der einen Seite der Empfänger und auf der anderen Seite (nach der Filterung) der Sender
-
-# Beteiligte
-
-## Broker
-
-### Methoden
-
-#### Publisher anmelden
-Gegenstück zu "beim Broker anmelden" des Publishers
+**Publisher anmelden**:
+Der Broker nimmt den Publisher auf dessen Anmeldung hin in den Kanal zum Topic auf. Die Methode ist das Gegenstück zu
+„beim Broker anmelden“ des Publishers.
 
 #### Publisher abmelden
 Gegenstück zu "beim Broker abmelden" des Publishers
 im gleichen Moment werden die Kanäle zu den Subscribern abgebaut (erst wenn der Kanal leer ist)
-Funktion "Kanal abbauen" aufrufen
+Funktion „Kanal abbauen“ aufrufen
 
 #### Kanal abbauen
 Bedingungen:
@@ -322,59 +285,49 @@ im gleichen Moment wird der Kanal vom Broker zum Subscriber abgebaut, aber erst,
 
 #### Rückmeldung an Publisher geben
 
-## Publisher
-
-### Methoden
-
-#### beim Broker anmelden
-im gleichen Moment wird der Kanal vom Publisher zum Broker aufgebaut und liefert dem Broker den Kanal mit
-
-#### Nachricht in den Kanal senden
-Voraussetzung: Es konnte ein Kanal vom Publisher zum Broker aufgebaut werden
-
-#### beim Broker abmelden
-im gleichen Moment wird der Kanal vom Publisher zum Broker abgebaut
-
-## Subscriber
-
-### Methoden
-
-#### beim Broker anmelden
-im gleichen Moment wird der Kanal vom Broker zum Subscriber aufgebaut
-
-#### beim Broker abmelden
-im gleichen Moment wird der Kanal vom Broker zum Subscriber abgebaut, Voraussetzung: Der Kanal ist leer
-
-## Sender
-
-### Methoden
-
-## Empfänger
-
-### Methoden
-
-## Filter
-Filters: Filters are Boolean expressions that are executed against the messages for a specific topic or topic group.
-
-### Methoden
-
-#### Filter aufbauen
-
-#### Filter verändern
-
-#### Filter abbauen
-
-## Klassen
-
-### Kanal
-
-### Broker
-
 ### Subscriber
+Der Subscriber übernimmt die An- und die Abmeldung zu einem Topic beim Broker für seinen Empfänger. Zudem leitet er 
+Nachrichten, die er zu dem Topic vom Broker erhält, an den Empfänger weiter. Eine weitere Business-Logik wird 
+beim Subscriber nicht hinterlegt.
 
-### Publisher
+#### Methoden
+
+**beim Broker anmelden**:
+Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker für einen bestimmten Topic an, um die 
+Nachrichten zu dem Topic zu erhalten. Sobald er sich für den Topic anmeldet, wird vom Broker der Kanal zum Subscriber 
+aufgebaut.
+
+**beim Broker abmelden**:
+Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker von einem bestimmten Topic ab, um keine 
+Nachrichten zu dem Topic mehr zu erhalten. Sobald er sich für den Topic abmeldet, wird vom Broker der Kanal zum 
+Subscriber abgebaut. Voraussetzung: Der Kanal ist leer. Sollte das noch nicht der Fall sein, wird erst der Kanal
+geleert, bevor er abgebaut wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal
+eingespielt.
+
+### Sender
+
+#### Methoden
 
 ### Filter
+Filters: Filters are Boolean expressions that are executed against the messages for a specific topic or topic group.
+
+#### Methoden
+
+
+
+
+
+sender->publisher->kanal
+
+kanal->subscriber->empfänger
+
+->filter->subscriber
+
+filter besteht aus publisher und kanal
+
+filter ist auf der einen Seite der Empfänger und auf der anderen Seite (nach der Filterung) der Sender
+
+
 
 ## Umsetzung
 
@@ -396,50 +349,3 @@ Für folgende Beteiligte werden Objekte instanziert:
 - Subscriber
 - Empfänger
 - Filter
-
-### Klassen
-
-#### Sender
-
-##### Methoden
-
-
-#### Publisher
-
-##### Methoden
-
-
-#### Kanal
-
-##### Methoden
-
-
-#### POST_Sender
-
-##### Methoden
-
-
-#### POST_Empfaenger
-
-##### Methoden
-
-
-#### Broker
-
-##### Methoden
-
-
-#### Subscriber
-
-##### Methoden
-
-
-#### Empfaenger
-
-##### Methoden
-
-
-#### Filter
-
-##### Methoden
-
