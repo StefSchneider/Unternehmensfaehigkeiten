@@ -18,6 +18,7 @@ unbekannt, wer die Nachrichten verschickt. Für jeden Topic wird ein eigener Pub
 Diese asynchrone Verarbeitung der Nachrichten sorgt dafür, dass das Gesamtkonstrukt nicht durch Probleme einzelner 
 Bereiche blockiert wird.
 
+
 ## Modelle
 
 ![Pub/Sub Modell 1](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_1.png)
@@ -68,6 +69,7 @@ Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
 Hierbei verschicken mehrere Sender Nachrichten zum gleichen Topic. Um sich nicht gegenseitig zu behinder, baut jeder 
 Sender über einen Publisher einen Kanal zu dem Broker auf, der Nachrichten zu diesem Topic steuert. Ebenso baut der 
 Broker einen eigenen Kanal zu jedem Subscriber auf (siehe Modell 2 und Modell 3).
+
 
 ## Filter
 
@@ -192,19 +194,75 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 - Subscriber → Empfänger: definierte API
 
 
-
-
-
 ## Beteiligte
 
 ### Sender
+Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welchem Topic an welche Empfänger verschickt. 
 
-#### 
+#### Methoden 
+
+### Publisher
+Der Publisher übernimmt die An- und Abmeldung zu einem Topic beim Broker und die Veröffentlichung der Nachrichten zu dem
+Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publisher nicht hinterlegt.
+
+#### Methoden
+
+**beim Broker anmelden:**
+im gleichen Moment wird der Kanal vom Publisher zum Broker aufgebaut und liefert dem Broker den Kanal mit
+
+**Nachricht in den Kanal senden:**
+Voraussetzung: Es konnte ein Kanal vom Publisher zum Broker aufgebaut werden
+
+**beim Broker abmelden:**
+im gleichen Moment wird der Kanal vom Publisher zum Broker abgebaut
+
+### Kanal
+Bei einem Kanal handelt es sich eine Queue, in die am Ende neue Nachrichten vom Publisher eingespielt werden und diese
+vorne an den Subscriber oder den Filter weitergeleitet wird.
+
+#### Methoden
+
+**nehme Nachricht auf:**
+Der Kanal hängt die aktuell vom Publisher übermittelte Nachricht ans Ende der Queue an.
+
+**gebe Nachricht weiter:**
+Der Kanal gibt die zu vorderst stehende Nachricht in der Queue an einen Abnehmer weiter.
+
+**lösche Nachricht:**
+Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue: Voraussetzung: Er erhält eine positve Rückmeldung des
+jeweiligen Abnehmers über den Erhalt der Nachricht.
+
+**ermittle Anzahl Nachrichten:**
+Der Kanal liefert die Anzahl der sich noch in der Queue befindlichen Nachrichten zurück. Diese Methode wird benötigt, um
+einen Kanal unter der Voraussetzung zu löschen, dass er keine Nachrichten enthält, die noch nicht zugestellt wurden.
+
+### POST-Sender
+
+#### Methoden
+
+### POST-Empfänger
+
+#### Methoden
 
 
+### Subscriber
+Der Subscriber übernimmt die An- und die Abmeldung zu einem Topic beim Broker für seinen Empfänger. Zudem leitet er 
+Nachrichten, die er zu dem Topic vom Broker erhält, an den Empfänger weiter. Eine weitere Business-Logik wird 
+beim Subscriber nicht hinterlegt.
 
+#### Methoden
 
+**beim Broker anmelden:**
+Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker für einen bestimmten Topic an, um die 
+Nachrichten zu dem Topic zu erhalten. Sobald er sich für den Topic anmeldet wird vom Broker der Kanal zum Subscriber 
+aufgebaut.
 
+**beim Broker abmelden:**
+Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker von einen bestimmten Topic ab, um keine 
+Nachrichten zu dem Topic mehr zu erhalten. Sobald er sich für den Topic abmeldet wird vom Broker der Kanal zum 
+Subscriber abgebaut. Voraussetzung: Der Kanal ist leer. Sollte das noch nicht der Fall sein, wird erst der Kanal
+geleert, bevor er abgebaut wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal
+eingespielt.
 
 # Struktur
 
