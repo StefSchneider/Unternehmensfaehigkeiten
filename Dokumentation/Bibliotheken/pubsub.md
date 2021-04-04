@@ -61,7 +61,6 @@ Das Modell ist gekennzeichnet durch: **1 Sender - 2 Topics – jeweils 1 Empfän
 Bei diesem Modell verschickt der Sender Nachrichten zu unterschiedlichen Topics. Für jeden Topic nutzt er einen eigenen 
 Pub/Sub-Service mit eigenem Publisher, Kanal und Broker. In diesem Modell hat zudem jeder Topic auch zwei Empfänger.
 
-
 ![Pub/Sub Modell 5](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_5.png)
 
 Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
@@ -212,12 +211,15 @@ Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic an. 
 Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
 
 **Nachricht in den Kanal senden**:
-Der Publisher schickt die vom Sender erhaltene Nachricht zu dem Topic in den Kanal. Voraussetzung: Es konnte ein Kanal 
-vom Publisher zum Broker aufgebaut werden.
+Der Publisher schickt die vom Sender erhaltene Nachricht zu dem Topic in den Kanal. 
+Voraussetzungen: 
+- Es konnte ein Kanal vom Publisher zum Broker aufgebaut werden.
 
 **beim Broker abmelden**:
 Der Publisher meldet sich auf Anweisung des Senders vom Kanal zu dem Topic ab. Mm gleichen Moment wird der Kanal vom 
-Publisher zum Broker abgebaut. Voraussetzung: Der Kanal enthält keine Nachrichten mehr.
+Publisher zum Broker abgebaut. 
+Voraussetzungen: 
+- Der Kanal enthält keine Nachrichten mehr.
 
 ### Kanal
 Bei einem Kanal handelt es sich eine Queue, in die am Ende neue Nachrichten vom Publisher eingespielt werden und diese
@@ -232,8 +234,9 @@ Der Kanal hängt die aktuell vom Publisher übermittelte Nachricht ans Ende der 
 Der Kanal gibt die zu vorderst stehende Nachricht in der Queue an einen Abnehmer weiter.
 
 **lösche Nachricht**:
-Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue: Voraussetzung: Er erhält eine positve Rückmeldung des
-jeweiligen Abnehmers über den Erhalt der Nachricht.
+Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue: 
+Voraussetzungen: 
+- Er erhält eine positve Rückmeldung des jeweiligen Abnehmers über den Erhalt der Nachricht.
 
 **ermittle Anzahl Nachrichten**:
 Der Kanal liefert die Anzahl der sich noch in der Queue befindlichen Nachrichten zurück. Diese Methode wird benötigt, um
@@ -252,38 +255,49 @@ einen Kanal unter der Voraussetzung zu löschen, dass er keine Nachrichten enth�
 #### Methoden
 
 **Publisher anmelden**:
-Der Broker nimmt den Publisher auf dessen Anmeldung hin in den Kanal zum Topic auf. Die Methode ist das Gegenstück zu
-„beim Broker anmelden“ des Publishers.
+Der Broker nimmt den Publisher auf dessen Anmeldung hin in den Kanal zum Topic auf. Im selben Moment wird der Kanal vom
+Publisher zum Broker aufgebaut. Die Methode ist das Gegenstück zu „beim Broker anmelden“ des Publishers.
 
-#### Publisher abmelden
-Gegenstück zu "beim Broker abmelden" des Publishers
-im gleichen Moment werden die Kanäle zu den Subscribern abgebaut (erst wenn der Kanal leer ist)
-Funktion „Kanal abbauen“ aufrufen
+**Publisher abmelden**:
+Wenn sich der Publisher auf Weisung des Senders von dem Kanal zum Topic abmeldet, meldet ihn auch der Broker ab. Im 
+selben Moment werden die Kanäle zu den Subscribern zu dem Topic abgebaut. Dazu wird die Methode „Kanal abbauen“ 
+aufgerufen. Die Methode ist das Gegenstück zu „beim Broker abmelden“ des Publishers.
+Voraussetzungen: 
+- Die Kanäle sind leer. 
+- Es gibt keine weiteren Publisher, die denselben Topic nutzen. 
 
-#### Kanal abbauen
+**Kanal abbauen**:
+Mit dem Kanalabbau vom Sender zum Abnehmer wird die Queue gelöscht.
 Bedingungen:
-- Der Input-Kanal vom Publisher zum Broker ist abgebaut UND der Output-Kanal zum Subscriber ist leer
+- Der Input-Kanal vom Publisher zum Broker ist abgebaut UND der Output-Kanal zum Subscriber ist leer.
 - Es existiert kein Subscriber mehr zu dem Output-Kanal
-- Der Subscriber hat sich abgemeldet UND der Output-Kanal zu Subscriber ist leer
-Folge: Es dürfen keine Nachrichten mehr in diesen Output-Kanal gehen, d.h. kopiert werden
+- Der Subscriber hat sich abgemeldet UND der Output-Kanal zum Subscriber ist leer.
+Folge: Es dürfen keine Nachrichten mehr in diesen Output-Kanal gehen, das heißt kopiert werden.
 
-#### Subscriber anmelden
-Gegenstück zu "beim Broker anmelden" des Subscribers
-im gleichen Moment wird der Kanal vom Broker zum Subscriber aufgebaut
-liefert dem Subscriber den Kanal zurück
-muss den Kanal mit dem Input-Kanal vom Publisher zum Broker verbinden
+**Subscriber anmelden**:
+Der Broker nimmt den Subscriber auf dessen Anmeldung hin in den Kanal zum Topic auf. Im selben Moment wird der Kanal vom
+Broker zum Subscriber aufgebaut und der Broker liefert dem Subscriber den Kanal zurück. Zudem muss der Broker den neuen
+Output-Kanal mit dem Input-kanal vom Publisher zum Broker verbinden. Die Methode ist Gegenstück zu „beim Broker 
+anmelden“ des Subscribers.
 
-#### Nachricht transportieren
-muss Nachricht, die er vom Publisher erhalten hat, für jeden Kanal zum Subscriber einmal kopieren
-löscht anschließend die Nachricht, die er vom Publisher erhalten hat
+**Nachricht transportieren**:
+Der Broker muss die Nachricht, die er vom Publisher erhalten hat, für jeden Kanal zum Subscriber einmal kopieren und in
+jeder Queue ans Ende stellen. Anschließend löscht er die Nachricht, die er vom Publisher erhalten hat.
 
-#### Subscriber abmelden
-Gegenstück zu "beim Broker abmelden" des Subscribers
-im gleichen Moment wird der Kanal vom Broker zum Subscriber abgebaut, aber erst, wenn der Kanal leer ist 
+**Subscriber abmelden**:
+Wenn sich der Subscriber auf Weisung des Senders von dem Kanal zum Topic abmeldet, meldet ihn auch der Broker ab. 
+Im selben Moment wird der Kanal vom Broker zum Subscriber abgebaut. Die Methode ist das Gegenstück zu „beim Broker 
+abmelden“ des Subscribers.
+Voraussetzungen:
+- Der Kanal vom Broker vom Subscriber ist leer.
 
-#### alle Subscriber ermitteln
+**alle Subscriber ermitteln**:
+Der Broker ermittelt alle Subscriber, die sich beim ihm zu dem Topic angemeldet haben. 
 
-#### Rückmeldung an Publisher geben
+**Rückmeldung an Publisher geben**:
+Der Broker teilt dem Publisher mit, welche Subscriber er ermittelt hat. Der Publisher gibt die Information an den Sender
+weiter. Die Methode wird benötigt, um dem Sender mitzuteilen, wer seine Nachrichten erhält. Somit könnte der Sender 
+aussteuern, wem er bestimmte Nachrichten zukünftig zukommen lassen will und wem nicht.
 
 ### Subscriber
 Der Subscriber übernimmt die An- und die Abmeldung zu einem Topic beim Broker für seinen Empfänger. Zudem leitet er 
@@ -323,7 +337,7 @@ kanal->subscriber->empfänger
 
 ->filter->subscriber
 
-filter besteht aus publisher und kanal
+filter, besteht aus publisher und kanal
 
 filter ist auf der einen Seite der Empfänger und auf der anderen Seite (nach der Filterung) der Sender
 
