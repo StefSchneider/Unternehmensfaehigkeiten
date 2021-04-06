@@ -200,15 +200,33 @@ Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welch
 
 #### Methoden 
 
+**Topic einrichten**:
+Wenn der Sender einen neuen Topic, zu dem er Nachrichten verschickt, einrichten will, weist er den Publisher an, sich
+bei einem Broker für einen Kanal zum Topic anzumelden.
+
+**Nachricht versenden**:
+Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer zur späteren Identifkation der Antwort an
+den Publisher. Zudem teilt er dem Publisher mit, wenn die Nachricht nicht an bestimmte Empfänger zugestellt werden soll.
+
+**Topic beenden**:
+Wenn der Sender keine Nachrichten mehr zu einem Topic versenden will, weist er den Publisher an, sich beim Broker für
+den Kanal zum Topic abzumelden.
+
 ### Publisher
 Der Publisher übernimmt die An- und Abmeldung zu einem Topic beim Broker und die Veröffentlichung der Nachrichten zu dem
 Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publisher nicht hinterlegt.
 
 #### Methoden
 
+**Topic suchen**:
+Bevor der Publisher einen neuen Topic einrichtet, überprüft er, ob bereits ein solcher Topic existiert, über den andere 
+Publisher bereits Nachrichten versenden.
+
 **beim Broker anmelden**:
-Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic an. Im selben Moment wird der Kanal vom
-Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
+Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic, den er vom Sender erhalten hat, an. Im 
+selben Moment wird der Kanal vom Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
+Voraussetzungen:
+- Eine Prüfung vorab ergibt, dass noch kein solcher Topic existiert.
 
 **Nachricht in den Kanal senden**:
 Der Publisher schickt die vom Sender erhaltene Nachricht zu dem Topic in den Kanal. 
