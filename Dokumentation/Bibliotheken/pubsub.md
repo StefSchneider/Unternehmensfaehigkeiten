@@ -252,7 +252,7 @@ Der Kanal hängt die aktuell vom Publisher übermittelte Nachricht ans Ende der 
 Der Kanal gibt die zu vorderst stehende Nachricht in der Queue an einen Abnehmer weiter.
 
 **lösche Nachricht**:
-Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue: 
+Der Kanal löscht die zuletzt übermittelte Nachricht aus der Queue. 
 Voraussetzungen: 
 - Er erhält eine positve Rückmeldung des jeweiligen Abnehmers über den Erhalt der Nachricht.
 
@@ -260,15 +260,42 @@ Voraussetzungen:
 Der Kanal liefert die Anzahl der sich noch in der Queue befindlichen Nachrichten zurück. Diese Methode wird benötigt, um
 einen Kanal unter der Voraussetzung zu löschen, dass er keine Nachrichten enthält, die noch nicht zugestellt wurden.
 
+***WIE PASSEN POST-SENDER UND POST-EMPFÄNGER IN DAS KONSTRUKT?***
+
 ### POST-Sender
+Der POST-Sender wird zusammen mit dem POST-Empfänger eingesetzt, um die Nachrichtenzustellung zu puffern und damit
+Sender und Empfänger ein weiteres Arbeiten – unabhängig von der Zustellung – zu ermöglichen. Beim POST-Sender liegt 
+auch das Fehler-Handling, wenn die Nachricht nicht direlt an den POST-Empfänger zugestellt werden kann.
 
 #### Methoden
+
+**sende Nachricht**:
+Der POST-Sender verschickt über die REST-API per POST-Request die Nachricht an den POST-Empfänger.
+Voraussetzungen:
+- Er kennt die Adresse des POST-Empängers.
+
+**lösche Nachricht**:
+Der POST-Sender löscht die zuletzt übermittelte Nachricht. 
+Voraussetzungen: 
+- Er erhält eine positve Rückmeldung des jeweiligen POST-Empfängers über den Erhalt der Nachricht.
 
 ### POST-Empfänger
+Der POST-Empfänger erhält vom POST-Sender die Nachricht und schickt dem POST-Sender eine Empfangsbestätigung. Dann 
+leitet er die Nachricht an den Input-Kanal des Abnehmers (Broker oder Subscriber) weiter. 
 
 #### Methoden
 
+**Nachricht in den Kanal senden**:
+Der POST-Empfänger schickt die vom POST-Sender erhaltene Nachricht zu dem Topic in den Kanal. 
+Voraussetzungen: 
+- Es konnte ein Kanal vom POST-Empfänger zum Broker aufgebaut werden.
+
+***WIE PASSEN POST-SENDER UND POST-EMPFÄNGER IN DAS KONSTRUKT?***
+
+
 ### Broker
+Der Broker bildet die Schnittstelle zwischen Sendern und Empfängern. Er leitet die von den Publishern erhaltenen 
+Nachrichten an die jeweiligen Subscriber zu dem Topic weiter.
 
 #### Methoden
 
@@ -341,24 +368,29 @@ eingespielt.
 #### Methoden
 
 ### Filter
-Filters: Filters are Boolean expressions that are executed against the messages for a specific topic or topic group.
+Der Filter steuert die Weitergabe von Nachrichten von Sendern zu einem Topic an Empfänger. Er bsteht aus Eingangsteil, 
+das eingehende Nachrichten aufnimmt, einem Filterteil, das Nachrichten aussortiert und einem Ausgangsteil, 
+das Nachrichten ausgibt. Der Filter wird durch Config-Daten mithilfe von Bool’schen Ausdrücken erstellt. Der Filter 
+wird zwischen Subscriber und Epfänger gesetzt und nutzt die übrigen Elemente des Pub/Sub-Patterns. Das heißt, ausgehende
+Nachrichten gibt der Filter an einen Publisher weiter, der diese über Kanäle und einen Broker an einen Subscriber und
+letztendlich einen Empfänger leitet. Filter können sowohl nacheinander als auch parallel eingesetzt werden.
 
 #### Methoden
 
+**baue Filter auf**:
+Aus den Config-Daten wird ein Filter erstellt.
 
+**aktiviere Filter**:
+Diese Methode setzt den aufgebauten Filter ein, indem sie einen Publisher, Kanäle, POST-Sender, POST-Empfänger, Broker 
+und Subscriber sowie deren Methoden nutzt, um die gefilterten Nachrichten weiterzuleiten. Nach dem Aufbau leitet der 
+Filter nur die durchzulassenden Nachrichten an den jeweiligen Abnehmer weiter.
+Voraussetzungen:
+- Die Voraussetzungen der eingesetzten Beteiligten sind erfüllt.
 
-
-
-sender->publisher->kanal
-
-kanal->subscriber->empfänger
-
-->filter->subscriber
-
-filter, besteht aus publisher und kanal
-
-filter ist auf der einen Seite der Empfänger und auf der anderen Seite (nach der Filterung) der Sender
-
+**deaktiviere Filter**:
+Diese Methode entfernt alle bei der Filter-Aktivierung eingesetzten Beteiligte wieder und baut auch die Kanäle ab.
+Voraussetzungen:
+- Die Voraussetzungen der eingesetzten Beteiligten sind erfüllt.
 
 
 ## Umsetzung
