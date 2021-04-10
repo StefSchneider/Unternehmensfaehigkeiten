@@ -202,7 +202,8 @@ Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welch
 
 **Topic einrichten**:
 Wenn der Sender einen neuen Topic, zu dem er Nachrichten verschickt, einrichten will, weist er den Publisher an, sich
-bei einem Broker für einen Kanal zum Topic anzumelden.
+bei einem Broker für einen Kanal zum Topic anzumelden. Wenn für die Topic-Namen bestimmte Regeln gelten, müssen diese
+vor der Einrichtung des neuen Topics überprüft werden.
 
 **Nachricht versenden**:
 Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer zur späteren Identifkation der Antwort an
@@ -216,6 +217,8 @@ den Kanal zum Topic abzumelden.
 Der Publisher übernimmt die An- und Abmeldung zu einem Topic beim Broker und die Veröffentlichung der Nachrichten zu dem
 Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publisher nicht hinterlegt.
 
+***WIE SINNVOLL IST EINE METHODE ’BEI ALLEN BROKERN ANMELDEN’?***
+
 #### Methoden
 
 **Topic suchen**:
@@ -228,6 +231,11 @@ selben Moment wird der Kanal vom Publisher zum Broker aufgebaut – der Publishe
 Voraussetzungen:
 - Eine Prüfung vorab ergibt, dass noch kein solcher Topic existiert.
 
+**Nachricht überprüfen**:
+Bevor der Publisher die Nachricht an den Kanal sendet, überprüft er, ob die Nachricht vollständig und im richtigen
+Datenformat vorliegt. Falls dies nicht der Fall ist, meldet er dem Sender zurück, dass die Nachricht nicht versendbar
+ist.
+
 **Nachricht in den Kanal senden**:
 Der Publisher schickt die vom Sender erhaltene Nachricht zu dem Topic in den Kanal. 
 Voraussetzungen: 
@@ -238,6 +246,8 @@ Der Publisher meldet sich auf Anweisung des Senders vom Kanal zu dem Topic ab. M
 Publisher zum Broker abgebaut. 
 Voraussetzungen: 
 - Der Kanal enthält keine Nachrichten mehr.
+
+***MUSS NICHT AUCH DER BROKER GELÖSCHT WERDEN, WENN KEINE PUBLISHER MEHR NACHRICHTEN ZU DEM TOPIC SCHICKEN?***
 
 ### Kanal
 Bei einem Kanal handelt es sich eine Queue, in die am Ende neue Nachrichten vom Publisher eingespielt werden und diese
@@ -270,7 +280,9 @@ auch das Fehler-Handling, wenn die Nachricht nicht direlt an den POST-Empfänger
 #### Methoden
 
 **sende Nachricht**:
-Der POST-Sender verschickt über die REST-API per POST-Request die Nachricht an den POST-Empfänger.
+Der POST-Sender verschickt über die REST-API per POST-Request die Nachricht an den POST-Empfänger. Wenn der POST-Sender
+vom POST-Empfänger keine Empfangsbestätigung erhält, setzt ein Error-Handling ein, durch das er besipielsweise die
+Nachricht nach einer bestimmten Zeit nocheinmal verschickt. 
 Voraussetzungen:
 - Er kennt die Adresse des POST-Empängers.
 
@@ -349,6 +361,8 @@ Der Subscriber übernimmt die An- und die Abmeldung zu einem Topic beim Broker f
 Nachrichten, die er zu dem Topic vom Broker erhält, an den Empfänger weiter. Eine weitere Business-Logik wird 
 beim Subscriber nicht hinterlegt.
 
+***WIE SINNVOLL IST EINE METHODE ’BEI ALLEN BROKERN ANMELDEN’?***
+
 #### Methoden
 
 **beim Broker anmelden**:
@@ -363,9 +377,21 @@ Subscriber abgebaut. Voraussetzung: Der Kanal ist leer. Sollte das noch nicht de
 geleert, bevor er abgebaut wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal
 eingespielt.
 
-### Sender
+### Empfänger
+Der Empfänger verarbeitet die vom Sender verschickte Nachricht.
 
 #### Methoden
+**für Topic anmelden**:
+Der Empfänger weist den Subscriber an, sich beim Broker für einen bestimmten Topic anzumelden. Die Anweisung hierzu
+erhält der Empfänger über die Config-Daten.
+
+**Rückmeldung an Sender geben**:
+Wenn der Sender eine Rückantwort anfordert, schickt der Empfänger diese direkt an ihn.
+Voraussetzungen:
+- Der Sender hat eine ID mitgeliefert, mit deren Hilfe er die Rückantwort des Empfängers zuordnen kann.
+- Der Sender hat Daten mitgeschickt, wie er erreichbar ist.
+
+***ERFOLGT EINE DIREKTE RÜCKANTWORT ÜBER EINEN POST-REQUEST?***
 
 ### Filter
 Der Filter steuert die Weitergabe von Nachrichten von Sendern zu einem Topic an Empfänger. Er bsteht aus Eingangsteil, 
