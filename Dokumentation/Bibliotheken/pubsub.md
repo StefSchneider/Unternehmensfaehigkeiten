@@ -195,6 +195,8 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 
 ## Beteiligte/Klassen
 
+***https://github.com/Thierry46/pubsub/blob/master/pubsub.py***
+
 ### Sender
 Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welchem Topic an welche Empfänger verschickt. 
 
@@ -206,8 +208,9 @@ bei einem Broker für einen Kanal zum Topic anzumelden. Wenn für die Topic-Name
 vor der Einrichtung des neuen Topics überprüft werden.
 
 **Nachricht versenden**:
-Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer zur späteren Identifkation der Antwort an
-den Publisher. Zudem teilt er dem Publisher mit, wenn die Nachricht nicht an bestimmte Empfänger zugestellt werden soll.
+Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer, beispielsweise eine UUID, zur späteren 
+Identifkation der Antwort an den Publisher. Zudem teilt er dem Publisher mit, wenn die Nachricht nicht an bestimmte 
+Empfänger zugestellt werden soll.
 
 **Topic beenden**:
 Wenn der Sender keine Nachrichten mehr zu einem Topic versenden will, weist er den Publisher an, sich beim Broker für
@@ -250,8 +253,8 @@ Voraussetzungen:
 ***MUSS NICHT AUCH DER BROKER GELÖSCHT WERDEN, WENN KEINE PUBLISHER MEHR NACHRICHTEN ZU DEM TOPIC SCHICKEN?***
 
 ### Kanal
-Bei einem Kanal handelt es sich eine Queue, in die am Ende neue Nachrichten vom Publisher eingespielt werden und diese
-vorne an den Subscriber oder den Filter weitergeleitet wird.
+Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT-Queue, in die am Ende neue Nachrichten vom Publisher 
+eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet wird.
 
 #### Methoden
 
