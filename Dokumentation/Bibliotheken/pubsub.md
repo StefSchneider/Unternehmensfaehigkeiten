@@ -18,6 +18,8 @@ unbekannt, wer die Nachrichten verschickt. Für jeden Topic wird ein eigener Pub
 Diese asynchrone Verarbeitung der Nachrichten sorgt dafür, dass das Gesamtkonstrukt nicht durch Probleme einzelner 
 Bereiche blockiert wird.
 
+[Mehr zu Pub/Sub Pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern)
+
 
 ## Modelle
 
@@ -203,9 +205,14 @@ Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welch
 #### Methoden 
 
 **Topic einrichten**:
-Wenn der Sender einen neuen Topic, zu dem er Nachrichten verschickt, einrichten will, weist er den Publisher an, sich
-bei einem Broker für einen Kanal zum Topic anzumelden. Wenn für die Topic-Namen bestimmte Regeln gelten, müssen diese
-vor der Einrichtung des neuen Topics überprüft werden.
+Wenn der Sender einen neuen Topic, zu dem er Nachrichten verschickt, einrichten will, prüft er zunächst, ob der Topic 
+nicht bereits existiert. Falls nicht, instanziert er zuerst einen Broker und weist er den Publisher an, sich bei dem 
+Broker für einen Kanal zum Topic anzumelden. Wenn für die Topic-Namen bestimmte Regeln gelten, müssen diese vor der 
+Einrichtung des neuen Topics überprüft werden.
+
+***WENN DER SENDER VOR DER NEUEINRICHTUNG ÜBERPRÜFT, OB EIN TOPIC EXISTIERT: WIE KOMMT ER AN ALLE TOPICS?***
+
+***WELCHE NAMENSKONVENTIONEN GELTEN FÜR DIE TOPICS?***
 
 **Nachricht versenden**:
 Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer, beispielsweise eine UUID, zur späteren 
@@ -227,6 +234,8 @@ Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publishe
 **Topic suchen**:
 Bevor der Publisher einen neuen Topic einrichtet, überprüft er, ob bereits ein solcher Topic existiert, über den andere 
 Publisher bereits Nachrichten versenden.
+
+***WIRD OBSOLET, WENN DER SENDER VOR DER NEUANLAGE EINES TOPICS PRÜFT, OB DIESER SCHON EXISTIERT.***
 
 **beim Broker anmelden**:
 Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic, den er vom Sender erhalten hat, an. Im 
@@ -253,7 +262,7 @@ Voraussetzungen:
 ***MUSS NICHT AUCH DER BROKER GELÖSCHT WERDEN, WENN KEINE PUBLISHER MEHR NACHRICHTEN ZU DEM TOPIC SCHICKEN?***
 
 ### Kanal
-Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT-Queue, in die am Ende neue Nachrichten vom Publisher 
+Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT)-Queue, in die am Ende neue Nachrichten vom Publisher 
 eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet wird.
 
 #### Methoden
@@ -310,9 +319,14 @@ Voraussetzungen:
 
 ### Broker
 Der Broker bildet die Schnittstelle zwischen Sendern und Empfängern. Er leitet die von den Publishern erhaltenen 
-Nachrichten an die jeweiligen Subscriber zu dem Topic weiter.
+Nachrichten an die jeweiligen Subscriber zu dem Topic weiter. Der Broker speichert den Topic, zu dem er angelegt wurde. 
+Die Publisher und die Subscriber werden jeweils in einer Liste erfasst.
 
 #### Methoden
+
+**Broker anlegen (__init__)**:
+Bei der Neuanlage speichert der Broker den Topic und erstellt jeweils eine leere Liste für die Publisher und die
+Subscriber, die sich bei ihm anmelden.
 
 **Publisher anmelden**:
 Der Broker nimmt den Publisher auf dessen Anmeldung hin in den Kanal zum Topic auf. Im selben Moment wird der Kanal vom
