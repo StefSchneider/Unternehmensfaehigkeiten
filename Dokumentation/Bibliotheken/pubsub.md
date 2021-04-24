@@ -195,7 +195,7 @@ Zur Übergabe der Nachrichten (Daten) an die Beteiligten werden folgende Schnitt
 - Subscriber → Empfänger: definierte API
 
 
-## Beteiligte/Klassen
+## Beteiligte
 
 ***https://github.com/Thierry46/pubsub/blob/master/pubsub.py***
 
@@ -263,7 +263,8 @@ Voraussetzungen:
 
 ### Kanal
 Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT)-Queue, in die am Ende neue Nachrichten vom Publisher 
-eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet wird.
+eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet wird. Jede Queue ist ein eigener 
+Microservice.
 
 #### Methoden
 
@@ -449,10 +450,9 @@ Der Prozess wird im Grundmodell in drei Programme zerlegt:
 
 Für folgende Beteiligte werden Objekte instanziert:
 - Sender
-- Publisher
+- Publisher und Subscriber (eine Klasse)
 - Kanal
-- POST-Empfänger
+- POST-Sender und POST-Empfänger (eine Klasse)
 - Broker
-- Subscriber
 - Empfänger
 - Filter
