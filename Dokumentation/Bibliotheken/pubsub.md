@@ -3,9 +3,9 @@
 Pub/Sub (publish-subscribe) ist ein Nachrichten-System, in dem **Sender** ihre Nachrichten nicht direkt an **Empfänger** 
 schicken, sondern über einen **Broker** zur Verfügung stellen. Dazu bedienen sie sich sogenannten **Publishern** und 
 **Subscribern** sowie **Kanälen**. Die Publisher sorgen dafür, dass die Nachrichten des Senders zu einem bestimmten 
-**Topic** (Thema) über einen Kanal (Ausgangskanal) an einen Broker gesendet werden; bei diesem Broker melden sich dann 
-die Subscriber für bestimmte Topics an. Der Broker übermittelt dann die Nachrichten zu dem Topic über jeweils einen 
-Kanal (Eingangskanal) an die Subscriber, die die Nachrichten an die **Empfänger** weitergeben. 
+**Topic** (Thema) über einen Kanal (Ausgangskanal) an einen Broker gesendet werden; bei diesem Broker melden sich die 
+Subscriber für bestimmte Topics an. Der Broker übermittelt dann die Nachrichten zu dem Topic über jeweils einen Kanal 
+(Eingangskanal) an die Subscriber, die die Nachrichten an die **Empfänger** weitergeben. 
 
 ![Pub/Sub Grundmuster](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Grundmuster.png)
 
@@ -27,25 +27,25 @@ Bereiche blockiert wird.
 
 Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 1 Empfänger**
 
-Bei dieserm **Grundmodell* übergibt der **Sender** seine Nachricht an einen **Publisher**, der diese über einen 
+Bei diesem **Grundmodell* übergibt der **Sender** seine Nachricht an einen **Publisher**, der diese über einen 
 **Kanal** (Ausgangskanal) an einen **Broker** weiterleitet. Dieser Broker übermittelt die Nachrichten über einen 
 weiteren Kanal (Eingangskanal) an den **Subscriber**, der sich für den jeweiligen **Topic** angemeldet hat. Der 
-Subscriber geben die Nachrichten an die jeweiligen **Empfänger** weiter, wo sie verarbeitet werden. 
+Subscriber gibt die Nachrichten an die jeweiligen **Empfänger** weiter, wo sie verarbeitet werden. 
 
 Damit der Sender unabhängig von Empfängern bzw. dem Broker arbeiten kann und nicht darauf warten muss, ob es einen 
 Empfänger gibt und wie dieser arbeitet, werden eine **Queue (Kanal)** und ein **POST-Sender** eingesetzt. Der Publisher 
-gibt die Nachrichten über den Kanal an den POST-Sender, der diese an einen **POST-Empfänger** weiterleitet und auf 
-entsprechende Rückmeldungen wartet – der POST-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
+gibt die Nachrichten über den Ausganagskanal an den POST-Sender, der diese an einen **POST-Empfänger** weiterleitet und 
+auf entsprechende Rückmeldungen wartet – der POST-Sender kann auch Nachrichten bei einer erfolglosen Zustellung an den 
 POST-Empfänger nochmals verschicken, ohne dass der Sender in seiner Arbeit beeinflusst wird. Selbst wenn es gar keinen 
-Empfänger gibt, kann er weiterarbeiten. Die gleiche Struktur mit Post-Sender und Post-Empfänger wird auch auf dem Weg 
-vom Broker zum Subscriber angewendet. Damit dient das Konstrukt POST-Sender/POST-Empfänger quasi als Puffer,
+Empfänger gibt, kann er weiterarbeiten. Die gleiche Struktur mit POST-Sender und POST-Empfänger wird auch auf dem Weg 
+vom Broker zum Subscriber angewendet. Damit dient das Konstrukt POST-Sender/POST-Empfänger quasi als Puffer.
 
 ![Pub/Sub Modell 2](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_2.png)
 
 Das Modell ist gekennzeichnet durch: **2 Sender - 2 Topics - 2 Empfänger**
 
 Im Vergleich zu **Modell 1** gibt es hierbei unterschiedliche Topics, unter denen Sender Nachrichten senden, ebenso 
-gibt es mehrere Empfänger, für diese Nachrichten interessanr sind. Da zwei Topics von unterschiedlichen Sendern gesetzt 
+gibt es mehrere Empfänger, für diese Nachrichten interessant sind. Da zwei Topics von unterschiedlichen Sendern bespielt 
 und Empfängern bezogen werden, können beide Systeme vollkommen unabhängig voneinander agieren.
 
 ![Pub/Sub Modell 3](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_3.png)
@@ -53,7 +53,7 @@ und Empfängern bezogen werden, können beide Systeme vollkommen unabhängig von
 Das Modell ist gekennzeichnet durch: **1 Sender - 1 Topic - 2 Empfänger**
 
 Meldet sich mehr als ein Subscriber für einen Topic an, baut der Broker zu jedem Subscriber einen eigenen Kanal auf. 
-Damit vermeidezt er, dass die anderen Empfänger die Nachrichten zu dem Topic nicht erhalten, wenn ein Empfänger 
+Damit vermeidet er, dass die anderen Empfänger die Nachrichten zu dem Topic nicht erhalten, wenn ein Empfänger 
 ausfällt oder die Zustellung verzögert wird.
 
 ![Pub/Sub Modell 4](https://github.com/StefSchneider/Unternehmensfaehigkeiten/blob/master/Dokumentation/Grafiken/Pub_Sub_Modell_4.png)
@@ -67,7 +67,7 @@ Pub/Sub-Service mit eigenem Publisher, Kanal und Broker. In diesem Modell hat zu
 
 Das Modell ist gekennzeichnet durch: **2 Sender - 1 Topic - 2 Empfänger**
 
-Hierbei verschicken mehrere Sender Nachrichten zum gleichen Topic. Um sich nicht gegenseitig zu behinder, baut jeder 
+Hierbei verschicken mehrere Sender Nachrichten zum gleichen Topic. Um sich nicht gegenseitig zu behindern, baut jeder 
 Sender über einen Publisher einen Kanal zu dem Broker auf, der Nachrichten zu diesem Topic steuert. Ebenso baut der 
 Broker einen eigenen Kanal zu jedem Subscriber auf (siehe Modell 2 und Modell 3).
 
@@ -81,11 +81,11 @@ Filter hat einen Eingangsteil und einen Ausgangsteil. Zwischen diesen beiden Tei
 
 Um einen Filter in ein Pub/Sub-System einzusetzen, wird die Fuktionsweise des Grundmodells benutzt. So agiert der Filter
 als Empfänger, der sich über einen Subscriber bei einem Broker für Nachrichten zu dem entsprechenden Topic anmeldet. 
-Erhält der Filter auf diesem Weg Nachrichten, steuert er sie entsprechende der Regeln aus oder leitet sie weiter. Dazu
+Erhält der Filter auf diesem Weg Nachrichten, steuert er sie entsprechend der Regeln aus oder leitet sie weiter. Dazu
 nutzt er ebenfalls einen eigenen Broker und einen eigenen Ausgangskanal. Der Broker leitet die Nachrichten über den
 Eingangskanal an den Subscriber weiter, der diese an den eigentlichen Empfänger übergibt.
 
-Auch für den Einsatz der Filter wird der Puffer üder das Konstrukt POST-Sender/POST-Empfänger verwendet. Dabei werden 
+Auch für den Einsatz der Filter wird der Puffer über das Konstrukt POST-Sender/POST-Empfänger verwendet. Dabei werden 
 ein POST-Empfänger und ein Kanal vor den Filter gesetzt. Den Schluss des Filtereinsatzes bildet ein Kanal und ein
 POST-Sender, der wiederum die Nachricht an einen anderen POST-Empfänger übergibt.
 
@@ -204,24 +204,14 @@ Beim Sender ist die Business-Logik hinterlegt, welche Nachrichten er unter welch
 
 #### Methoden 
 
-**Topic einrichten**:
-Wenn der Sender einen neuen Topic, zu dem er Nachrichten verschickt, einrichten will, prüft er zunächst, ob der Topic 
-nicht bereits existiert. Falls nicht, instanziert er zuerst einen Broker und weist er den Publisher an, sich bei dem 
-Broker für einen Kanal zum Topic anzumelden. Wenn für die Topic-Namen bestimmte Regeln gelten, müssen diese vor der 
-Einrichtung des neuen Topics überprüft werden.
-
-***WENN DER SENDER VOR DER NEUEINRICHTUNG ÜBERPRÜFT, OB EIN TOPIC EXISTIERT: WIE KOMMT ER AN ALLE TOPICS?***
-
-***WELCHE NAMENSKONVENTIONEN GELTEN FÜR DIE TOPICS?***
-
 **Nachricht versenden**:
-Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer, beispielsweise eine UUID, zur späteren 
-Identifkation der Antwort an den Publisher. Zudem teilt er dem Publisher mit, wenn die Nachricht nicht an bestimmte 
+Der Sender übergibt die zu versendende Nachricht zu dem Topic und einer Nummer, beispielsweise eine UUID zur späteren 
+Identifkation der Antwort, an den Publisher. Zudem teilt er dem Publisher mit, wenn die Nachricht nicht an bestimmte 
 Empfänger zugestellt werden soll.
 
-**Topic beenden**:
+**Nachrichten zum Topic beenden**:
 Wenn der Sender keine Nachrichten mehr zu einem Topic versenden will, weist er den Publisher an, sich beim Broker für
-den Kanal zum Topic abzumelden.
+den Topic abzumelden.
 
 ### Publisher
 Der Publisher übernimmt die An- und Abmeldung zu einem Topic beim Broker und die Veröffentlichung der Nachrichten zu dem
@@ -231,15 +221,9 @@ Topic, die er vom Sender erhält. Eine weitere Business-Logik wird beim Publishe
 
 #### Methoden
 
-**Topic suchen**:
-Bevor der Publisher einen neuen Topic einrichtet, überprüft er, ob bereits ein solcher Topic existiert, über den andere 
-Publisher bereits Nachrichten versenden.
-
-***WIRD OBSOLET, WENN DER SENDER VOR DER NEUANLAGE EINES TOPICS PRÜFT, OB DIESER SCHON EXISTIERT.***
-
 **beim Broker anmelden**:
-Der Publisher meldet auf Anweisung des Senders bei einem Broker einen Topic, den er vom Sender erhalten hat, an. Im 
-selben Moment wird der Kanal vom Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
+Der Publisher meldet sich auf Anweisung des Senders bei einem Topic, den er vom Sender erhalten hat, an. Im selben 
+Moment wird der Kanal vom Publisher zum Broker aufgebaut – der Publisher liefert dem Broker den Kanal mit.
 Voraussetzungen:
 - Eine Prüfung vorab ergibt, dass noch kein solcher Topic existiert.
 
@@ -254,17 +238,17 @@ Voraussetzungen:
 - Es konnte ein Kanal vom Publisher zum Broker aufgebaut werden.
 
 **beim Broker abmelden**:
-Der Publisher meldet sich auf Anweisung des Senders vom Kanal zu dem Topic ab. Mm gleichen Moment wird der Kanal vom 
-Publisher zum Broker abgebaut. 
+Der Publisher meldet sich auf Anweisung des Senders vom Kanal zu dem Topic ab, wenn dieser keine Nachrichten mehr zu dem
+Topic versenden möchte. Mm gleichen Moment wird der Kanal vom Publisher zum Broker abgebaut. 
 Voraussetzungen: 
 - Der Kanal enthält keine Nachrichten mehr.
 
-***MUSS NICHT AUCH DER BROKER GELÖSCHT WERDEN, WENN KEINE PUBLISHER MEHR NACHRICHTEN ZU DEM TOPIC SCHICKEN?***
-
 ### Kanal
-Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT)-Queue, in die am Ende neue Nachrichten vom Publisher 
-eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet wird. Jede Queue ist ein eigener 
+Bei einem Kanal handelt es sich eine FIFO(First-IN-FIRST-OUT)-Queue, an deren Ende neue Nachrichten vom Publisher 
+eingespielt werden und diese vorne an den Subscriber oder den Filter weitergeleitet werden. Jede Queue ist ein eigener 
 Microservice.
+
+***WELCHE LIBRARY IST BESSER GEEIGNET - QUEUE ODER COLLECTIONS.DEQUEUE? (QUEUE BASIERT AUF COLLECTIONS.DEQUEUE)***
 
 #### Methoden
 
@@ -294,7 +278,7 @@ auch das Fehler-Handling, wenn die Nachricht nicht direlt an den POST-Empfänger
 
 **sende Nachricht**:
 Der POST-Sender verschickt über die REST-API per POST-Request die Nachricht an den POST-Empfänger. Wenn der POST-Sender
-vom POST-Empfänger keine Empfangsbestätigung erhält, setzt ein Error-Handling ein, durch das er besipielsweise die
+vom POST-Empfänger keine Empfangsbestätigung erhält, setzt ein Error-Handling ein, durch das er beispielsweise die
 Nachricht nach einer bestimmten Zeit nocheinmal verschickt. 
 Voraussetzungen:
 - Er kennt die Adresse des POST-Empängers.
@@ -306,7 +290,7 @@ Voraussetzungen:
 
 ### POST-Empfänger
 Der POST-Empfänger erhält vom POST-Sender die Nachricht und schickt dem POST-Sender eine Empfangsbestätigung. Dann 
-leitet er die Nachricht an den Input-Kanal des Abnehmers (Broker oder Subscriber) weiter. 
+leitet er die Nachricht an den Eingangskanal des Abnehmers (Broker oder Subscriber) weiter. 
 
 #### Methoden
 
@@ -317,26 +301,40 @@ Voraussetzungen:
 
 ***WIE PASSEN POST-SENDER UND POST-EMPFÄNGER IN DAS KONSTRUKT?***
 
-
-### Broker
+### Broker/Topic
 Der Broker bildet die Schnittstelle zwischen Sendern und Empfängern. Er leitet die von den Publishern erhaltenen 
-Nachrichten an die jeweiligen Subscriber zu dem Topic weiter. Der Broker speichert den Topic, zu dem er angelegt wurde. 
-Die Publisher und die Subscriber werden jeweils in einer Liste erfasst.
+Nachrichten an die jeweiligen Subscriber zu dem Topic weiter. In dem Konstrukt bildet jeder Topic einen eigenen 
+Microservice (Programm), der Broker ist ein Opjekt, hinter dem die Geschäftslogik des Topics liegt. Topic und Broker 
+werden über eine Config-Datei angelegt. Die Arbeitsschritte dabei sind:
+1. Der Broker wird über die Config-Datei angelegt.
+2. Der Broker startet den Topic-Microservice (Programm) und vergibt den Topic-Namen. 
+3. Das Topic-Programm baut den REST-Empfänger und die Input-Queue auf.
+4. Erst wenn ein Empfänger existiert, baut der Topic die Output-Queue und den REST-Sender auf.
+
+Wichtig: Der Empfänger wird vor dem Sender gestartet, damit auch ein Rückantwortkanal aufgebaut werden kann und 
+Nachrichten nicht ins Leere laufen.
+
+Die Publisher und die Subscriber werden vom Broker jeweils in einer Liste erfasst.
+
+***WELCHE NAMENSKONVENTIONEN GELTEN FÜR DIE TOPICS?***
+
+***MUSS NICHT AUCH DER BROKER GELÖSCHT WERDEN, WENN KEINE PUBLISHER MEHR NACHRICHTEN ZU DEM TOPIC SCHICKEN?***
 
 #### Methoden
 
 **Broker anlegen (__init__)**:
-Bei der Neuanlage speichert der Broker den Topic und erstellt jeweils eine leere Liste für die Publisher und die
-Subscriber, die sich bei ihm anmelden.
+Bei der Neuanlage speichert der Broker den Topic-Microservice und erstellt jeweils eine leere Liste für die Publisher 
+und die Subscriber, die sich bei ihm anmelden.
 
 **Publisher anmelden**:
-Der Broker nimmt den Publisher auf dessen Anmeldung hin in den Kanal zum Topic auf. Im selben Moment wird der Kanal vom
-Publisher zum Broker aufgebaut. Die Methode ist das Gegenstück zu „beim Broker anmelden“ des Publishers.
+Der Broker nimmt den Publisher auf dessen Anmeldung hin zum Topic auf. Im selben Moment wird der Kanal vom Publisher 
+zum Broker aufgebaut. Die Methode ist das Gegenstück zu „beim Broker anmelden“ des Publishers.
 
 **Publisher abmelden**:
-Wenn sich der Publisher auf Weisung des Senders von dem Kanal zum Topic abmeldet, meldet ihn auch der Broker ab. Im 
-selben Moment werden die Kanäle zu den Subscribern zu dem Topic abgebaut. Dazu wird die Methode „Kanal abbauen“ 
-aufgerufen. Die Methode ist das Gegenstück zu „beim Broker abmelden“ des Publishers.
+Wenn sich der Publisher auf Weisung des Senders vom Topic abmeldet, meldet ihn auch der Broker ab. Falls nur dieser eine 
+Publisher Nachrichten zu dem Topic versendet, werden im selben Moment die Kanäle zu den Subscribern zu dem Topic 
+abgebaut. Dazu wird die Methode „Kanal abbauen“ aufgerufen. Die Methode ist das Gegenstück zu „beim Broker abmelden“ des 
+Publishers.
 Voraussetzungen: 
 - Die Kanäle sind leer. 
 - Es gibt keine weiteren Publisher, die denselben Topic nutzen. 
@@ -344,15 +342,15 @@ Voraussetzungen:
 **Kanal abbauen**:
 Mit dem Kanalabbau vom Sender zum Abnehmer wird die Queue gelöscht.
 Bedingungen:
-- Der Input-Kanal vom Publisher zum Broker ist abgebaut UND der Output-Kanal zum Subscriber ist leer.
-- Es existiert kein Subscriber mehr zu dem Output-Kanal
-- Der Subscriber hat sich abgemeldet UND der Output-Kanal zum Subscriber ist leer.
-Folge: Es dürfen keine Nachrichten mehr in diesen Output-Kanal gehen, das heißt kopiert werden.
+- Der Input-Eingangskanal vom Publisher zum Broker ist abgebaut UND der Ausgangskanal zum Subscriber ist leer.
+- Es existiert kein Subscriber mehr zu dem Ausgangskanal
+- Der Subscriber hat sich abgemeldet UND der Ausgangskanal zum Subscriber ist leer.
+Folge: Es dürfen keine Nachrichten mehr in diesen Ausgangskanal gehen, das heißt kopiert werden.
 
 **Subscriber anmelden**:
 Der Broker nimmt den Subscriber auf dessen Anmeldung hin in den Kanal zum Topic auf. Im selben Moment wird der Kanal vom
 Broker zum Subscriber aufgebaut und der Broker liefert dem Subscriber den Kanal zurück. Zudem muss der Broker den neuen
-Output-Kanal mit dem Input-kanal vom Publisher zum Broker verbinden. Die Methode ist Gegenstück zu „beim Broker 
+Ausgangskanal mit dem Eingangskanal vom Publisher zum Broker verbinden. Die Methode ist Gegenstück zu „beim Broker 
 anmelden“ des Subscribers.
 
 **Nachricht transportieren**:
@@ -360,9 +358,9 @@ Der Broker muss die Nachricht, die er vom Publisher erhalten hat, für jeden Kan
 jeder Queue ans Ende stellen. Anschließend löscht er die Nachricht, die er vom Publisher erhalten hat.
 
 **Subscriber abmelden**:
-Wenn sich der Subscriber auf Weisung des Senders von dem Kanal zum Topic abmeldet, meldet ihn auch der Broker ab. 
-Im selben Moment wird der Kanal vom Broker zum Subscriber abgebaut. Die Methode ist das Gegenstück zu „beim Broker 
-abmelden“ des Subscribers.
+Wenn sich der Subscriber auf Weisung des Senders von dem Topic abmeldet, meldet ihn auch der Broker ab. Im selben Moment
+wird der Kanal vom Broker zum Subscriber abgebaut. Die Methode ist das Gegenstück zu „beim Broker abmelden“ des 
+Subscribers.
 Voraussetzungen:
 - Der Kanal vom Broker vom Subscriber ist leer.
 
@@ -389,11 +387,10 @@ Nachrichten zu dem Topic zu erhalten. Sobald er sich für den Topic anmeldet, wi
 aufgebaut.
 
 **beim Broker abmelden**:
-Der Subscriber meldet sich auf Anweisung des Empfängers sich beim Broker von einem bestimmten Topic ab, um keine 
-Nachrichten zu dem Topic mehr zu erhalten. Sobald er sich für den Topic abmeldet, wird vom Broker der Kanal zum 
-Subscriber abgebaut. Voraussetzung: Der Kanal ist leer. Sollte das noch nicht der Fall sein, wird erst der Kanal
-geleert, bevor er abgebaut wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal
-eingespielt.
+Der Subscriber meldet sich auf Anweisung des Empfängers beim Broker von einem bestimmten Topic ab, um keine Nachrichten 
+zu dem Topic mehr zu erhalten. Sobald er sich für den Topic abmeldet, wird vom Broker der Kanal zum Subscriber abgebaut. 
+Voraussetzung: Der Kanal ist leer. Sollte das noch nicht der Fall sein, wird erst der Kanal geleert, bevor er abgebaut 
+wird. Mit der Abmeldung werden aber vom Broker keine neuen Nachrichten mehr in den Kanal eingespielt.
 
 ### Empfänger
 Der Empfänger verarbeitet die vom Sender verschickte Nachricht.
@@ -413,7 +410,7 @@ Voraussetzungen:
 
 ### Filter
 Der Filter steuert die Weitergabe von Nachrichten von Sendern zu einem Topic an Empfänger. Er bsteht aus Eingangsteil, 
-das eingehende Nachrichten aufnimmt, einem Filterteil, das Nachrichten aussortiert und einem Ausgangsteil, 
+das eingehende Nachrichten aufnimmt, einem Filterteil, das Nachrichten aussortiert, und einem Ausgangsteil, 
 das Nachrichten ausgibt. Der Filter wird durch Config-Daten mithilfe von Bool’schen Ausdrücken erstellt. Der Filter 
 wird zwischen Subscriber und Epfänger gesetzt und nutzt die übrigen Elemente des Pub/Sub-Patterns. Das heißt, ausgehende
 Nachrichten gibt der Filter an einen Publisher weiter, der diese über Kanäle und einen Broker an einen Subscriber und
@@ -456,3 +453,8 @@ Für folgende Beteiligte werden Objekte instanziert:
 - Broker
 - Empfänger
 - Filter
+
+### Microservices
+Folgende Teile laufen als eigener Microservice:
+- Topic
+- Queue
